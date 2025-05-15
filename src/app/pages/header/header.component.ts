@@ -19,10 +19,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 export class HeaderComponent {
   navItems = [
     { label: 'Home', href: '/client/dashboard' },
-    { label: 'Restaurant', href: '/restaurant/dashboard' },
+    { label: 'Restaurant', href: '/restaurants' },
     { label: 'Partenaires', href: '/partenaire-pub' },
     { label: 'Livreurs', href: '/livreur-pub' },
-    { label: 'Contact', href: '/support' }
+    { label: 'Contact', href: '/contacts' }
   ];
 
   isMenuOpen = false;

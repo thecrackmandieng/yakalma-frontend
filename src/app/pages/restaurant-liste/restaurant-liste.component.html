@@ -1,0 +1,18 @@
+<app-header></app-header>
+<div class="restaurant-list">
+  <h1>Liste des Restaurants</h1>
+  <div class="restaurant-grid">
+    <div class="restaurant-card" *ngFor="let restaurant of restaurants" (click)="onRestaurantClick(restaurant)">
+      <div class="card-image">
+        <img [src]="restaurant.image" alt="Image du restaurant" />
+      </div>
+      <div class="card-details">
+        <h2>{{ restaurant.name }}</h2>
+        <p>{{ restaurant.description }}</p>
+        <p><strong>Adresse:</strong> {{ restaurant.address }}</p>
+        <p><strong>Contact:</strong> {{ restaurant.contact }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

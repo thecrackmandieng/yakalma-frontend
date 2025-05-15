@@ -31,6 +31,10 @@ import { InscriptionPartenaireComponent } from './pages/inscription-partenaire/i
 import { InscriptionLivreurComponent } from './pages/inscription-livreur/inscription-livreur.component';
 import { ConnexionPartenaireComponent } from './pages/connexion-partenaire/connexion-partenaire.component';
 import { ConnexionLivreurComponent } from './pages/connexion-livreur/connexion-livreur.component';
+import { ContactsComponent } from './pages/contacts/contacts.component';
+import { RestaurantListeComponent } from './pages/restaurant-liste/restaurant-liste.component';
+
+
 
 
 
@@ -67,6 +71,8 @@ export const routes: Routes = [
   { path: 'inscription-livreur', component: InscriptionLivreurComponent },
   { path: 'connexion-partenaire', component: ConnexionPartenaireComponent },
   { path: 'connexion-livreur', component: ConnexionLivreurComponent },
+  { path: 'restaurants', component: RestaurantListeComponent },
+
 
 
   // Livreur
@@ -83,6 +89,7 @@ export const routes: Routes = [
   { path: 'client/orders-history', component: ClientOrdersHistoryComponent },
 
   // Autres
+  { path: 'contacts', component: ContactsComponent },
   { path: 'support', component: SupportComponent },
   { path: 'faq', component: FaqComponent },
   { path: '**', component: NotFoundComponent }, // Page 404
