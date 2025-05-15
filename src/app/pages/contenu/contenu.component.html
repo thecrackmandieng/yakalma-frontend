@@ -1,0 +1,41 @@
+<section class="section">
+  <div class="container">
+    <div class="header-row">
+      <div class="header-text">COMMANDE FACILE EN 3 ÉTAPES</div>
+      <div class="header-text">Watch and Follow</div>
+    </div>
+
+    <div class="content">
+      <div class="title-section">
+        <h2 class="title">
+          <span>comment</span> &nbsp;<span>nous</span> &nbsp;<span>travaillons</span>
+        </h2>
+      </div>
+
+      <div class="steps-section">
+        <div class="steps-grid">
+          <div *ngFor="let step of steps" class="step-item">
+            <div class="step-image-wrapper">
+              <fa-icon [icon]="step.icon" class="step-icon"></fa-icon>
+              <div class="step-number">{{ step.number }}</div>
+            </div>
+            <h3 class="step-title">{{ step.title }}</h3>
+            <p class="step-description">{{ step.description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="video-section">
+        <div class="video-image"></div>
+        <div class="video-card">
+          <div class="video-content">
+            <div class="video-background" style="background-image: url('/assets/img-video-450x450-jpg.png');"></div>
+            <div class="play-icon">
+              <i class="fas fa-play-circle play-icon-svg"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

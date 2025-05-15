@@ -1,0 +1,144 @@
+.partner-pub-page {
+    font-family: 'Times New Roman', Times, serif;
+    color: #000;
+  }
+  
+  .hero h1 {
+    font-size: 7rem;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+  }
+  
+  .header {
+    background: url('/assets/partb.png') no-repeat center center;
+    background-size: cover;
+    color: black;
+    font-size: 3rem; /* Augmenter la taille de la police */
+    padding: 16rem;
+    text-align: center;
+  }
+  
+  .partnership {
+    width: 100%;
+    background-color: #f5f5f5;
+    padding: 2rem; /* Augmenter la hauteur du contenu */
+  }
+  
+  .container {
+    max-width: 2800px; /* Augmenter la largeur maximale */
+    margin: 0 auto;
+    background-color: white;
+    padding: 4rem; /* Augmenter le padding pour plus d'espace */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .title-section {
+    text-align: center;
+    margin-bottom: 14rem; /* Augmenter l'espace entre les sections */
+  }
+  
+  .title {
+    font-size: 9rem; /* Augmenter la taille de la police */
+    color: black;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
+  .partner-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem; /* Augmenter l'espace entre les sections */
+  }
+  
+  .partner-image {
+    flex: 1;
+  }
+  
+  .image {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+  
+  .partner-description {
+    flex: 2;
+    padding-left: 4rem; /* Augmenter l'espace entre l'image et la description */
+  }
+  
+  .subtitle {
+    font-size: 6rem; /* Augmenter la taille de la police */
+    color: black;
+    font-weight: bold;
+    margin-bottom: 6rem; /* Augmenter l'espace entre le sous-titre et la description */
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+  }
+  
+  .description {
+    font-size: 2rem; /* Augmenter la taille de la police */
+    color: #555;
+    line-height: 1.8; /* Augmenter l'espacement entre les lignes */
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+  }
+  
+  .benefits-section {
+    margin-bottom: 10rem; /* Augmenter l'espace entre les sections */
+  }
+  
+  .benefits-grid {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  
+  .benefit-item {
+    text-align: center;
+    margin: 2rem; /* Augmenter l'espace entre les éléments */
+  }
+  
+  .icon {
+    width: 200px; /* Augmenter la taille des icônes */
+    height: 200px; /* Augmenter la taille des icônes */
+    margin-bottom: 1rem; /* Augmenter l'espace entre l'icône et le texte */
+  }
+  
+  .benefit-text {
+    font-size: 2rem; /* Augmenter la taille de la police */
+    color: #555;
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
+  .steps-section,
+  .become-partner-section {
+    margin-bottom: 4rem; /* Augmenter l'espace entre les sections */
+  }
+  
+  .steps-grid,
+  .steps-grid {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  
+  .step-item {
+    text-align: center;
+    margin: 2rem; /* Augmenter l'espace entre les éléments */
+  }
+  
+  .step-title {
+    font-size: 1.5rem; /* Augmenter la taille de la police */
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 1rem; /* Augmenter l'espace entre le titre et le texte */
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
+  .step-text {
+    font-size: 2rem; /* Augmenter la taille de la police */
+    color: #555;
+    line-height: 1.8; /* Augmenter l'espacement entre les lignes */
+    font-family: 'Times New Roman', Times, serif;
+  }
+  

@@ -1,0 +1,57 @@
+
+<section class="banniere">
+    <div class="banniere-container">
+      <!-- Background with image overlay -->
+      <div class="background-overlay">
+        <img class="background-image" alt="Food background" src="/assets/lo.png" />
+      </div>
+  
+      <!-- Content container -->
+      <div class="content-container">
+        <!-- Left side text content -->
+        <div class="left-content">
+          <div class="text-content">
+            <h2 class="subtitle">livraison Rapide & Facile</h2>
+            <h1 class="title">Roi Des Bon Plats</h1>
+          </div>
+  
+          <div class="description">
+            <p>vous offrir une qualité de repas est notre preoccupation pour tous jours</p>
+          </div>
+  
+          <div class="actions">
+            <button class="menu-button">
+              <div class="button-inner">
+                <span class="button-text">votre menu</span>
+              </div>
+            </button>
+  
+            <div class="rating">
+              <div class="rating-image"></div>
+              <div class="rating-text">4.8</div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Right side image -->
+        <div class="right-image">
+          <div class="image-container"></div>
+        </div>
+  
+        <!-- Navigation arrows -->
+        <button class="nav-button left-arrow">
+          <svg-icon src="path-to-chevron-left-icon" class="nav-icon"></svg-icon>
+        </button>
+  
+        <button class="nav-button right-arrow">
+          <svg-icon src="path-to-chevron-right-icon" class="nav-icon"></svg-icon>
+        </button>
+  
+        <!-- Navigation dots -->
+        <div class="nav-dots">
+          <div *ngFor="let dot of navigationDots; let i = index" [ngClass]="{'active': dot.active, 'dot': true}"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  

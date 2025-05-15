@@ -1,0 +1,27 @@
+<section class="section-wrapper">
+    <div class="header">
+      <h2 class="title">
+        <span>Choisir</span>
+        <span>Un</span>
+        <span>Categorie</span>
+      </h2>
+      <div class="underline"></div>
+    </div>
+  
+    <div class="cards-container">
+      <div *ngFor="let card of categoryCards" class="card">
+        <div class="card-image" [style.backgroundImage]="'url(' + card.imagePath + ')'"></div>
+        <div class="card-content">
+          <h3 class="card-title">{{ card.title }}</h3>
+          <p class="card-dish-count">{{ card.dishCount }}</p>
+        </div>
+      </div>
+    </div>
+  
+    <div class="dots-container">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </section>
+  

@@ -1,0 +1,78 @@
+.header {
+  display: flex;
+    flex-direction: row; /* Change column to row */
+    justify-content: space-between; /* Space between logo and nav */
+    align-items: center;
+    text-align: center;
+    background-color: #004085;
+    color: white;
+    padding: 10px 100px;
+}
+
+.logo {
+    display: flex; /* Ensure proper alignment */
+    align-items: center;
+}
+
+.logo h1 {
+    font-size: 2rem;
+    font-family: 'Playfair Display', serif;
+    margin: 0;
+    color: white;
+    text-align: left; /* Align text to the left */
+}
+
+
+.nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centre les éléments horizontalement */
+    align-items: center; /* Centre les éléments verticalement */
+    text-align: center;
+    margin-top: 10px;
+}
+
+.nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+.nav a:hover {
+    background-color: #005bb5;
+}
+
+.contact-button {
+    background-color: #005bb5;
+    color: black;
+    border-radius: 25px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.contact-button:hover {
+    background-color: #e0e0e0;
+}
+
+/* Media query for responsiveness */
+@media (max-width: 768px) {
+    .header {
+        padding: 20px;
+    }
+
+    .nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .contact-button {
+        width: 100%;
+        text-align: center;
+    }
+}

@@ -1,0 +1,64 @@
+<section class="div-wrapper">
+    <div class="container">
+      <div class="header">
+        <div class="title-wrapper">
+          <h2 class="title">Fast</h2>
+          <h2 class="title">Food</h2>
+          <h2 class="title">Menus</h2>
+        </div>
+        <div class="underline"></div>
+      </div>
+  
+      <div class="menu-grid">
+        <div *ngFor="let item of menuItems" class="menu-item">
+          <div class="card">
+            <div class="card-content">
+              <div class="image-wrapper">
+                <div class="image-bg"></div>
+                <div class="image" [style.backgroundImage]="'url(' + item.image + ')'"></div>
+              </div>
+              <div class="item-details">
+                <div class="stars">
+                  <span *ngFor="let _ of [].constructor(5)" class="star"></span>
+                </div>
+                <div class="item-name">
+                  <h3>{{ item.name.split(" ").slice(0, -1).join(" ") }}</h3>
+                  <h3>{{ item.name.split(" ").slice(-1) }}</h3>
+                </div>
+                <div class="item-price">{{ item.price }}</div>
+                <button class="add-to-cart" aria-label="Add to cart">
+                  <svg-icon src="path-to-plus-icon" class="plus-icon"></svg-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Opening hours card -->
+        <div class="opening-hours-card">
+          <div class="card-content">
+            <h3 class="opening-hours-title">HORAIRES D'OUVERTURE</h3>
+            <div class="underline-small"></div>
+            <div class="opening-hours">
+              <div class="day">
+                <span>Mon</span>
+                <span>17:00 to 23:00</span>
+              </div>
+              <div class="day">
+                <span>Tue</span>
+                <span>17:00 to 23:00</span>
+              </div>
+            </div>
+            <div class="contact-info">
+              <div class="contact-bg"></div>
+              <div class="contact-details">
+                <div class="phone-number">+221771506749</div>
+                <div class="address">Dakar Avenu Cheikh Anta Diop</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  

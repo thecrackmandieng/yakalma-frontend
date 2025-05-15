@@ -1,0 +1,218 @@
+.section {
+  width: 100%;
+  padding: 4rem 1rem;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.heading {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.subtitle {
+  font-family: 'Fredoka One', Helvetica, sans-serif;
+  font-size: 1.25rem;
+  color: #5371ff;
+  letter-spacing: 2px;
+  line-height: 1.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.title-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.title {
+  font-family: 'Fredoka One', Helvetica, sans-serif;
+  font-size: 3.125rem;
+  color: black;
+  line-height: 3.75rem;
+  text-align: center;
+}
+
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.images {
+  position: relative;
+  height: 31.625rem;
+}
+
+.image-bg,
+.image-bg-1 {
+  position: absolute;
+  height: 31.625rem;
+  background-size: cover;
+  background-position: center;
+  margin-left: -55rem;
+}
+
+.image-bg {
+  left: 25rem;
+  width: 21.4375rem;
+  border-radius: 15.5rem;
+  border: 0.0625rem solid black;
+  background-image: url('/assets/cui.avif');
+}
+
+.image-bg-1 {
+  left: 1rem;
+  width: 21.4375rem;
+  border-radius: 15.5rem;
+  border: 0.0625rem solid black;
+  background-image: url('/assets/cuisiniere.jpg');
+}
+
+.text-features {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  margin-left: 900px;
+}
+
+.description {
+  font-family: 'Epilogue', Helvetica, sans-serif;
+  font-size: 1rem;
+  color: #555555;
+  line-height: 1.67rem;
+}
+
+.feature-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.feature-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.feature-icon {
+  width: 6.875rem;
+  height: 6.875rem;
+  border-radius: 3.4375rem;
+  border: 0.1875rem solid #5371ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-icon img {
+  width: 3.1875rem;
+  height: 3.1875rem;
+}
+
+.feature-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.feature-title {
+  font-family: 'Fredoka One', Helvetica, sans-serif;
+  font-size: 1.375rem;
+  color: black;
+  line-height: 2.29rem;
+}
+
+.feature-description {
+  font-family: 'Epilogue', Helvetica, sans-serif;
+  font-size: 1rem;
+  color: #555555;
+  line-height: 1.67rem;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 1024px) {
+  .text-features {
+    margin-left: 0;
+    align-items: center;
+  }
+
+  .image-bg {
+    left: 0;
+    width: 18rem;
+  }
+
+  .image-bg-1 {
+    left: 0;
+    width: 18rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  .content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .images {
+    height: auto;
+  }
+
+  .image-bg,
+  .image-bg-1 {
+    position: static;
+    width: 100%;
+    height: auto;
+    border-radius: 1rem;
+  }
+
+  .feature-card {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .feature-icon {
+    width: 5rem;
+    height: 5rem;
+  }
+
+  .feature-icon img {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  .feature-title {
+    font-size: 1.125rem;
+  }
+
+  .description,
+  .feature-description {
+    font-size: 0.875rem;
+  }
+}

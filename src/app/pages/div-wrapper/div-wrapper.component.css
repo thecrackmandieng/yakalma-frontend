@@ -1,0 +1,233 @@
+
+.div-wrapper {
+  position: relative;
+  width: 100%;
+  padding: 6rem 0;
+  background-color: #f5f8fd;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.title-wrapper {
+  display: flex;
+  gap: 1rem;
+}
+
+.title {
+  font-family: 'Fredoka One', Helvetica, sans-serif;
+  font-size: 3.75rem;
+  color: black;
+  line-height: 4.5rem;
+  text-align: center;
+}
+
+.underline {
+  width: 16.875rem;
+  height: 0.625rem;
+  margin-top: 1rem;
+  background-color: #5371ff;
+  border-radius: 1.875rem;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.menu-item {
+  position: relative;
+}
+
+.card {
+  position: relative;
+  height: 247px;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0px 3px 18px rgba(2, 21, 78, 0.08);
+  overflow: hidden;
+}
+
+.card-content {
+  display: flex;
+  height: 100%;
+}
+
+.image-wrapper {
+  position: relative;
+}
+
+.image-bg {
+  position: absolute;
+  width: 105px;
+  height: 223px;
+  top: 3px;
+  left: 49px;
+  background-color: #5371ff;
+  border-radius: 100px;
+}
+
+.image {
+  position: relative;
+  width: 180px;
+  height: 150px;
+  top: 33px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 1000px;
+  margin-left: 15px;
+}
+
+.item-details {
+  flex: 1;
+  padding-top: 43px;
+  padding-left: 204px;
+  padding-right: 1rem;
+}
+
+.stars {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.star {
+  font-family: 'Inter', Helvetica, sans-serif;
+  font-size: 0.9375rem;
+  color: #5371ff;
+  line-height: 1.5625rem;
+}
+
+.item-name {
+  margin-top: 2rem;
+}
+
+.item-name h3 {
+  font-family: 'Fredoka One', Helvetica, sans-serif;
+  font-size: 1.625rem;
+  color: black;
+  line-height: 1.95rem;
+}
+
+.item-price {
+  margin-top: 1.5rem;
+  font-family: 'Fredoka One', Helvetica, sans-serif;
+  font-size: 1.875rem;
+  color: #5371ff;
+  line-height: 3.125rem;
+}
+
+.add-to-cart {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 50px;
+  height: 50px;
+  background-color: #5371ff;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+}
+
+.plus-icon {
+  width: 1rem;
+  height: 1rem;
+  color: black;
+}
+
+.opening-hours-card {
+  height: 230px;
+  width: 396px;
+  background-color: #fed30d;
+  border-radius: 20px;
+  
+}
+
+.opening-hours-title {
+  font-family: 'Fredoka One', Helvetica, sans-serif;
+  font-size: 1.85rem;
+  color: black;
+  text-align: center;
+  margin-left: 40px;
+}
+.underline-small {
+    width: 14.25rem;
+    height: 0.3125rem;
+    margin: 6rem 0 6rem auto;
+    background-color: black;
+    border-radius: 1.25rem;
+    margin-left: -200px;
+}
+
+.opening-hours {
+    margin-top: 7.5rem;
+    display: flex;
+}
+
+.day {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+}
+
+.day span {
+    font-family: 'Fredoka One', Helvetica, sans-serif;
+    font-size: 1rem;
+    color: black;
+    line-height: 1.67rem;
+    
+}
+
+.contact-info {
+    margin-top: auto;
+    text-align: left;
+}
+
+.contact-bg {
+  position: relative;
+  background-color: #5371ff;
+  border-radius: 30px;
+  padding-bottom: 9.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: -350px;
+  margin-top: 190px;
+  width: 15vw;
+}
+
+.contact-details {
+  position: absolute;
+}
+
+.phone-number {
+  font-family: 'Fredoka One', Helvetica, sans-serif;
+  font-size: 1.75rem;
+  color: black;
+  line-height: 2.92rem;
+  text-align: center;
+    margin-top: -7.9rem;
+    margin-left: -32rem;
+}
+
+.address {
+  font-family: 'Fredoka One', Helvetica, sans-serif;
+  font-size: 1rem;
+  color: white;
+  line-height: 1.67rem;
+  text-align: center;
+  margin-left: -32rem;
+
+}

@@ -1,0 +1,15 @@
+<div class="register-container">
+  <h1>Inscription</h1>
+  <form (submit)="register($event)">
+    <input type="email" placeholder="Email" [(ngModel)]="email" name="email" required />
+    <input type="password" placeholder="Mot de passe" [(ngModel)]="password" name="password" required />
+    <select [(ngModel)]="role" name="role" required>
+      <option value="" disabled selected>Choisir un rôle</option>
+      <option value="admin">Admin</option>
+      <option value="restaurant">Restaurant</option>
+      <option value="livreur">Livreur</option>
+      <option value="client">Client</option>
+    </select>
+    <button type="submit">S'inscrire</button>
+  </form>
+</div>
