@@ -63,29 +63,51 @@
 
 
 .restaurant-list {
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 1500px;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
 }
 
 .restaurant-list h1 {
   text-align: center;
   margin-bottom: 20px;
   color: #333;
+  font-size: 2.5rem;
+  font-weight: bold;
+
 }
 
 .restaurant-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
 }
 
 .restaurant-card {
   border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
+  background-color: #fff;
 }
 
 .restaurant-card:hover {
@@ -106,8 +128,10 @@
 
 .card-details h2 {
   margin: 0 0 10px;
-  font-size: 1.5em;
+  font-size: 2em;
   color: #444;
+    font-weight: bold;
+  font-family: 'Playfair Display', serif;
 }
 
 .card-details p {

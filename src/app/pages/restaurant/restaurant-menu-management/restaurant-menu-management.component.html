@@ -1,1 +1,27 @@
-<p>restaurant-menu-management works!</p>
+<app-header-restaurant></app-header-restaurant>
+<div class="order-list">
+  <h1>Liste des Commandes</h1>
+  <div class="order-grid">
+    <div class="order-card" *ngFor="let order of orders">
+      <div class="order-image">
+        <img [src]="order.image" alt="Image commande" />
+        <div class="order-actions">
+          <button class="accept-button" (click)="acceptOrder(order)">Accepter</button>
+        </div>
+      </div>
+      <div class="order-details">
+        <h2>Commande #{{ order.id }}</h2>
+        <p><strong>Client:</strong> {{ order.customerName }}</p>
+        <p><strong>Adresse:</strong> {{ order.address }}</p>
+        <p><strong>Contact:</strong> {{ order.contact }}</p>
+        <p><strong>Articles:</strong></p>
+        <ul>
+          <li *ngFor="let item of order.items">
+            {{ item.name }} - {{ item.quantity }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

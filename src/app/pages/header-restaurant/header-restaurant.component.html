@@ -2,12 +2,19 @@
     <div class="logo">
         <h1>Yakalma</h1>
     </div>
-    <nav class="nav" style="display: flex; justify-content: center; gap: 20px;">
-      <a href="#">Accueil</a>
-      <a href="#">Commande</a>
-      <a href="#">Menu</a>
-      <a href="#">Pages</a>
-
+    <nav class="nav" >
+      <a routerLink="/restaurant/dashboard"
+         [ngClass]="{active: activeLink === 'accueil'}"
+         (click)="setActive('accueil')">Accueil</a>
+      <a routerLink="/restaurant/menu-management"
+         [ngClass]="{active: activeLink === 'commande'}"
+         (click)="setActive('commande')">Commande</a>
+      <a routerLink="/restaurant/menu"
+         [ngClass]="{active: activeLink === 'menu'}"
+         (click)="setActive('menu')">Menu</a>
+      <a routerLink="/pages"
+         [ngClass]="{active: activeLink === 'pages'}"
+         (click)="setActive('pages')">Pages</a>
     </nav>
     <a href="#" class="contact-button">Contact</a>
 </header>

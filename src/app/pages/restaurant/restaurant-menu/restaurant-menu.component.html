@@ -1,0 +1,84 @@
+<app-header-restaurant></app-header-restaurant>
+<div class="menu-list">
+  <h1>Votre Menu</h1>
+  <div class="menu-grid">
+    <div
+      class="menu-card"
+      *ngFor="let item of menuItems"
+      (click)="openModal(item, $event)"
+    >
+      <div class="menu-image">
+        <img [src]="item.image" alt="Image plat" />
+      </div>
+      <div class="menu-details">
+        <h2>{{ item.name }}</h2>
+        <p><strong>Description:</strong> {{ item.description }}</p>
+        <p><strong>Prix:</strong> {{ item.price | currency }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop" *ngIf="showModal" (click)="closeModal()"></div>
+<div class="modal" *ngIf="showModal">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+
+    <!-- Étape 1 : Choix quantité -->
+    <ng-container *ngIf="!showOperatorChoice && !showPaymentForm">
+      <div class="menu-image" style="margin-bottom: 20px;">
+        <img [src]="modalItem?.image" alt="Image plat" />
+      </div>
+      <h2>{{ modalItem?.name }}</h2>
+      <p><strong>Description:</strong> {{ modalItem?.description }}</p>
+      <p><strong>Prix:</strong> {{ modalItem?.price | currency }}</p>
+      <p><strong>Montant total:</strong> {{ totalPrice | currency:'XOF' }}</p>
+      <div class="quantity-selector">
+        <button (click)="decrementQuantity()">-</button>
+        <span>{{ quantity }}</span>
+        <button (click)="incrementQuantity()">+</button>
+      </div>
+      <div class="modal-actions">
+        <button class="order-button" (click)="placeOrderWithQuantity()">Commander</button>
+        <button class="cancel-button" (click)="closeModal()">Annuler</button>
+      </div>
+    </ng-container>
+
+    <!-- Étape 2 : Choix opérateur -->
+    <ng-container *ngIf="showOperatorChoice">
+      <h2>Choisissez un opérateur</h2>
+      <div style="display:flex;gap:18px;justify-content:center;margin:24px 0;">
+        <div *ngFor="let op of operators" (click)="chooseOperator(op)" style="cursor:pointer;text-align:center;">
+          <img [src]="op.image" [alt]="op.name" style="width:70px;height:70px;object-fit:contain;border-radius:12px;border:2px solid #2563EB;margin-bottom:8px;">
+          <div>{{ op.name }}</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="cancel-button" (click)="closeModal()">Annuler</button>
+      </div>
+    </ng-container>
+
+    <!-- Étape 3 : Formulaire de paiement -->
+    <ng-container *ngIf="showPaymentForm">
+      <h2>Paiement - {{ selectedOperator?.name }}</h2>
+      <form (ngSubmit)="validatePayment()" #payForm="ngForm" style="width:100%;max-width:350px;">
+        <div style="margin-bottom:12px;">
+          <input type="text" [(ngModel)]="payment.name" name="name" placeholder="Nom sur la carte" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <input type="text" [(ngModel)]="payment.card" name="card" placeholder="Numéro de carte" required maxlength="19" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:12px;">
+          <input type="text" [(ngModel)]="payment.exp" name="exp" placeholder="MM/AA" required maxlength="5" style="flex:1;padding:8px;border-radius:6px;border:1px solid #ccc;">
+          <input type="text" [(ngModel)]="payment.cvc" name="cvc" placeholder="CVC" required maxlength="4" style="flex:1;padding:8px;border-radius:6px;border:1px solid #ccc;">
+        </div>
+        <div class="modal-actions">
+          <button class="order-button" type="submit">Valider le paiement</button>
+          <button class="cancel-button" type="button" (click)="showPaymentForm = false; showOperatorChoice = true;">Retour</button>
+        </div>
+      </form>
+    </ng-container>
+
+  </div>
+</div>
+<app-footer></app-footer>
