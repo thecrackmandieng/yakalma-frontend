@@ -34,7 +34,6 @@
   padding: 6rem;
   width: 150%;
   max-width: 500px;
-
 }
 
 /* Titre formulaire */
@@ -44,6 +43,7 @@
   margin-bottom: 1rem;
   font-family: 'Playfair Display', serif;
 }
+
 .label {
   display: block;
   margin-top: 15px;
@@ -55,20 +55,24 @@
   margin-bottom: 0.5rem;
   font-family: 'Playfair Display', serif;
 }
- .inp {
+
+.inp {
   width: 100%;
   padding: 10px;
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+
 .inp:focus {
   border-color: #007bff;
   outline: none;
 }
+
 .inp::placeholder {
   color: #999;
 }
+
 .inp:focus::placeholder {
   color: transparent;
 }
@@ -87,6 +91,11 @@
 
 .card .btn-primary:hover {
   background-color: #1E40AF;
+}
+
+.card .btn-primary:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 
 /* Message bas */
@@ -114,7 +123,6 @@
   justify-content: space-between;
   align-items: center;
   gap: 1.5rem;
-
 }
 
 .footer a {
@@ -124,4 +132,15 @@
 
 .footer a:hover {
   text-decoration: underline;
+}
+
+/* Message d'erreur */
+.error-message {
+  color: red;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 4px;
+  text-align: center;
 }

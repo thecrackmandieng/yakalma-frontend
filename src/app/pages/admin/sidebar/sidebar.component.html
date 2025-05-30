@@ -1,0 +1,29 @@
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>Dashboard</h2>
+  </div>
+  <div class="sidebar-menu">
+    <ul>
+      <li>
+        <a routerLink="/partenaires" routerLinkActive="active">
+          <i class="fas fa-handshake"></i> Partenaires
+        </a>
+      </li>
+      <li>
+        <a routerLink="/livreurs" routerLinkActive="active">
+          <i class="fas fa-truck"></i> Livreurs
+        </a>
+      </li>
+      <li>
+        <a routerLink="/paiement" routerLinkActive="active">
+          <i class="fas fa-credit-card"></i> Paiement
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="deconnexion">
+    <a href="#" (click)="logout()">
+      <i class="fas fa-sign-out-alt"></i> Déconnexion
+    </a>
+  </div>
+</div>

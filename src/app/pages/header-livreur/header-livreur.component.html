@@ -1,0 +1,26 @@
+<header class="header">
+    <div class="logo">
+        <h1>Yakalma</h1>
+    </div>
+
+    <div class="button-container">
+        <!-- Bouton Code -->
+        <button *ngIf="!showInput" class="contact-button" (click)="toggleInput()">Code</button>
+
+        <!-- Champ d'entrée et bouton Valider -->
+        <div *ngIf="showInput" class="input-group">
+            <input type="text" placeholder="Enter validation code" class="validation-input" [(ngModel)]="validationCode">
+            <button class="validate-button" (click)="validateCode()">Valider</button>
+        </div>
+    </div>
+
+    <!-- Message de succès -->
+    <div *ngIf="showSuccessModal" class="message success-message">
+        Code validé avec succès !
+    </div>
+
+    <!-- Message d'erreur -->
+    <div *ngIf="showErrorModal" class="message error-message">
+        {{ errorMessage }}
+    </div>
+</header>

@@ -30,7 +30,10 @@ import { ClientOrdersTrackingComponent } from './pages/client/client-orders-trac
 import { ClientOrdersHistoryComponent } from './pages/client/client-orders-history/client-orders-history.component';
 import { PartenairePubComponent } from './pages/partenaire-pub/partenaire-pub.component';
 import { InscriptionPartenaireComponent } from './pages/inscription-partenaire/inscription-partenaire.component';
+import { InscriptionPCompletComponent } from './pages/inscription-p-complet/inscription-p-complet.component';
+
 import { InscriptionLivreurComponent } from './pages/inscription-livreur/inscription-livreur.component';
+import { InscriptionLCompletComponent } from './pages/inscription-l-complet/inscription-l-complet.component';
 import { ConnexionPartenaireComponent } from './pages/connexion-partenaire/connexion-partenaire.component';
 import { ConnexionLivreurComponent } from './pages/connexion-livreur/connexion-livreur.component';
 import { ContactsComponent } from './pages/contacts/contacts.component';
@@ -71,9 +74,8 @@ export const routes: Routes = [
   { path: 'restaurant/orders-history', component: RestaurantOrdersHistoryComponent },
   { path: 'restaurant/settings', component: RestaurantSettingsComponent },
   { path: 'inscription-partenaire', component: InscriptionPartenaireComponent },
-  { path: 'inscription-livreur', component: InscriptionLivreurComponent },
+  { path: 'inscription-p-complet', component: InscriptionPCompletComponent },
   { path: 'connexion-partenaire', component: ConnexionPartenaireComponent },
-  { path: 'connexion-livreur', component: ConnexionLivreurComponent },
   { path: 'restaurants', component: RestaurantListeComponent },
 
 
@@ -83,6 +85,12 @@ export const routes: Routes = [
   { path: 'livreur/map', component: LivreurMapComponent },
   { path: 'livreur/deliveries-history', component: LivreurDeliveriesHistoryComponent },
   { path: 'livreur/profile', component: LivreurProfileComponent },
+  { path: 'connexion-livreur', component: ConnexionLivreurComponent },
+  { path: 'inscription-livreur', component: InscriptionLivreurComponent },
+  { path: 'inscription-l-complet', component: InscriptionLCompletComponent },
+
+
+
 
   // Client
   { path: 'client/dashboard', component: ClientDashboardComponent },

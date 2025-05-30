@@ -12,6 +12,10 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./restaurant-menu.component.css'],
 })
 export class RestaurantMenuComponent {
+imagePreview: any;
+onImageSelected($event: Event) {
+throw new Error('Method not implemented.');
+}
   menuItems = [
     {
       name: "Poulet Yassa",
@@ -86,6 +90,15 @@ export class RestaurantMenuComponent {
     cvc: ''
   };
 
+  // Pour ajouter un plat
+  showAddDishModal = false;
+  newDish = {
+    name: '',
+    description: '',
+    price: 0,
+    image: ''
+  };
+
   get totalPrice(): number {
     return this.modalItem ? this.modalItem.price * this.quantity : 0;
   }
@@ -142,5 +155,19 @@ export class RestaurantMenuComponent {
       `Paiement validé pour ${this.modalItem.name} (x${this.quantity})\nMontant total: ${this.totalPrice} FCFA\nOpérateur: ${this.selectedOperator?.name}\nNom: ${this.payment.name}\nCarte: ${this.payment.card}`
     );
     this.closeModal();
+  }
+
+  openAddDishModal() {
+    this.showAddDishModal = true;
+  }
+
+  closeAddDishModal() {
+    this.showAddDishModal = false;
+    this.newDish = { name: '', description: '', price: 0, image: '' };
+  }
+
+  addDish() {
+    this.menuItems.push({ ...this.newDish });
+    this.closeAddDishModal();
   }
 }

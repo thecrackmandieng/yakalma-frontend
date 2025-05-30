@@ -1,0 +1,119 @@
+.sidebar {
+  width: 250px;
+  height: 90vh;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+  font-family: playfair-display, serif;
+  font-weight: bold;
+  border-top: solid 3px #5371FF;
+  border-bottom: solid 3px #5371FF;
+  border-right: solid 3px #5371FF;
+  padding-top: 100px; /* Ajoute de l'espace pour le header */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.sidebar-header {
+    background-color: #5371FF;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: playfair-display, serif;
+    font-weight: bold;
+    font-size: 24px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+.sidebar-menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar-menu li:hover  {
+    background-color: #5371FF;
+    cursor: pointer;
+    color: white;
+}
+.sidebar-menu li a:hover {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+}
+.sidebar-menu li a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #5371FF;
+}
+
+.sidebar-menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-menu li {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-menu a {
+    text-decoration: none;
+    color: #5371FF;
+    font-size: 18px;
+}
+
+.sidebar-menu a i {
+    margin-right: 10px;
+    color: #5371FF;
+}
+.sidebar-menu a:hover {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.sidebar-menu li:hover {
+    background-color: #5371FF;
+    color: white;
+}
+.sidebar-menu li i {
+    color: #5371FF;
+    margin-right: 10px;
+}
+.deconnexion {
+  margin-top: auto;
+  text-align: center;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: playfair-display, serif;
+  font-weight: bold;
+  color: #5371FF;
+  transition: background-color 0.3s ease;
+}
+
+.deconnexion a {
+    text-decoration: none;
+    color: #5371FF;
+    font-size: 18px;
+}
+
+.deconnexion a i {
+    margin-right: 10px;
+}

@@ -1,0 +1,33 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #5371FF;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.app-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  font-family: 'Playfair Display', serif;
+  transition: color 0.3s ease;
+}
+
+.header-right .profile-pic {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}

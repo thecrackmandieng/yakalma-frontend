@@ -307,3 +307,18 @@ body, html {
 }
 
 /* Ajoutez d'autres styles CSS selon vos besoins */
+.add-dish-button {
+  background-color: #2563EB;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.add-dish-button:hover {
+  background-color: #1D4ED8;
+}
+
+/* Ajoutez d'autres styles CSS selon vos besoins */
