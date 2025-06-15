@@ -1,2 +1,30 @@
 <app-header></app-header>
 <app-sidebar></app-sidebar>
+
+<div class="dashboard-container">
+  <div class="cards">
+      <div class="card">
+    <fa-icon [icon]="['fas', 'users']" class="large-icon"></fa-icon>
+    <h3>Total Clients</h3>
+    <p>{{ totalClients }}</p>
+  </div>
+  <div class="card">
+    <fa-icon [icon]="['fas', 'handshake']" class="large-icon"></fa-icon>
+    <h3>Total Partenaires</h3>
+    <p>{{ totalPartenaires }}</p>
+  </div>
+  <div class="card">
+    <fa-icon [icon]="['fas', 'truck']" class="large-icon"></fa-icon>
+    <h3>Total Livreurs</h3>
+    <p>{{ totalLivreurs }}</p>
+  </div>
+  </div>
+
+  <div class="chart" *ngIf="isBrowser()">
+    <canvas baseChart
+      [data]="lineChartData"
+      [options]="lineChartOptions"
+      type="line">
+    </canvas>
+  </div>
+</div>

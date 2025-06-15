@@ -1,0 +1,65 @@
+/* Pour occuper l’espace disponible sans empiéter sur le sidebar et header */
+.dashboard-container {
+  margin-left: 290px; /* largeur du sidebar */
+  margin-top: -900px;   /* hauteur du header */
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #f7f8fa;
+  min-height: 80vh;
+}
+
+/* Container des cartes */
+.cards {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 40px;
+
+}
+
+/* Style des cartes */
+.card {
+  flex: 1 1 calc(33.33% - 20px);
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  padding: 50px;
+  border-radius: 12px;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  color: #5371FF;
+  border-left: solid #5371FF;
+  border-bottom: solid #5371FF;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+}
+.card:hover {
+transform: translateY(-5px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Graphique */
+.chart {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  max-height: 900px; /* Hauteur max du conteneur graphique */
+  overflow: hidden;
+}
+
+.chart canvas {
+  height: 550px !important; /* Hauteur fixe du canvas */
+  width: 100% !important;    /* Largeur 100% pour la réactivité */
+}
+.large-icon {
+  font-size: 4rem; /* Ajustez la taille selon vos besoins */
+}
+
+
+@media (max-width: 768px) {
+  .card {
+    flex: 1 1 100%;
+  }
+}
