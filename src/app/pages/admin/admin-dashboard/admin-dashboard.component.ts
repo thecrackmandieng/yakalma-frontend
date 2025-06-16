@@ -22,7 +22,7 @@ export class AdminDashboardComponent {
 
   // Données pour les cartes
   totalClients = 150;
-  totalPartenaires = 35;
+  totalPartenaires = 45;
   totalLivreurs = 18;
 
   // Données du graphique
