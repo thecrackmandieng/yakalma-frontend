@@ -1,4 +1,4 @@
- import { Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
 // Import des composants
 import { LoginComponent } from './pages/auth/login/login.component';
@@ -16,7 +16,6 @@ import { RestaurantOrdersTrackingComponent } from './pages/restaurant/restaurant
 import { RestaurantOrdersHistoryComponent } from './pages/restaurant/restaurant-orders-history/restaurant-orders-history.component';
 import { RestaurantSettingsComponent } from './pages/restaurant/restaurant-settings/restaurant-settings.component';
 import { RestaurantMenuComponent } from './pages/restaurant/restaurant-menu/restaurant-menu.component';
-
 
 import { LivreurDashboardComponent } from './pages/livreur/livreur-dashboard/livreur-dashboard.component';
 import { LivreurMapComponent } from './pages/livreur/livreur-map/livreur-map.component';
@@ -39,14 +38,11 @@ import { ConnexionLivreurComponent } from './pages/connexion-livreur/connexion-l
 import { ContactsComponent } from './pages/contacts/contacts.component';
 import { RestaurantListeComponent } from './pages/restaurant-liste/restaurant-liste.component';
 
-
-
-
-
 import { SupportComponent } from './pages/support/support.component';
 import { FaqComponent } from './pages/faq/faq.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { LivreurPubComponent } from './pages/livreur-pub/livreur-pub.component';
+import { LivreursComponent } from './pages/admin/livreurs/livreurs.component';
 
 export const routes: Routes = [
   // Authentification
@@ -56,8 +52,6 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'partenaire-pub', component: PartenairePubComponent },
   { path: 'livreur-pub', component: LivreurPubComponent },
-
-
 
   // Admin
   { path: 'admin/dashboard', component: AdminDashboardComponent },
@@ -78,8 +72,6 @@ export const routes: Routes = [
   { path: 'connexion-partenaire', component: ConnexionPartenaireComponent },
   { path: 'restaurants', component: RestaurantListeComponent },
 
-
-
   // Livreur
   { path: 'livreur/dashboard', component: LivreurDashboardComponent },
   { path: 'livreur/map', component: LivreurMapComponent },
@@ -88,9 +80,7 @@ export const routes: Routes = [
   { path: 'connexion-livreur', component: ConnexionLivreurComponent },
   { path: 'inscription-livreur', component: InscriptionLivreurComponent },
   { path: 'inscription-l-complet', component: InscriptionLCompletComponent },
-
-
-
+  { path: 'livreurs', component: LivreursComponent }, // Nouvelle route pour LivreursComponent
 
   // Client
   { path: 'client/dashboard', component: ClientDashboardComponent },
