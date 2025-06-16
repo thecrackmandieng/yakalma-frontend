@@ -1,51 +1,51 @@
 <section class="section">
-    <div class="container">
-      <!-- Heading Section -->
-      <div class="heading">
-        <h3 class="subtitle">POUR VOTRE FOOD RESTAURANT</h3>
-        <div class="title-wrapper">
-          <h2 class="title">parfait</h2>
-          <h2 class="title">lieu</h2>
-          <h2 class="title">Pour</h2>
-          <h2 class="title">vos</h2>
-          <h2 class="title">Besoin</h2>
-        </div>
-        <h2 class="title">En tous securité</h2>
+  <div class="container">
+    <!-- Heading Section -->
+    <div class="heading">
+      <h3 class="subtitle">POUR VOTRE FOOD RESTAURANT</h3>
+      <div class="title-wrapper">
+        <h2 class="title">Parfait</h2>
+        <h2 class="title">lieu</h2>
+        <h2 class="title">pour</h2>
+        <h2 class="title">vos</h2>
+        <h2 class="title">besoins</h2>
       </div>
-  
-      <!-- Content Section -->
-      <div class="content">
-        <!-- Left side - Images -->
-        <div class="images">
-          <div class="image-bg"></div>
-          <div class="image-bg-1"></div>
+      <h2 class="title">En tous sécurité</h2>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content">
+      <!-- Left side - Images -->
+      <div class="images">
+        <div class="image-bg"></div>
+        <div class="image-bg-1"></div>
+      </div>
+
+      <!-- Right side - Text and Features -->
+      <div class="text-features">
+        <div class="description">
+          Nisl quam nestibulum ac quam nec odio elementu sceisue
+          <br />
+          the aucan ligula. Orci varius natoque pena culus mus
+          <br />
+          nellentesque ha um ac quam nec odio aibulum ac quam nec
+          <br />
+          odio elrbine.
         </div>
-  
-        <!-- Right side - Text and Features -->
-        <div class="text-features">
-          <div class="description">
-            Nisl quam nestibulum ac quam nec odio elementu sceisue
-            <br />
-            the aucan ligula. Orci varius natoque pena culus mus
-            <br />
-            nellentesque ha um ac quam nec odio aibulum ac quam nec
-            <br />
-            odio elrbine.
-          </div>
-  
-          <!-- Feature Cards -->
-          <div class="feature-cards">
-            <div *ngFor="let feature of features" class="feature-card">
-              <div class="feature-icon">
-                <i [class]="feature.icon"></i>
-              </div>
-              <div class="feature-content">
-                <h3 class="feature-title">{{ feature.title }}</h3>
-                <p class="feature-description">{{ feature.description }}</p>
-              </div>
+
+        <!-- Feature Cards -->
+        <div class="feature-cards">
+          <div *ngFor="let feature of features" class="feature-card">
+            <div class="feature-icon">
+              <i [class]="feature.icon"></i>
+            </div>
+            <div class="feature-content">
+              <h3 class="feature-title">{{ feature.title }}</h3>
+              <p class="feature-description">{{ feature.description }}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>

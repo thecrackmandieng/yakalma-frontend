@@ -22,28 +22,27 @@
     <!-- Right Side Actions -->
     <div class="actions">
       <!-- Search Icon -->
-      <div class="icon search-icon"></div>
-      <i class="fas fa-search"></i>
-      </div>
+      <button class="action-btn search-btn">
+        <i class="fas fa-search"></i>
+      </button>
 
       <!-- Cart Icon with Badge -->
-      <div class="cart-icon-wrapper">
-      <div class="icon cart-icon">
+      <button class="action-btn cart-btn">
         <i class="fas fa-shopping-cart"></i>
-      </div>
-      <span class="cart-badge">0</span>
-    </div>
+        <span class="cart-badge">0</span>
+      </button>
 
-      <!-- Login Button -->
-      <button class="login-button" routerLink="/login">
-        <span class="login-text">Connexion</span>
+      <!-- Connexion Button -->
+      <button class="connexion-button">
+        <span class="connexion-text">Connexion</span>
       </button>
 
       <!-- Hamburger Menu -->
-      <div class="hamburger-menu" (click)="toggleMenu()">
+      <button class="hamburger-menu" (click)="toggleMenu()">
         <div class="hamburger-line"></div>
         <div class="hamburger-line"></div>
         <div class="hamburger-line"></div>
+      </button>
     </div>
   </div>
 </header>
