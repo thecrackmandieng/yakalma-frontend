@@ -18,8 +18,16 @@ export class LivreursComponent implements OnInit {
   isAddModalVisible: boolean = false;
   isEditModalVisible: boolean = false;
   isDeleteModalVisible: boolean = false;
-  newLivreur: Livreur = { id: 0, nom: '', prenom: '' };
-  selectedLivreur: Livreur = { id: 0, nom: '', prenom: '' };
+  newLivreur: Livreur = {
+    id: 0, nom: '', prenom: '',
+    email: undefined,
+    telephone: undefined
+  };
+  selectedLivreur: Livreur = {
+    id: 0, nom: '', prenom: '',
+    email: undefined,
+    telephone: undefined
+  };
   selectedLivreurId: number | null = null;
   errorMessage: string = '';
   successMessage: string = '';
@@ -55,7 +63,7 @@ onAddSubmit() {
   this.livreursService.addLivreur(this.newLivreur).subscribe({
     next: (addedLivreur) => {
       this.livreurs = [...this.livreurs, addedLivreur]; // Utilisation de l'opérateur spread pour éviter les mutations directes
-      this.newLivreur = { id: 0, nom: '', prenom: '' };
+      this.newLivreur = { id: 0, nom: '', prenom: '', email: '', telephone: '' };
       this.successMessage = 'Livreur ajouté avec succès!';
       this.errorMessage = '';
       setTimeout(() => {

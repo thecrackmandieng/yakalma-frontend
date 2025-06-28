@@ -1,1 +1,133 @@
-<p>partenaires works!</p>
+<app-header></app-header>
+<div class="container">
+  <app-sidebar></app-sidebar>
+  <div class="main-content">
+    <button class="btn-add" (click)="openAddLivreurModal()">Ajouter un partenaire</button>
+
+    <!-- Modal d'ajout -->
+    <div *ngIf="isAddModalVisible" class="modal">
+      <div class="modal-content">
+        <span class="close" (click)="closeAddModal()">&times;</span>
+        <h2>Ajouter un Partenaire</h2>
+        <form (submit)="onAddSubmit()">
+          <div class="form-group">
+            <label for="nom">Nom :</label>
+            <input type="text" id="nom" [(ngModel)]="newLivreur.nom" name="nom" required>
+            <div *ngIf="!newLivreur.nom && isSubmitted" class="error-message">Le nom est requis.</div>
+          </div>
+          <div class="form-group">
+            <label for="prenom">Prénom :</label>
+            <input type="text" id="prenom" [(ngModel)]="newLivreur.prenom" name="prenom" required>
+            <div *ngIf="!newLivreur.prenom && isSubmitted" class="error-message">Le prénom est requis.</div>
+          </div>
+            <div class="form-group">
+            <label for="prenom">Email :</label>
+            <input type="text" id="email" [(ngModel)]="newLivreur.email" name="email" required>
+            <div *ngIf="!newLivreur.email && isSubmitted" class="error-message">Le prénom est requis.</div>
+          </div>
+            <div class="form-group">
+            <label for="telephone">telephone :</label>
+            <input type="text" id="telephone" [(ngModel)]="newLivreur.telephone" name="telephone" required>
+            <div *ngIf="!newLivreur.telephone && isSubmitted" class="error-message">Le telephone est requis.</div>
+          </div>
+          <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+          <button type="submit" class="btn-submit">Ajouter</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de modification -->
+    <div *ngIf="isEditModalVisible" class="modal">
+      <div class="modal-content">
+        <span class="close" (click)="closeEditModal()">&times;</span>
+        <h2>Modifier le partenare</h2>
+        <form (submit)="onEditSubmit()">
+          <div class="form-group">
+            <label for="edit-nom">Nom :</label>
+            <input type="text" id="edit-nom" [(ngModel)]="selectedLivreur.nom" name="edit-nom" required>
+            <div *ngIf="!selectedLivreur.nom && isEditSubmitted" class="error-message">Le nom est requis.</div>
+          </div>
+          <div class="form-group">
+            <label for="edit-prenom">Prénom :</label>
+            <input type="text" id="edit-prenom" [(ngModel)]="selectedLivreur.prenom" name="edit-prenom" required>
+            <div *ngIf="!selectedLivreur.prenom && isEditSubmitted" class="error-message">Le prénom est requis.</div>
+          </div>
+            <div class="form-group">
+            <label for="edit-email">Email :</label>
+            <input type="text" id="edit-email" [(ngModel)]="selectedLivreur.email" name="edit-email" required>
+            <div *ngIf="!selectedLivreur.email && isEditSubmitted" class="error-message">Le email est requis.</div>
+          </div>
+            <div class="form-group">
+            <label for="edit-telephone">telephone :</label>
+            <input type="text" id="edit-telephone" [(ngModel)]="selectedLivreur.telephone" name="edit-telephone" required>
+            <div *ngIf="!selectedLivreur.telephone && isEditSubmitted" class="error-message">Le telephone est requis.</div>
+          </div>
+          <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+          <button type="submit" class="btn-submit">Modifier</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div *ngIf="isDeleteModalVisible" class="modal">
+      <div class="modal-content">
+        <h2>Confirmer la suppression</h2>
+        <p>Êtes-vous sûr de vouloir supprimer ce livreur ?</p>
+        <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+        <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="cancelDelete()">Annuler</button>
+          <button class="btn-confirm" (click)="confirmDelete()">Supprimer</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="livreurs-list">
+      <h2>Liste des Partenaires</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Email</th>
+              <th>Numéro de téléphone</th>
+              <th>status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let livreur of livreurs">
+              <td>{{ livreur.id }}</td>
+              <td>{{ livreur.nom }}</td>
+              <td>{{ livreur.prenom }}</td>
+              <td>{{ livreur.email }}</td>
+              <td>{{ livreur.telephone }}</td>
+              <td>
+                <span class="status" [ngClass]="{'active': livreur.status === 'actif', 'inactive': livreur.status === 'inactif'}">
+                  {{ livreur.status }}
+                </span>
+              <td>
+                <button class="icon-button view" title="Voir les documents">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="icon-button edit" (click)="openEditLivreurModal(livreur)" title="Modifier">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="icon-button delete" (click)="openDeleteModal(livreur.id)" title="Supprimer">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+                <button class="icon-button toggle-status" (click)="toggleStatus(livreur.id)" title="Changer le statut">
+                  <i class="fas fa-toggle-on"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

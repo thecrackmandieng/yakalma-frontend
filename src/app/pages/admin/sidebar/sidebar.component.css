@@ -50,6 +50,7 @@
     color: white;
     text-decoration: none;
     transition: color 0.3s ease;
+    text-decoration: none;
 
 }
 .sidebar-menu li a {
@@ -57,6 +58,7 @@
     align-items: center;
     text-decoration: none;
     color: #5371FF;
+    text-decoration: none;
 }
 
 .sidebar-menu {

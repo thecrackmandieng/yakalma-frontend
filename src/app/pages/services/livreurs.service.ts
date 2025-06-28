@@ -7,9 +7,9 @@ import { Livreur } from '../models/livreur.model';
 })
 export class LivreursService {
   private livreurs: Livreur[] = [
-    { id: 1, nom: 'Doe', prenom: 'John' },
-    { id: 2, nom: 'Smith', prenom: 'Jane' },
-    { id: 3, nom: 'Johnson', prenom: 'Jim' }
+    { id: 1, nom: 'Doe', prenom: 'John', status: 'active', email: 'mousta@gmail.com', telephone: '123456789' },
+    { id: 2, nom: 'Smith', prenom: 'Jane', status: 'inactive', email: 'momy@gmail.com', telephone: '987654321' },
+    { id: 3, nom: 'Johnson', prenom: 'Jim', status: 'active', email: 'fallou@gmail.com', telephone: '456789123' },
   ];
 
   constructor() { }

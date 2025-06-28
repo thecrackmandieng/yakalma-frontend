@@ -43,6 +43,8 @@ import { FaqComponent } from './pages/faq/faq.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { LivreurPubComponent } from './pages/livreur-pub/livreur-pub.component';
 import { LivreursComponent } from './pages/admin/livreurs/livreurs.component';
+import { PartenairesComponent } from './pages/admin/partenaires/partenaires.component';
+
 
 export const routes: Routes = [
   // Authentification
@@ -71,6 +73,8 @@ export const routes: Routes = [
   { path: 'inscription-p-complet', component: InscriptionPCompletComponent },
   { path: 'connexion-partenaire', component: ConnexionPartenaireComponent },
   { path: 'restaurants', component: RestaurantListeComponent },
+  { path: 'admin/partenaires', component: PartenairesComponent }, // Nouvelle route pour LivreursComponent
+
 
   // Livreur
   { path: 'livreur/dashboard', component: LivreurDashboardComponent },
@@ -80,7 +84,7 @@ export const routes: Routes = [
   { path: 'connexion-livreur', component: ConnexionLivreurComponent },
   { path: 'inscription-livreur', component: InscriptionLivreurComponent },
   { path: 'inscription-l-complet', component: InscriptionLCompletComponent },
-  { path: 'livreurs', component: LivreursComponent }, // Nouvelle route pour LivreursComponent
+  { path: 'admin/livreurs', component: LivreursComponent }, // Nouvelle route pour LivreursComponent
 
   // Client
   { path: 'client/dashboard', component: ClientDashboardComponent },
