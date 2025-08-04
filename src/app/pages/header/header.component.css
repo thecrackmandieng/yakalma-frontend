@@ -3,6 +3,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   background-color: #fff;
   position: relative;
+  z-index: 10;
 }
 
 .container {
@@ -11,7 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 8vh; /* Utilisation de vh */
+  height: 8vh;
   padding: 0 1rem;
 }
 
@@ -22,14 +23,14 @@
 
 .logo-wrapper {
   position: relative;
-  width: 10vw; /* Utilisation de vw */
-  height: 7vh; /* Utilisation de vh */
+  width: 10vw;
+  height: 7vh;
 }
 
 .logo-background {
   position: absolute;
-  width: 10vw; /* Utilisation de vw */
-  height: 6vh; /* Utilisation de vh */
+  width: 10vw;
+  height: 6vh;
   top: 0.5rem;
   left: 0;
   background-color: #5371ff;
@@ -38,20 +39,20 @@
 
 .logo-border {
   position: relative;
-  width: 9vw; /* Utilisation de vw */
-  height: 4vh; /* Utilisation de vh */
+  width: 9vw;
+  height: 4vh;
   top: -0.5rem;
-  left: 1vw; /* Utilisation de vw */
+  left: 1vw;
   border: 3px solid #5371ff;
   border-radius: 0.75rem;
 }
 
 .logo-image {
   position: absolute;
-  width: 7vw; /* Utilisation de vw */
-  height: 7vh; /* Utilisation de vh */
+  width: 7vw;
+  height: 7vh;
   top: 0;
-  left: 1.5vw; /* Utilisation de vw */
+  left: 1.5vw;
   object-fit: cover;
 }
 
@@ -61,7 +62,6 @@
   font-family: 'Fugaz One', Helvetica, sans-serif;
   font-size: 1.25rem;
   font-weight: normal;
-  letter-spacing: 0;
   line-height: 1.67rem;
   white-space: nowrap;
 }
@@ -87,33 +87,37 @@
   font-size: 1.125rem;
   font-weight: 500;
   color: #212121;
-  letter-spacing: 0;
-  line-height: 1.75rem;
-  white-space: nowrap;
   text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+.nav-link:hover {
+  color: #5371ff;
 }
 
 .actions {
   display: flex;
   align-items: center;
-  gap: 5rem; /* Réduction de l'écart pour déplacer à gauche */
-  margin-left: -5rem; /* Ajout d'une marge négative pour déplacer davantage à gauche */
-}
-.search-icon {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: #212121;
-  margin-left: -5.5rem; /* Déplacement vers la gauche */
+  gap: 2rem;
+  position: relative;
+  cursor: pointer;
 }
 
 .cart-icon-wrapper {
   position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cart-icon {
-  width: 1.1875rem;
-  height: 1.0625rem;
+  width: 1.2rem;
+  height: 1.2rem;
   color: #00a149;
+  position: relative;
 }
 
 .cart-badge {
@@ -123,24 +127,23 @@
   width: 1rem;
   height: 1rem;
   background-color: #212121;
-  border-radius: 0.75rem;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  font-family: 'Oswald', Helvetica, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #fff;
 }
 
 .login-button {
-  width: 11vw; /* Utilisation de vw */
-  height: 5vh; /* Utilisation de vh */
+  width: 11vw;
+  height: 5vh;
   background-color: #ffc222;
   border-radius: 0.4375rem;
   border: none;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .login-button:hover {
@@ -153,7 +156,6 @@
   font-weight: 600;
   color: #fff;
   letter-spacing: 0.05rem;
-  line-height: 1.0625rem;
   white-space: nowrap;
 }
 
@@ -173,33 +175,80 @@
   background-color: #212121;
 }
 
-/* Styles pour le menu déroulant */
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.search-input {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 14px;
+}
+
+.search-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+/* Résultats filtrés */
+.filtered-results {
+  position: absolute;
+  top: 100%;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 300px;
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 99;
+  list-style: none;
+  padding: 0;
+  margin-top: 8px;
+}
+
+.filtered-results li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.filtered-results li:hover {
+  background-color: #f0f0f0;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   .container {
-    height: 10vh; /* Ajustement de la hauteur */
+    height: 10vh;
     padding: 0 0.5rem;
   }
 
   .logo-wrapper {
-    width: 15vw; /* Ajustement de la largeur */
-    height: 8vh; /* Ajustement de la hauteur */
+    width: 15vw;
+    height: 8vh;
   }
 
   .logo-background {
-    width: 15vw; /* Ajustement de la largeur */
-    height: 7vh; /* Ajustement de la hauteur */
+    width: 15vw;
+    height: 7vh;
   }
 
   .logo-border {
-    width: 14vw; /* Ajustement de la largeur */
-    height: 5vh; /* Ajustement de la hauteur */
-    left: 1.5vw; /* Ajustement de la position */
+    width: 14vw;
+    height: 5vh;
+    left: 1.5vw;
   }
 
   .logo-image {
-    width: 12vw; /* Ajustement de la largeur */
-    height: 7vh; /* Ajustement de la hauteur */
-    left: 2vw; /* Ajustement de la position */
+    width: 12vw;
+    height: 7vh;
+    left: 2vw;
   }
 
   .nav-list {
@@ -207,20 +256,20 @@
   }
 
   .nav-link {
-    font-size: 1rem; /* Réduction de la taille de police */
+    font-size: 1rem;
   }
 
   .login-button {
-    width: 15vw; /* Ajustement de la largeur */
-    height: 6vh; /* Ajustement de la hauteur */
+    width: 15vw;
+    height: 6vh;
   }
 
   .login-text {
-    font-size: 1rem; /* Réduction de la taille de police */
+    font-size: 1rem;
   }
 
   .hamburger-menu {
-    display: flex; /* Affichage du menu hamburger */
+    display: flex;
   }
 
   .navigation-menu {
@@ -230,11 +279,12 @@
     width: 100%;
     background-color: #fff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: none; /* Masquer le menu de navigation par défaut */
+    display: none;
+    z-index: 20;
   }
 
   .navigation-menu.active {
-    display: block; /* Afficher le menu de navigation lorsque la classe active est ajoutée */
+    display: block;
   }
 
   .nav-list {
@@ -246,85 +296,68 @@
 
 @media (max-width: 480px) {
   .container {
-    height: 12vh; /* Ajustement de la hauteur */
+    height: 12vh;
     padding: 0 0.25rem;
   }
 
   .logo-wrapper {
-    width: 20vw; /* Ajustement de la largeur */
-    height: 9vh; /* Ajustement de la hauteur */
+    width: 20vw;
+    height: 9vh;
   }
 
   .logo-background {
-    width: 20vw; /* Ajustement de la largeur */
-    height: 8vh; /* Ajustement de la hauteur */
+    width: 20vw;
+    height: 8vh;
   }
 
   .logo-border {
-    width: 19vw; /* Ajustement de la largeur */
-    height: 6vh; /* Ajustement de la hauteur */
-    left: 2vw; /* Ajustement de la position */
+    width: 19vw;
+    height: 6vh;
+    left: 2vw;
   }
 
   .logo-image {
-    width: 17vw; /* Ajustement de la largeur */
-    height: 8vh; /* Ajustement de la hauteur */
-    left: 2.5vw; /* Ajustement de la position */
-  }
-
-  .nav-list {
-    gap: 0.5rem;
+    width: 17vw;
+    height: 8vh;
+    left: 2.5vw;
   }
 
   .nav-link {
-    font-size: 0.9rem; /* Réduction de la taille de police */
+    font-size: 0.9rem;
   }
 
   .login-button {
-    width: 20vw; /* Ajustement de la largeur */
-    height: 7vh; /* Ajustement de la hauteur */
+    width: 25vw;
+    height: 8vh;
   }
 
   .login-text {
-    font-size: 0.9rem; /* Réduction de la taille de police */
+    font-size: 1rem;
   }
+
   .hamburger-menu {
-    width: 1.5rem; /* Ajustement de la largeur */
-    height: 1rem; /* Ajustement de la hauteur */
+    width: 1.5rem;
+    height: 1rem;
   }
+
   .hamburger-line {
-    width: 1.5rem; /* Ajustement de la largeur */
-    height: 0.125rem; /* Ajustement de la hauteur */
+    width: 1.5rem;
+    height: 0.125rem;
   }
-  .search-icon {
-    width: 0.8rem; /* Ajustement de la largeur */
-    height: 0.8rem; /* Ajustement de la hauteur */
-  }
-  .cart-icon {
-    width: 0.8rem; /* Ajustement de la largeur */
-    height: 0.8rem; /* Ajustement de la hauteur */
-  }
-  .cart-badge {
-    width: 0.8rem; /* Ajustement de la largeur */
-    height: 0.8rem; /* Ajustement de la hauteur */
-    font-size: 0.6rem; /* Ajustement de la taille de police */
-  }
+
   .cart-icon-wrapper {
-    width: 2rem; /* Ajustement de la largeur */
-    height: 2rem; /* Ajustement de la hauteur */
+    width: 2rem;
+    height: 2rem;
   }
+
   .cart-icon {
-    width: 1.5rem; /* Ajustement de la largeur */
-    height: 1.5rem; /* Ajustement de la hauteur */
+    width: 1.5rem;
+    height: 1.5rem;
   }
-  .login-button {
-    width: 25vw; /* Ajustement de la largeur */
-    height: 8vh; /* Ajustement de la hauteur */
-  }
-  .login-text {
-    font-size: 1rem; /* Ajustement de la taille de police */
-  }
-  .login-button:hover {
-    background-color: rgba(255, 194, 34, 0.8); /* Ajustement de la couleur au survol */
+
+  .cart-badge {
+    width: 0.8rem;
+    height: 0.8rem;
+    font-size: 0.6rem;
   }
 }

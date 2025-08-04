@@ -1,33 +1,69 @@
 <app-header-l></app-header-l>
 
 <div class="page-container">
-  <h1>Connexion Livreur</h1>
-  <p>
-    Nous prenons en compte tous les facteurs de changement et vous fournissons les composants dont vous avez besoin pour changer et créer un événement qui se produit réellement.
+  <h1 class="text-center">Connexion Livreur</h1>
+
+  <p class="description text-center">
+    Nous prenons en compte tous les facteurs de changement et vous fournissons les composants dont vous avez besoin
+    pour changer et créer un événement qui se produit réellement.
   </p>
-  <div class="card">
-    <h2>Connectez-vous</h2>
-    <label for="email" class="label">Adresse email</label>
-    <input type="email" id="email" placeholder="Entrez votre adresse email" class="inp" [(ngModel)]="email" (input)="validateEmail()" />
 
-    <label for="password" class="label">Mot de passe</label>
-    <input type="password" id="password" placeholder="Entrez votre mot de passe" class="inp" [(ngModel)]="password" (input)="validatePassword()" />
+  <div class="card form-card shadow p-4">
+    <h2 class="mb-3">Connectez-vous</h2>
 
-    <button class="btn-primary" (click)="onLogin()" [disabled]="!isFormValid()">Se connecter</button>
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <div class="mb-3">
+        <label for="email" class="form-label">Adresse email ou numéro de téléphone</label>
+        <input
+          type="text"
+          id="email"
+          name="email"
+          class="form-control"
+          [(ngModel)]="email"
+          required
+          (input)="validateEmailOrPhone()"
+          placeholder="Entrez votre adresse email ou numéro"
+        />
+      </div>
 
-    <!-- Message d'erreur -->
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Mot de passe</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="form-control"
+          [(ngModel)]="password"
+          required
+          (input)="validatePassword()"
+          placeholder="Entrez votre mot de passe"
+        />
+      </div>
 
-    <p class="terms" style="margin-top: 15px; font-size: 12px; color: #777; text-align: center;">
-      En continuant, vous acceptez de recevoir des appels, messages WhatsApp ou SMS/RCS au numéro fourni, y compris de façon automatisée, de la part d’Uber et de ses sociétés affiliées.
+      <button
+        type="submit"
+        class="btn btn-primary w-100"
+        [disabled]="!isFormValid()"
+      >
+        Se connecter
+      </button>
+
+      <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+        {{ errorMessage }}
+      </div>
+    </form>
+
+    <p class="terms text-muted mt-4 text-center" style="font-size: 12px;">
+      En continuant, vous acceptez de recevoir des appels, messages WhatsApp ou SMS/RCS au numéro fourni, y compris
+      de façon automatisée, de la part d’Uber et de ses sociétés affiliées.
     </p>
   </div>
 
-  <div class="footer">
+  <div class="footer mt-5">
     <div class="row">
+      <!-- Ajoute ici d'autres éléments si nécessaire -->
     </div>
   </div>
 </div>
+
 <app-footer></app-footer>

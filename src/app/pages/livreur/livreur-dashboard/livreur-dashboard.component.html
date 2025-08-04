@@ -1,41 +1,74 @@
 <app-header-livreur></app-header-livreur>
+
 <div class="order-list">
-  <h1>Liste des Commandes</h1>
+  <h1>Liste des Commandes Livrées</h1>
+
   <div class="order-grid">
     <div class="order-card" *ngFor="let order of orders">
-      <div class="order-image">
+
+      <!-- ─── Image + actions ─────────────────────────────── -->
+      <div class="order-image" [class.disabled]="order.status === 'en_cours'">
         <img [src]="order.image" alt="Image commande" />
+
         <div class="order-actions">
-          <button class="accept-button" (click)="acceptOrder(order)" [disabled]="order.status === 'livré'">
-            {{ order.status === 'livré' ? 'Livré' : 'Accepter' }}
+          <!-- Bouton Accepter (visible tant que status = 'livre') -->
+          <button
+            class="accept-button"
+            *ngIf="order.status === 'livre'"
+            (click)="acceptOrder(order)"
+          >
+            Accepter
+          </button>
+
+          <!-- Bouton Localisation (désactivé si status = 'en_cours') -->
+          <button
+            class="map-icon-button"
+            title="Voir la localisation"
+            (click)="showMap(order)"
+            [disabled]="order.status === 'en_cours'"
+          >
+            <i class="fas fa-location-dot"></i>
           </button>
         </div>
       </div>
-      <div class="order-details">
-        <h2>Commande #{{ order.id }}</h2>
-        <p><strong>Client:</strong> {{ order.customerName }}</p>
-        <p><strong>Adresse:</strong> {{ order.address }}</p>
-        <p><strong>Contact:</strong> {{ order.contact }}</p>
-        <p><strong>Statut:</strong> {{ order.status }}</p>
-        <p><strong>Articles:</strong></p>
-        <ul>
-          <li *ngFor="let item of order.items">
-            {{ item.name }} - {{ item.quantity }}
-          </li>
-        </ul>
-      </div>
+
+      <!-- ─── Détails ─────────────────────────────────────── -->
+<div class="order-details">
+  <h2>Commande #{{ order._id?.slice(0, 6) }}...</h2>
+  <p><strong>Client :</strong> {{ order.customerName }}</p>
+  <p><strong>Adresse :</strong> {{ order.address }}</p>
+  <p><strong>Contact :</strong> {{ order.contact }}</p>
+
+  <!-- NOUVEAU : Infos restaurant -->
+  <p><strong>Restaurant :</strong> {{ order.restaurantName || 'N/A' }}</p>
+  <p><strong>Téléphone restaurant :</strong> {{ order.restaurantPhone || 'N/A' }}</p>
+  <p><strong>Adresse restaurant :</strong> {{ order.restaurantAddress || 'N/A' }}</p>
+
+  <p><strong>Statut :</strong> {{ order.status }}</p>
+
+  <p><strong>Articles :</strong></p>
+  <ul>
+    <li *ngFor="let item of order.items">
+      {{ item.name }} – {{ item.quantity }}
+    </li>
+  </ul>
+</div>
+
     </div>
   </div>
 </div>
 
-<!-- Modal pour afficher la carte -->
+<!-- ─── Modal Google Map ─────────────────────────────────── -->
 <div *ngIf="selectedOrder" class="modal-overlay" (click)="closeModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
-    <google-map [center]="selectedOrder.center" [zoom]="13" height="400px" width="100%">
-      <advanced-marker [position]="selectedOrder.center" [title]="selectedOrder.customerName">
-        <pin-element></pin-element>
-      </advanced-marker>
-    </google-map>
+    <google-map
+      *ngIf="selectedOrder.center"
+      [center]="selectedOrder.center"
+      [zoom]="13"
+      height="400px"
+      width="100%"
+    ></google-map>
+
     <button (click)="closeModal()">Fermer</button>
   </div>
 </div>

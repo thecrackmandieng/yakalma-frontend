@@ -4,13 +4,13 @@
   <div class="restaurant-grid">
     <div class="restaurant-card" *ngFor="let restaurant of restaurants" (click)="onRestaurantClick(restaurant)">
       <div class="card-image">
-        <img [src]="restaurant.image" alt="Image du restaurant" />
+        <img [src]="getImageUrl(restaurant)" alt="Image du restaurant" />
       </div>
       <div class="card-details">
         <h2>{{ restaurant.name }}</h2>
         <p>{{ restaurant.description }}</p>
         <p><strong>Adresse:</strong> {{ restaurant.address }}</p>
-        <p><strong>Contact:</strong> {{ restaurant.contact }}</p>
+        <p><strong>Contact:</strong> {{ restaurant.phone }}</p>
       </div>
     </div>
   </div>

@@ -1,8 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HeaderRestaurantComponent } from "../../header-restaurant/header-restaurant.component";
 import { FooterComponent } from "../../footer/footer.component";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { PartenaireService } from '../../../services/partenaire.service';
+import { MenuItem } from '../../models/menu-item.model';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-restaurant-menu',
@@ -11,74 +15,16 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './restaurant-menu.component.html',
   styleUrls: ['./restaurant-menu.component.css'],
 })
-export class RestaurantMenuComponent {
-imagePreview: any;
-onImageSelected($event: Event) {
-throw new Error('Method not implemented.');
-}
-  menuItems = [
-    {
-      name: "Poulet Yassa",
-      description: "Poulet mariné aux oignons et citron, servi avec du riz.",
-      price: 3500,
-      image: "assets/riz.png"
-    },
-    {
-      name: "Thieboudienne",
-      description: "Riz au poisson traditionnel sénégalais.",
-      price: 4000,
-      image: "assets/dieune.webp"
-    },
-    {
-      name: "Pizza Margherita",
-      description: "Pizza classique avec sauce tomate, mozzarella et basilic.",
-      price: 5000,
-      image: "assets/pizzaa.jpg"
-    },
-    {
-      name: "Burger Maison",
-      description: "Burger au steak haché, fromage, salade et sauce maison.",
-      price: 3000,
-      image: "assets/yassa.webp"
-    },
-    {
-      name: "Salade Végétarienne",
-      description: "Salade fraîche avec légumes de saison.",
-      price: 2500,
-      image: "assets/salade.jpeg"
-    },
-    {
-      name: "Poisson Grillé",
-      description: "Poisson frais grillé, servi avec légumes.",
-      price: 4500,
-      image: "assets/griade.webp"
-    },
-    {
-      name: "Croissant",
-      description: "Viennoiserie française au beurre.",
-      price: 800,
-      image: "assets/croissant.jpeg"
-    },
-    {
-      name: "Jus de Bissap",
-      description: "Boisson traditionnelle à base de fleurs d’hibiscus.",
-      price: 500,
-      image: "assets/bissap.webp"
-    }
-  ];
+export class RestaurantMenuComponent implements OnInit {
+  menuItems: MenuItem[] = [];
+  imagePreview: string | ArrayBuffer | null = null;
+  selectedImage: File | null = null;
+  successMessage: string = '';
 
-  operators = [
-    { name: 'Wave', image: 'assets/wave.webp' },
-    { name: 'Orange Money', image: 'assets/Orange.png' },
-    { name: 'Carte prépayée', image: 'assets/carte.jpg' }
-  ];
-
-  selectedItem: any = null;
   showModal = false;
-  modalItem: any = null;
+  modalItem: MenuItem | null = null;
   quantity = 1;
 
-  // Pour la gestion des étapes
   showOperatorChoice = false;
   showPaymentForm = false;
   selectedOperator: any = null;
@@ -87,27 +33,132 @@ throw new Error('Method not implemented.');
     name: '',
     card: '',
     exp: '',
-    cvc: ''
+    cvc: '',
+    address: '',
+    contact: ''
   };
 
-  // Pour ajouter un plat
   showAddDishModal = false;
-  newDish = {
+  newDish: Partial<MenuItem> = {
     name: '',
     description: '',
     price: 0,
     image: ''
   };
 
+  showEditDishModal = false;
+  editDish: Partial<MenuItem> = {};
+  editImagePreview: string | ArrayBuffer | null = null;
+  selectedEditImage: File | null = null;
+
+  showDeleteConfirmModal = false;
+  dishToDelete: MenuItem | null = null;
+
+  operators = [
+    { name: 'Wave', image: 'assets/wave.webp' },
+    { name: 'Orange Money', image: 'assets/Orange.png' },
+    { name: 'Carte prépayée', image: 'assets/carte.jpg' }
+  ];
+
+  restaurantName: string = '';
+  restaurantId: string = '';
+  isRestaurant: boolean = false;
+
+  constructor(
+    private partenaireService: PartenaireService,
+    private route: ActivatedRoute,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
+ngOnInit() {
+  if (isPlatformBrowser(this.platformId)) {
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('profile') || '{}');
+    this.isRestaurant = user?.role === 'restaurant';
+
+    if (token && this.isRestaurant) {
+      // Utilisateur restaurant connecté : afficher son propre nom
+      this.restaurantName = user?.name || '';
+
+      const storedId = localStorage.getItem('restaurantId');
+      if (storedId) {
+        this.restaurantId = storedId;
+        this.loadMenuFromRoute();
+      } else {
+        this.loadRestaurantProfile();
+      }
+
+    } else {
+      // Pas connecté en restaurant : récupérer id dans l'URL
+      this.route.params.subscribe(params => {
+        this.restaurantId = params['id'];
+        if (this.restaurantId) {
+          this.getRestaurantName(this.restaurantId);  // récupère et set le nom du restaurant
+          this.loadMenuFromRoute();                   // charge le menu du restaurant
+        } else {
+          console.error("⚠️ Aucun ID restaurant trouvé dans l'URL.");
+        }
+      });
+    }
+  }
+}
+
+
+  getRestaurantName(id: string) {
+    this.partenaireService.getPartenaireById(id).subscribe({
+      next: (restaurant) => {
+        this.restaurantName = restaurant.name;
+      },
+      error: (err) => console.error('Erreur récupération nom restaurant:', err)
+    });
+  }
+
+  private loadMenuFromRoute() {
+    let id = this.restaurantId;
+    if (!id && isPlatformBrowser(this.platformId)) {
+      id = localStorage.getItem('restaurantId') || '';
+    }
+
+    if (!id) {
+      console.error("❌ ID du restaurant introuvable.");
+      return;
+    }
+
+    this.partenaireService.getMenuByRestaurantId(id).subscribe({
+      next: (menus) => {
+        this.menuItems = menus;
+      },
+      error: (err) => {
+        console.error('Erreur récupération menus:', err);
+        this.menuItems = [];
+      }
+    });
+  }
+
+  loadRestaurantProfile() {
+    this.partenaireService.getRestaurantProfile().subscribe({
+      next: (res: any) => {
+        if (res?.restaurant?._id) {
+          localStorage.setItem('restaurantId', res.restaurant._id);
+          this.restaurantId = res.restaurant._id;
+          this.loadMenuFromRoute();
+        }
+      },
+      error: (err) => console.error('Erreur récupération profil restaurant:', err)
+    });
+  }
+
+  getImageUrl(imagePath: string): string {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
+    return `http://localhost:3000/${imagePath}`;
+  }
+
   get totalPrice(): number {
     return this.modalItem ? this.modalItem.price * this.quantity : 0;
   }
 
-  selectItem(item: any) {
-    this.selectedItem = item;
-  }
-
-  openModal(item: any, event: Event) {
+  openModal(item: MenuItem, event: Event) {
     event.stopPropagation();
     this.modalItem = item;
     this.quantity = 1;
@@ -115,7 +166,7 @@ throw new Error('Method not implemented.');
     this.showOperatorChoice = false;
     this.showPaymentForm = false;
     this.selectedOperator = null;
-    this.payment = { name: '', card: '', exp: '', cvc: '' };
+    this.payment = { name: '', card: '', exp: '', cvc: '', address: '', contact: '' };
   }
 
   closeModal() {
@@ -141,7 +192,6 @@ throw new Error('Method not implemented.');
   chooseOperator(operator: any) {
     this.selectedOperator = operator;
     if (operator.name === 'Wave') {
-      // Redirection vers le site Wave
       window.open('https://www.wave.com/sn/', '_blank');
       this.closeModal();
       return;
@@ -151,10 +201,42 @@ throw new Error('Method not implemented.');
   }
 
   validatePayment() {
-    alert(
-      `Paiement validé pour ${this.modalItem.name} (x${this.quantity})\nMontant total: ${this.totalPrice} FCFA\nOpérateur: ${this.selectedOperator?.name}\nNom: ${this.payment.name}\nCarte: ${this.payment.card}`
-    );
-    this.closeModal();
+    if (!this.modalItem || !this.modalItem.name) return;
+
+    const restaurantId = localStorage.getItem('restaurantId');
+    if (!restaurantId) {
+      this.successMessage = "Erreur : Identifiant du restaurant non trouvé. Veuillez vous reconnecter.";
+      setTimeout(() => this.successMessage = '', 3000);
+      return;
+    }
+
+    const orderPayload = {
+      items: [
+        {
+          name: this.modalItem.name,
+          quantity: this.quantity,
+          image: this.modalItem.image || ''
+        }
+      ],
+      customerName: this.payment.name.trim(),
+      address: this.payment.address.trim(),
+      contact: this.payment.contact.trim(),
+      restaurantId: restaurantId
+    };
+
+    this.partenaireService.createOrder(orderPayload).subscribe({
+      next: () => {
+        this.successMessage = "✅ Commande envoyée avec succès !";
+        setTimeout(() => {
+          this.successMessage = '';
+          this.closeModal();
+        }, 2000);
+      },
+      error: () => {
+        this.successMessage = "Erreur lors de l'envoi de la commande.";
+        setTimeout(() => this.successMessage = '', 3000);
+      }
+    });
   }
 
   openAddDishModal() {
@@ -164,10 +246,110 @@ throw new Error('Method not implemented.');
   closeAddDishModal() {
     this.showAddDishModal = false;
     this.newDish = { name: '', description: '', price: 0, image: '' };
+    this.imagePreview = null;
+    this.selectedImage = null;
+  }
+
+  onImageSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      this.selectedImage = file;
+      const reader = new FileReader();
+      reader.onload = () => this.imagePreview = reader.result;
+      reader.readAsDataURL(file);
+    }
   }
 
   addDish() {
-    this.menuItems.push({ ...this.newDish });
-    this.closeAddDishModal();
+    if (!this.selectedImage || !this.newDish.name || !this.newDish.description || !this.newDish.price) {
+      alert('Tous les champs sont requis.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('name', this.newDish.name);
+    formData.append('description', this.newDish.description);
+    formData.append('price', this.newDish.price.toString());
+    formData.append('image', this.selectedImage);
+
+    this.partenaireService.addMenuItem(formData).subscribe({
+      next: (res: any) => {
+        this.menuItems.push(res.menuItem);
+        this.closeAddDishModal();
+      },
+      error: () => alert("Erreur lors de l'ajout du plat.")
+    });
+  }
+
+  openEditDishModal(item: MenuItem) {
+    this.editDish = { ...item };
+    this.editImagePreview = this.getImageUrl(item.image || '');
+    this.selectedEditImage = null;
+    this.showEditDishModal = true;
+  }
+
+  closeEditDishModal() {
+    this.showEditDishModal = false;
+    this.editDish = {};
+    this.editImagePreview = null;
+    this.selectedEditImage = null;
+  }
+
+  onEditImageSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      this.selectedEditImage = file;
+      const reader = new FileReader();
+      reader.onload = () => this.editImagePreview = reader.result;
+      reader.readAsDataURL(file);
+    }
+  }
+
+  updateDish() {
+    if (!this.editDish._id || !this.editDish.name || !this.editDish.description || !this.editDish.price) {
+      alert('Tous les champs sont requis.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('name', this.editDish.name);
+    formData.append('description', this.editDish.description);
+    formData.append('price', this.editDish.price.toString());
+    if (this.selectedEditImage) {
+      formData.append('image', this.selectedEditImage);
+    }
+
+    this.partenaireService.updateMenuItem(this.editDish._id, formData).subscribe({
+      next: (res: any) => {
+        const index = this.menuItems.findIndex(i => i._id === this.editDish._id);
+        if (index !== -1) {
+          this.menuItems[index] = res.menuItem;
+        }
+        this.closeEditDishModal();
+      },
+      error: () => alert('Erreur lors de la modification du plat.')
+    });
+  }
+
+  openDeleteConfirmModal(item: MenuItem) {
+    this.dishToDelete = item;
+    this.showDeleteConfirmModal = true;
+  }
+
+  closeDeleteConfirmModal() {
+    this.showDeleteConfirmModal = false;
+    this.dishToDelete = null;
+  }
+
+  confirmDelete() {
+    if (!this.dishToDelete?._id) return;
+
+    this.partenaireService.deleteMenuItem(this.dishToDelete._id).subscribe({
+      next: () => {
+        this.menuItems = this.menuItems.filter(i => i._id !== this.dishToDelete?._id);
+        this.closeDeleteConfirmModal();
+      },
+      error: () => alert('Erreur lors de la suppression du plat.')
+    });
   }
 }

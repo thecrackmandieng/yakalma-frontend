@@ -1,97 +1,49 @@
 <app-header-l></app-header-l>
+
 <div class="page-container">
   <h1>Inscription Livreur</h1>
   <p>
-    Nous prenons en compte tous les facteurs de changement et vous fournissons les composants dont vous avez besoin pour changer et créer un événement qui se produit réellement.
+    Merci de compléter les informations ci-dessous pour finaliser votre inscription.
   </p>
 
   <div class="dropdown-container">
-    <!-- Informations Personnelles -->
+    <!-- Informations personnelles -->
     <button class="dropdown-btn" (click)="toggleDropdown('personalInfo')">Informations Personnelles</button>
     <div id="personalInfo" class="dropdown-content">
       <form #personalForm="ngForm">
-        <input type="text" name="nom" placeholder="Nom" required minlength="2" ngModel #nom="ngModel" />
-        <div *ngIf="nom.invalid && nom.touched" class="error">
-          <span *ngIf="nom.errors?.['required']">Le nom est requis.</span>
-          <span *ngIf="nom.errors?.['minlength']">Le nom doit contenir au moins 2 caractères.</span>
-        </div>
-
-        <input type="text" name="prenom" placeholder="Prénom" required minlength="2" ngModel #prenom="ngModel" />
-        <div *ngIf="prenom.invalid && prenom.touched" class="error">
-          <span *ngIf="prenom.errors?.['required']">Le prénom est requis.</span>
-          <span *ngIf="prenom.errors?.['minlength']">Le prénom doit contenir au moins 2 caractères.</span>
-        </div>
-
-        <input type="email" name="email" placeholder="Email" required email ngModel #email="ngModel" />
-        <div *ngIf="email.invalid && email.touched" class="error">
-          <span *ngIf="email.errors?.['required']">L'email est requis.</span>
-          <span *ngIf="email.errors?.['email']">Format d'email invalide.</span>
-        </div>
-
-        <input type="tel" name="telephone" placeholder="Téléphone" required pattern="^[0-9]{8,15}$" ngModel #telephone="ngModel" />
-        <div *ngIf="telephone.invalid && telephone.touched" class="error">
-          <span *ngIf="telephone.errors?.['required']">Le téléphone est requis.</span>
-          <span *ngIf="telephone.errors?.['pattern']">Numéro de téléphone invalide.</span>
-        </div>
+        <input type="text" name="nom" placeholder="Nom" [(ngModel)]="formData.nom" required />
+        <input type="text" name="prenom" placeholder="Prénom" [(ngModel)]="formData.prenom" required />
+        <input type="email" name="email" placeholder="Email" [(ngModel)]="formData.email" required />
+        <input type="tel" name="telephone" placeholder="Téléphone" [(ngModel)]="formData.telephone" required />
       </form>
     </div>
 
-    <!-- Informations du Véhicule -->
+    <!-- Informations du véhicule -->
     <button class="dropdown-btn" (click)="toggleDropdown('vehicleInfo')">Informations du Véhicule</button>
     <div id="vehicleInfo" class="dropdown-content">
       <form #vehicleForm="ngForm">
-        <input type="text" name="typeVehicule" placeholder="Type de véhicule (ex: moto, voiture...)" required ngModel #typeVehicule="ngModel" />
-        <div *ngIf="typeVehicule.invalid && typeVehicule.touched" class="error">
-          <span *ngIf="typeVehicule.errors?.['required']">Le type de véhicule est requis.</span>
-        </div>
-
-        <input type="text" name="marque" placeholder="Marque" required ngModel #marque="ngModel" />
-        <div *ngIf="marque.invalid && marque.touched" class="error">
-          <span *ngIf="marque.errors?.['required']">La marque est requise.</span>
-        </div>
-
-        <input type="text" name="modele" placeholder="Modèle" required ngModel #modele="ngModel" />
-        <div *ngIf="modele.invalid && modele.touched" class="error">
-          <span *ngIf="modele.errors?.['required']">Le modèle est requis.</span>
-        </div>
-
-        <input type="text" name="immatriculation" placeholder="Immatriculation" required ngModel #immatriculation="ngModel" />
-        <div *ngIf="immatriculation.invalid && immatriculation.touched" class="error">
-          <span *ngIf="immatriculation.errors?.['required']">L'immatriculation est requise.</span>
-        </div>
+        <input type="text" name="typeVehicule" placeholder="Type de véhicule" [(ngModel)]="formData.typeVehicule" required />
+        <input type="text" name="immatriculation" placeholder="Immatriculation" [(ngModel)]="formData.immatriculation" required />
       </form>
     </div>
 
-    <!-- Papiers du Véhicule -->
+    <!-- Papiers du véhicule -->
     <button class="dropdown-btn" (click)="toggleDropdown('vehiclePapers')">Papiers du Véhicule</button>
     <div id="vehiclePapers" class="dropdown-content">
       <form #papersForm="ngForm">
-        <input type="file" name="carteGrise" required ngModel #carteGrise="ngModel" />
-        <div *ngIf="carteGrise.invalid && carteGrise.touched" class="error">
-          <span *ngIf="carteGrise.errors?.['required']">La carte grise est requise.</span>
-        </div>
+        <label>Carte d'identité</label>
+        <input type="file" (change)="onFileSelected($event, 'carteGrise')" />
 
-        <input type="file" name="assurance" required ngModel #assurance="ngModel" />
-        <div *ngIf="assurance.invalid && assurance.touched" class="error">
-          <span *ngIf="assurance.errors?.['required']">L'assurance est requise.</span>
-        </div>
-
-        <input type="file" name="permisConduire" required ngModel #permisConduire="ngModel" />
-        <div *ngIf="permisConduire.invalid && permisConduire.touched" class="error">
-          <span *ngIf="permisConduire.errors?.['required']">Le permis de conduire est requis.</span>
-        </div>
+        <label>Assurance</label>
+        <input type="file" (change)="onFileSelected($event, 'assurance')" />
       </form>
     </div>
   </div>
-<button class="btn-save-all"
-  (click)="saveAll()"
-  [disabled]="personalForm.invalid || vehicleForm.invalid || papersForm.invalid">
-  Enregistrer global
-</button>
 
-  <div class="footer">
-    <div class="row">
-    </div>
-  </div>
+  <button class="btn-save-all" (click)="saveAll()">Enregistrer</button>
+
+  <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
 </div>
+
 <app-footer></app-footer>

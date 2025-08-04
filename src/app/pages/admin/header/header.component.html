@@ -3,7 +3,79 @@
     <img src="assets/logo.png" alt="Logo" class="logo" />
     <span class="app-name">yakalma</span>
   </div>
-  <div class="header-right">
+
+  <div class="header-right" (click)="toggleDropdown()" style="position: relative; cursor: pointer;">
     <img src="assets/chefn.webp" alt="Profil" class="profile-pic" />
+    <span class="chevron">&#9662;</span>
+
+    <!-- Dropdown menu -->
+    <div *ngIf="dropdownOpen" class="dropdown-content">
+      <a (click)="goToProfile()">👤 Profil</a>
+      <a (click)="changePassword()">🔑 Changer mot de passe</a>
+      <a (click)="logout()">🚪 Déconnexion</a>
+    </div>
   </div>
 </header>
+
+<!-- Modal Profil -->
+<div class="modal-backdrop" *ngIf="showProfileModal" (click)="closeProfileModal()">
+  <div class="modal-profile" (click)="$event.stopPropagation()">
+    <h2>Mon Profil</h2>
+    <form (submit)="saveProfile(); $event.preventDefault()">
+      <label>Prénom</label>
+      <input type="text" [(ngModel)]="firstName" name="firstName" required />
+
+      <label>Nom</label>
+      <input type="text" [(ngModel)]="lastName" name="lastName" required />
+
+      <label>Email</label>
+      <input type="email" [(ngModel)]="email" name="email" required />
+
+      <label>Téléphone</label>
+      <input type="text" [(ngModel)]="phone" name="phone" required />
+
+      <div class="modal-actions">
+        <button type="submit" class="btn save">Enregistrer</button>
+        <button type="button" class="btn cancel" (click)="closeProfileModal()">
+          Annuler
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Changer Mot de Passe -->
+<div class="modal-backdrop" *ngIf="showPasswordModal" (click)="closePasswordModal()">
+  <div class="modal-profile" (click)="$event.stopPropagation()">
+    <h2>Changer le mot de passe</h2>
+    <form (submit)="submitPasswordChange(); $event.preventDefault()">
+      <label>Mot de passe actuel</label>
+      <input
+        type="password"
+        [(ngModel)]="currentPassword"
+        name="currentPassword"
+        required
+      />
+
+      <label>Nouveau mot de passe</label>
+      <input type="password" [(ngModel)]="newPassword" name="newPassword" required />
+
+      <label>Confirmer le mot de passe</label>
+      <input
+        type="password"
+        [(ngModel)]="confirmPassword"
+        name="confirmPassword"
+        required
+      />
+
+      <div class="error" *ngIf="passwordError">{{ passwordError }}</div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn save">Modifier</button>
+        <button type="button" class="btn cancel" (click)="closePasswordModal()">
+          Annuler
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

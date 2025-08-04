@@ -8,31 +8,38 @@
 
   <div class="card">
     <h2>Indiquez votre adresse email</h2>
-    <input type="email" placeholder="Enter email address" />
 
-    <button class="btn-primary" routerLink="/inscription-l-complet">Continuer</button>
+    <!-- Champ lié à l'email -->
+    <input type="email" [(ngModel)]="email" placeholder="Enter email address" class="form-control" />
 
-    <div class="divider">OU</div>
+    <!-- Bouton d'inscription -->
+    <button class="btn-primary mt-3" (click)="preRegisterLivreur()">Continuer</button>
 
-    <button class="btn-social">
-      <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg
-                                                                              " alt="Google" />
+    <!-- Affichage erreur -->
+    <div *ngIf="errorMessage" class="alert alert-danger mt-2">
+      {{ errorMessage }}
+    </div>
+
+    <div class="divider mt-4">OU</div>
+
+    <button class="btn-social mt-2">
+      <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google" />
       Continuer avec Google
     </button>
 
-    <button class="btn-social">
+    <button class="btn-social mt-2">
       <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple" />
       Continuer avec Icloud
     </button>
 
-    <p class="terms">
+    <p class="terms mt-3">
       En continuant, vous acceptez de recevoir des appels, messages WhatsApp ou SMS/RCS au numéro fourni, y compris de façon automatisée, de la part d’Uber et de ses sociétés affiliées.
     </p>
   </div>
 
   <div class="footer">
-    <div class="row">
-    </div>
+    <div class="row"></div>
   </div>
 </div>
+
 <app-footer></app-footer>

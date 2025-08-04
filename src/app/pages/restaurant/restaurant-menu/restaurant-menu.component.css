@@ -322,3 +322,99 @@ body, html {
 }
 
 /* Ajoutez d'autres styles CSS selon vos besoins */
+.menu-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.menu-card:hover {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+}
+
+.menu-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* Style boutons icônes */
+.icon-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #2563eb;
+  transition: color 0.3s ease;
+}
+
+.icon-button:hover {
+  color: #1d4ed8;
+}
+
+.icon-button:focus {
+  outline: none;
+}
+
+.success-message {
+  animation: fadeOut 3s forwards;
+}
+.success-message {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: bold;
+}
+
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.restaurant-card {
+  background: white;
+  border-radius: 20px;
+  padding: 0.2rem 2rem; /* Réduction du padding vertical */
+  margin: 1.5rem auto;
+  max-width: 600px;
+  box-shadow: 0 15px 35px rgba(0, 12, 26, 0.35); /* Utilisation de #004085 */
+  text-align: center;
+  border: 2px solid #2563eb;
+  animation: pulseBorder 2.5s infinite;
+}
+
+.restaurant-title {
+  color: #2563eb;
+  font-weight: 700;
+  font-size: 2rem; /* Taille un peu réduite */
+  margin: 0.5rem 0;
+
+  animation: shimmerText 2s infinite;
+}
+
+
+
+
+@keyframes pulseBorder {
+  0% {
+    box-shadow: 0 0 10px #2563eb;
+  }
+  50% {
+    box-shadow: 0 0 20px #3b82f6;
+  }
+  100% {
+    box-shadow: 0 0 10px #2563eb;
+  }
+}
+

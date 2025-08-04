@@ -8,7 +8,7 @@
   <div class="card">
     <h2>Connectez-vous</h2>
     <label for="email" class="label">Adresse email</label>
-    <input type="email" id="email" placeholder="Entrez votre adresse email" class="inp" [(ngModel)]="email" (input)="validateEmail()" />
+    <input type="email" id="email" placeholder="Entrez votre adresse email ou numero telephone" class="inp" [(ngModel)]="email" (input)="validateEmailOrPhone()" />
 
     <label for="password" class="label">Mot de passe</label>
     <input type="password" id="password" placeholder="Entrez votre mot de passe" class="inp" [(ngModel)]="password" (input)="validatePassword()" />

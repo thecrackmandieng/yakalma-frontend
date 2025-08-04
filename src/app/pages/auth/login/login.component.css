@@ -1,37 +1,146 @@
-.login-container {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .login-container h1 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .login-container input {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  .login-container button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .login-container button:hover {
-    background-color: #0056b3;
-  }
-  
+/* Page */
+.page-container {
+  min-height: 100vh;
+  background-color: white;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+}
+
+/* Titre principal */
+.page-container h1 {
+  font-size: 6rem;
+  font-weight: bold;
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 1rem;
+}
+
+/* Paragraphe principal */
+.page-container p {
+  color: #4B5563;
+  max-width: 600px;
+  margin-bottom: 2.5rem;
+}
+
+/* Carte principale */
+.card {
+  background-color: white;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  padding: 6rem;
+  width: 150%;
+  max-width: 500px;
+}
+
+/* Titre formulaire */
+.card h2 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  color: #555;
+  font-size: 1rem;
+  align-items: flex-start;
+  text-align: left;
+  margin-bottom: 0.5rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.inp {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.inp:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.inp::placeholder {
+  color: #999;
+}
+
+.inp:focus::placeholder {
+  color: transparent;
+}
+
+/* Bouton continuer */
+.card .btn-primary {
+  width: 100%;
+  padding: 10px;
+  margin-top: 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.card .btn-primary:hover {
+  background-color: #1E40AF;
+}
+
+.card .btn-primary:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Message bas */
+.card .terms {
+  font-size: 0.75rem;
+  color: #9CA3AF;
+  margin-top: 1.5rem;
+}
+
+/* Footer */
+.footer {
+  margin-top: 2.5rem;
+  max-width: 470px;
+  font-size: 1.5rem;
+  color: #4B5563;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer .row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.footer a {
+  color: #2563EB;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* Message d'erreur */
+.error-message {
+  color: red;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 4px;
+  text-align: center;
+}

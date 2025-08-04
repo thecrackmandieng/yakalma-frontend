@@ -20,7 +20,7 @@ export class SidebarComponent {
   constructor(private router: Router) {}
 
   logout() {
-    // Ajoutez ici la logique de déconnexion
+    // Ajoute ta logique de déconnexion ici
     this.router.navigate(['/login']);
   }
 }

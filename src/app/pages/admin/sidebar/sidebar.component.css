@@ -1,121 +1,130 @@
 .sidebar {
-  width: 250px;
-  height: 90vh;
-  margin-top: 20px;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-  font-family: playfair-display, serif;
-  font-weight: bold;
-  border-top: solid 3px #5371FF;
-  border-bottom: solid 3px #5371FF;
-  border-right: solid 3px #5371FF;
-  padding-top: 100px; /* Ajoute de l'espace pour le header */
+  width: 260px;
+  height: 95vh;
+  margin-top: 65px;
+  overflow-y: auto;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: 'Playfair Display', serif;
+  border-right: 3px solid #5371FF;
+  transition: all 0.3s ease-in-out;
+  z-index: 1000;
 }
 
+/* Header */
 .sidebar-header {
-    background-color: #5371FF;
-    color: white;
-    padding: 10px;
-    text-align: center;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-family: playfair-display, serif;
-    font-weight: bold;
-    font-size: 24px;
-    transition: background-color 0.3s ease;
+  text-align: center;
+  background: #5371FF;
+  color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 25px;
+  transition: background-color 0.3s;
 }
 
+.sidebar-header:hover {
+  background-color: #415ad6;
+}
+
+/* Menu */
 .sidebar-menu ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-.sidebar-menu {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-.sidebar-menu li:hover  {
-    background-color: #5371FF;
-    cursor: pointer;
-    color: white;
-}
-.sidebar-menu li a:hover {
-    color: white;
-    text-decoration: none;
-    transition: color 0.3s ease;
-    text-decoration: none;
-
-}
-.sidebar-menu li a {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: #5371FF;
-    text-decoration: none;
-}
-
-.sidebar-menu {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .sidebar-menu li {
-    margin-bottom: 15px;
-    padding: 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+  margin-bottom: 15px;
 }
 
 .sidebar-menu a {
-    text-decoration: none;
-    color: #5371FF;
-    font-size: 18px;
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #5371FF;
+  transition: all 0.3s;
+  font-weight: 500;
 }
 
 .sidebar-menu a i {
-    margin-right: 10px;
-    color: #5371FF;
+  margin-right: 12px;
+  font-size: 20px;
 }
-.sidebar-menu a:hover {
-    color: white;
-    text-decoration: none;
-    transition: color 0.3s ease;
+
+.sidebar-menu li:hover a,
+.sidebar-menu a.active {
+  background-color: #5371FF;
+  color: #fff;
 }
-.sidebar-menu li:hover {
-    background-color: #5371FF;
-    color: white;
+
+.sidebar-menu li:hover i {
+  color: #fff;
 }
-.sidebar-menu li i {
-    color: #5371FF;
-    margin-right: 10px;
-}
+
+/* Déconnexion */
 .deconnexion {
   margin-top: auto;
+  padding: 15px;
   text-align: center;
-  padding: 10px;
-  background-color: #f1f1f1;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-family: playfair-display, serif;
-  font-weight: bold;
-  color: #5371FF;
-  transition: background-color 0.3s ease;
+  border-top: 1px solid #eee;
 }
 
 .deconnexion a {
-    text-decoration: none;
-    color: #5371FF;
-    font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #5371FF;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: bold;
+  transition: all 0.3s;
 }
 
 .deconnexion a i {
-    margin-right: 10px;
+  margin-right: 10px;
+}
+
+.deconnexion a:hover {
+  color: #fff;
+  background-color: #5371FF;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+/* Responsive Sidebar */
+@media (max-width: 992px) {
+  .sidebar {
+    width: 220px;
+    padding: 15px;
+  }
+  .sidebar-header {
+    font-size: 20px;
+  }
+  .sidebar-menu a {
+    font-size: 16px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -260px;
+    transition: left 0.3s ease-in-out;
+  }
+  .sidebar.open {
+    left: 0;
+  }
 }

@@ -1,20 +1,304 @@
-<header class="header">
-    <div class="logo">
-        <h1>Yakalma</h1>
+<!-- header.component.html -->
+<header class="header" role="banner">
+  <div class="logo">
+    <a routerLink="/restaurants" aria-label="Retour à la page des restaurants">
+      <h1>Yakalma</h1>
+    </a>
+  </div>
+
+  <nav class="nav" role="navigation" aria-label="Menu principal">
+    <a
+      routerLink="/restaurant/dashboard"
+      *ngIf="isRestaurant"
+      [ngClass]="{ active: activeLink === 'accueil' }"
+      (click)="setActive('accueil')"
+    >Accueil</a>
+
+    <a
+      routerLink="/restaurant/menu-management"
+      *ngIf="isRestaurant"
+      [ngClass]="{ active: activeLink === 'commande' }"
+      (click)="setActive('commande')"
+    >Commande</a>
+
+    <a
+      routerLink="/restaurant/menu"
+      *ngIf="isRestaurant"
+      [ngClass]="{ active: activeLink === 'menu' }"
+      (click)="setActive('menu')"
+    >Menu</a>
+
+    <a
+      routerLink="/pages"
+      *ngIf="isRestaurant"
+      [ngClass]="{ active: activeLink === 'pages' }"
+      (click)="setActive('pages')"
+    >Pages</a>
+  </nav>
+
+
+  <div
+        *ngIf="isRestaurant"
+    class="profile-menu"
+    (click)="toggleDropdown()"
+    tabindex="0"
+    role="button"
+    aria-haspopup="true"
+    [attr.aria-expanded]="dropdownOpen"
+    aria-label="Menu utilisateur"
+  >
+    <div class="profile-icon">
+      <img src="assets/chefn.webp" alt="Avatar utilisateur" />
+      <span>Mon Compte</span>
+      <span class="chevron">&#9662;</span>
     </div>
-    <nav class="nav" >
-      <a routerLink="/restaurant/dashboard"
-         [ngClass]="{active: activeLink === 'accueil'}"
-         (click)="setActive('accueil')">Accueil</a>
-      <a routerLink="/restaurant/menu-management"
-         [ngClass]="{active: activeLink === 'commande'}"
-         (click)="setActive('commande')">Commande</a>
-      <a routerLink="/restaurant/menu"
-         [ngClass]="{active: activeLink === 'menu'}"
-         (click)="setActive('menu')">Menu</a>
-      <a routerLink="/pages"
-         [ngClass]="{active: activeLink === 'pages'}"
-         (click)="setActive('pages')">Pages</a>
-    </nav>
-    <a href="#" class="contact-button">Contact</a>
+
+    <div *ngIf="dropdownOpen" class="dropdown-content" role="menu">
+      <a role="menuitem" tabindex="0" (click)="goToProfile()">👤 Profil</a>
+      <a role="menuitem" tabindex="0" (click)="changePassword()">🔑 Changer mot de passe</a>
+      <a role="menuitem" tabindex="0" (click)="logout()">🚪 Déconnexion</a>
+    </div>
+  </div>
 </header>
+
+
+<!-- Modal Profil -->
+<!-- Modal Profil -->
+<div
+  class="modal-backdrop"
+  *ngIf="showProfileModal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="profileModalTitle"
+  (click)="closeProfileModal()"
+>
+  <div class="modal-profile" (click)="$event.stopPropagation()">
+    <h2 id="profileModalTitle">Mon Profil</h2>
+
+    <form (submit)="saveProfile(); $event.preventDefault()" enctype="multipart/form-data" novalidate>
+
+      <!-- Champs texte alignés 2 par 2 -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">Prénom</label>
+          <input
+            id="firstName"
+            type="text"
+            [(ngModel)]="firstName"
+            name="firstName"
+            required
+            autocomplete="given-name"
+          />
+        </div>
+        <div class="form-group">
+          <label for="lastName">Nom</label>
+          <input
+            id="lastName"
+            type="text"
+            [(ngModel)]="lastName"
+            name="lastName"
+            required
+            autocomplete="family-name"
+          />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            required
+            autocomplete="email"
+          />
+        </div>
+        <div class="form-group">
+          <label for="phone">Téléphone</label>
+          <input
+            id="phone"
+            type="tel"
+            [(ngModel)]="phone"
+            name="phone"
+            required
+            autocomplete="tel"
+            pattern="^[+0-9\s\-]+$"
+          />
+        </div>
+      </div>
+
+      <hr />
+
+      <!-- Upload documents -->
+      <label for="permis">Permis</label>
+      <input
+        id="permis"
+        type="file"
+        (change)="onFileChange($event, 'permis')"
+        accept=".pdf,.jpg,.jpeg,.png"
+      />
+      <div *ngIf="uploadedFilesUrl['permisUrl']">
+        <a
+          href="{{ uploadedFilesUrl['permisUrl'] }}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Voir le document actuel
+        </a>
+      </div>
+
+      <label for="certificat">Certificat</label>
+      <input
+        id="certificat"
+        type="file"
+        (change)="onFileChange($event, 'certificat')"
+        accept=".pdf,.jpg,.jpeg,.png"
+      />
+      <div *ngIf="uploadedFilesUrl['certificatUrl']">
+        <a
+          href="{{ uploadedFilesUrl['certificatUrl'] }}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Voir le document actuel
+        </a>
+      </div>
+
+      <label for="autresDocs">Autres Documents</label>
+      <input
+        id="autresDocs"
+        type="file"
+        (change)="onFileChange($event, 'autresDocs')"
+        accept=".pdf,.jpg,.jpeg,.png"
+      />
+      <div *ngIf="uploadedFilesUrl['autresDocsUrl']">
+        <a
+          href="{{ uploadedFilesUrl['autresDocsUrl'] }}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Voir le document actuel
+        </a>
+      </div>
+
+      <label for="idCardCopy">Copie Carte d’Identité</label>
+      <input
+        id="idCardCopy"
+        type="file"
+        (change)="onFileChange($event, 'idCardCopy')"
+        accept=".pdf,.jpg,.jpeg,.png"
+      />
+      <div *ngIf="uploadedFilesUrl['idCardCopyUrl']">
+        <a
+          href="{{ uploadedFilesUrl['idCardCopyUrl'] }}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Voir le document actuel
+        </a>
+      </div>
+
+      <hr />
+
+      <!-- Upload photo -->
+      <label for="photo">Photo</label>
+      <input
+        id="photo"
+        type="file"
+        (change)="onFileChange($event, 'photo')"
+        accept=".jpg,.jpeg,.png"
+      />
+      <div *ngIf="uploadedFilesUrl['photoUrl']">
+        <img
+          [src]="uploadedFilesUrl['photoUrl']"
+          alt="Photo actuelle"
+          class="preview-photo"
+        />
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn save">Enregistrer</button>
+        <button type="button" class="btn cancel" (click)="closeProfileModal()">
+          Annuler
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal succès -->
+<div *ngIf="showSuccessModal" class="modal-backdrop success-modal" (click)="closeSuccessModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <h2>Succès</h2>
+    <p>{{ modalMessage }}</p>
+    <button class="modal-close-btn" (click)="closeSuccessModal()">Fermer</button>
+  </div>
+</div>
+
+<!-- Modal erreur -->
+<div *ngIf="showErrorModal" class="modal-backdrop error-modal" (click)="closeErrorModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <h2>Erreur</h2>
+    <p>{{ modalMessage }}</p>
+    <button class="modal-close-btn" (click)="closeErrorModal()">Fermer</button>
+  </div>
+</div>
+
+
+
+<!-- Modal Changer Mot de Passe -->
+<div
+  class="modal-backdrop"
+  *ngIf="showPasswordModal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="passwordModalTitle"
+  (click)="closePasswordModal()"
+>
+  <div class="modal-profile" (click)="$event.stopPropagation()">
+    <h2 id="passwordModalTitle">Changer le mot de passe</h2>
+    <form (submit)="submitPasswordChange(); $event.preventDefault()" novalidate>
+      <label for="currentPassword">Mot de passe actuel</label>
+      <input
+        id="currentPassword"
+        type="password"
+        [(ngModel)]="currentPassword"
+        name="currentPassword"
+        required
+        autocomplete="current-password"
+      />
+
+      <label for="newPassword">Nouveau mot de passe</label>
+      <input
+        id="newPassword"
+        type="password"
+        [(ngModel)]="newPassword"
+        name="newPassword"
+        required
+        autocomplete="new-password"
+      />
+
+      <label for="confirmPassword">Confirmer le mot de passe</label>
+      <input
+        id="confirmPassword"
+        type="password"
+        [(ngModel)]="confirmPassword"
+        name="confirmPassword"
+        required
+        autocomplete="new-password"
+      />
+
+      <div class="error" *ngIf="passwordError" role="alert">{{ passwordError }}</div>
+      <div class="success" *ngIf="passwordSuccess" role="alert">{{ passwordSuccess }}</div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn save">Modifier</button>
+        <button type="button" class="btn cancel" (click)="closePasswordModal()">
+          Annuler
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -14,25 +14,64 @@
     <nav class="navigation-menu" [class.active]="isMenuOpen">
       <ul class="nav-list">
         <li *ngFor="let item of navItems" class="nav-item">
-          <a class="nav-link" [href]="item.href">{{ item.label }}</a>
+          <a class="nav-link" [routerLink]="item.href">{{ item.label }}</a>
         </li>
       </ul>
     </nav>
 
     <!-- Right Side Actions -->
     <div class="actions">
-      <!-- Search Icon -->
-      <div class="icon search-icon"></div>
-      <i class="fas fa-search"></i>
+      <!-- Search Input -->
+      <div class="search-wrapper" style="position: relative;">
+        <input
+          type="text"
+          placeholder="Rechercher une adresse..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          class="search-input"
+          autocomplete="off"
+        />
+        <button class="search-button">
+          <i class="fas fa-search"></i>
+        </button>
+
+        <!-- Résultats -->
+        <div
+          *ngIf="searchTerm && filteredRestaurants.length > 0"
+          class="search-results"
+          style="position: absolute; background: white; border: 1px solid #ddd; width: 300px; max-height: 200px; overflow-y: auto; z-index: 1000;"
+        >
+          <ul style="list-style: none; margin: 0; padding: 0;">
+            <li
+              *ngFor="let restaurant of filteredRestaurants"
+              style="padding: 8px; cursor: pointer;"
+              (click)="goToRestaurantMenu(restaurant._id)"
+              (mouseenter)="onMouseEnter($event)"
+              (mouseleave)="onMouseLeave($event)"
+            >
+              <strong>{{ restaurant.name }}</strong><br />
+              <small>{{ restaurant.address }}</small>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Aucun résultat -->
+        <div
+          *ngIf="searchTerm && filteredRestaurants.length === 0"
+          class="no-result"
+          style="position: absolute; background: white; border: 1px solid #ddd; width: 300px; padding: 8px; z-index: 1000;"
+        >
+          Aucun restaurant trouvé
+        </div>
       </div>
 
       <!-- Cart Icon with Badge -->
       <div class="cart-icon-wrapper">
-      <div class="icon cart-icon">
-        <i class="fas fa-shopping-cart"></i>
+        <div class="icon cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+        </div>
+        <span class="cart-badge">0</span>
       </div>
-      <span class="cart-badge">0</span>
-    </div>
 
       <!-- Login Button -->
       <button class="login-button" routerLink="/login">
@@ -44,6 +83,7 @@
         <div class="hamburger-line"></div>
         <div class="hamburger-line"></div>
         <div class="hamburger-line"></div>
+      </div>
     </div>
   </div>
 </header>

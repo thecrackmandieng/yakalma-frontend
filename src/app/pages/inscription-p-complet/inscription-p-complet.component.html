@@ -1,8 +1,9 @@
 <app-header-p></app-header-p>
+
 <div class="page-container">
-  <h1>Inscription partenaire</h1>
+  <h1>Inscription Partenaire</h1>
   <p>
-    Nous prenons en compte tous les facteurs de changement et vous fournissons les composants dont vous avez besoin pour changer et créer un événement qui se produit réellement.
+    Merci de compléter les informations ci-dessous pour finaliser votre inscription.
   </p>
 
   <div class="dropdown-container">
@@ -10,89 +11,55 @@
     <button class="dropdown-btn" (click)="toggleDropdown('personalInfo')">Informations Personnelles</button>
     <div id="personalInfo" class="dropdown-content">
       <form #personalForm="ngForm">
-        <input type="text" name="nom" placeholder="Nom" required minlength="2" ngModel #nom="ngModel" />
-        <div *ngIf="nom.invalid && nom.touched" class="error">
-          <span *ngIf="nom.errors?.['required']">Le nom est requis.</span>
-          <span *ngIf="nom.errors?.['minlength']">Le nom doit contenir au moins 2 caractères.</span>
-        </div>
-
-        <input type="text" name="prenom" placeholder="Prénom" required minlength="2" ngModel #prenom="ngModel" />
-        <div *ngIf="prenom.invalid && prenom.touched" class="error">
-          <span *ngIf="prenom.errors?.['required']">Le prénom est requis.</span>
-          <span *ngIf="prenom.errors?.['minlength']">Le prénom doit contenir au moins 2 caractères.</span>
-        </div>
-
-        <input type="email" name="email" placeholder="Email" required email ngModel #email="ngModel" />
-        <div *ngIf="email.invalid && email.touched" class="error">
-          <span *ngIf="email.errors?.['required']">L'email est requis.</span>
-          <span *ngIf="email.errors?.['email']">Format d'email invalide.</span>
-        </div>
-
-        <input type="tel" name="telephone" placeholder="Téléphone" required pattern="^[0-9]{8,15}$" ngModel #telephone="ngModel" />
-        <div *ngIf="telephone.invalid && telephone.touched" class="error">
-          <span *ngIf="telephone.errors?.['required']">Le téléphone est requis.</span>
-          <span *ngIf="telephone.errors?.['pattern']">Numéro de téléphone invalide.</span>
-        </div>
+        <input type="text" name="nom" placeholder="Nom" [(ngModel)]="formData.nom" required />
+        <input type="text" name="prenom" placeholder="Prénom" [(ngModel)]="formData.prenom" required />
+        <input type="email" name="email" placeholder="Email" [(ngModel)]="formData.email" required />
+        <input type="tel" name="telephone" placeholder="Téléphone" [(ngModel)]="formData.telephone" required />
       </form>
     </div>
 
-    <!-- Informations du Restaurant -->
+    <!-- Informations Restaurant -->
     <button class="dropdown-btn" (click)="toggleDropdown('restaurantInfo')">Informations du Restaurant</button>
     <div id="restaurantInfo" class="dropdown-content">
       <form #restaurantForm="ngForm">
-        <input type="text" name="nomResto" placeholder="Nom du Restaurant" required ngModel #nomResto="ngModel" />
-        <div *ngIf="nomResto.invalid && nomResto.touched" class="error">
-          <span *ngIf="nomResto.errors?.['required']">Le nom du restaurant est requis.</span>
-        </div>
-
-        <input type="text" name="adresse" placeholder="Adresse" required ngModel #adresse="ngModel" />
-        <div *ngIf="adresse.invalid && adresse.touched" class="error">
-          <span *ngIf="adresse.errors?.['required']">L'adresse est requise.</span>
-        </div>
-
-        <input type="text" name="ville" placeholder="Ville" required ngModel #ville="ngModel" />
-        <div *ngIf="ville.invalid && ville.touched" class="error">
-          <span *ngIf="ville.errors?.['required']">La ville est requise.</span>
-        </div>
-
-        <input type="text" name="codePostal" placeholder="Code Postal" required pattern="^[0-9]{4,10}$" ngModel #codePostal="ngModel" />
-        <div *ngIf="codePostal.invalid && codePostal.touched" class="error">
-          <span *ngIf="codePostal.errors?.['required']">Le code postal est requis.</span>
-          <span *ngIf="codePostal.errors?.['pattern']">Code postal invalide.</span>
-        </div>
+        <input type="text" name="nomResto" placeholder="Nom du Restaurant" [(ngModel)]="formData.nomResto" required />
+        <input type="text" name="adresse" placeholder="Adresse" [(ngModel)]="formData.adresse" required />
+        <input type="text" name="ville" placeholder="Ville" [(ngModel)]="formData.ville" required />
+        <input type="text" name="codePostal" placeholder="Code Postal" [(ngModel)]="formData.codePostal" required />
+        <input type="text" name="ninea" placeholder="NINEA" [(ngModel)]="formData.ninea" required />
       </form>
     </div>
 
-    <!-- Papiers Nécessaires -->
+    <!-- Papiers nécessaires -->
     <button class="dropdown-btn" (click)="toggleDropdown('requiredPapers')">Papiers Nécessaires</button>
     <div id="requiredPapers" class="dropdown-content">
       <form #papersForm="ngForm">
-        <input type="file" name="permis" required ngModel #permis="ngModel" />
-        <div *ngIf="permis.invalid && permis.touched" class="error">
-          <span *ngIf="permis.errors?.['required']">Le permis de commerce est requis.</span>
-        </div>
+        <label>Registre de commerce</label>
+        <input type="file" (change)="onFileSelected($event, 'permis')" required />
 
-        <input type="file" name="certificat" required ngModel #certificat="ngModel" />
-        <div *ngIf="certificat.invalid && certificat.touched" class="error">
-          <span *ngIf="certificat.errors?.['required']">Le certificat d'hygiène est requis.</span>
-        </div>
+        <label>Certificat d'hygiène</label>
+        <input type="file" (change)="onFileSelected($event, 'certificat')" required />
 
-        <input type="file" name="autresDocs" required ngModel #autresDocs="ngModel" />
-        <div *ngIf="autresDocs.invalid && autresDocs.touched" class="error">
-          <span *ngIf="autresDocs.errors?.['required']">Les autres documents sont requis.</span>
-        </div>
+        <label>Copie d'identité</label>
+        <input type="file" (change)="onFileSelected($event, 'idCardCopy')" required />
+
+        <label>Photo</label>
+        <input type="file" (change)="onFileSelected($event, 'photo')" required />
+
+         <label>Autres documents légaux</label>
+        <input type="file" (change)="onFileSelected($event, 'autresDocs')" required />
+
+
       </form>
     </div>
   </div>
-<button class="btn-save-all"
-  (click)="saveAll()"
-  [disabled]="personalForm.invalid || restaurantForm.invalid || papersForm.invalid">
-  Enregistrer global
-</button>
 
-  <div class="footer">
-    <div class="row">
-    </div>
-  </div>
+  <button class="btn-save-all" (click)="saveAll(personalForm, restaurantForm, papersForm)">
+    Enregistrer
+  </button>
+
+  <div class="success-message" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
 </div>
+
 <app-footer></app-footer>

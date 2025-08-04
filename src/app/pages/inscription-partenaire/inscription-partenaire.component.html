@@ -8,31 +8,50 @@
 
   <div class="card">
     <h2>Indiquez votre adresse email</h2>
-    <input type="email" placeholder="Enter email address" />
 
-    <button class="btn-primary" routerLink="/inscription-p-complet">Continuer</button>
+    <!-- Input lié au composant -->
+    <input
+      type="email"
+      [(ngModel)]="email"
+      placeholder="Entrez votre adresse email"
+    />
+
+    <!-- Bouton déclencheur -->
+    <button class="btn-primary" (click)="onContinue()">Continuer</button>
+
+    <!-- Messages -->
+    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+    <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
 
     <div class="divider">OU</div>
 
+    <!-- Connexion avec Google -->
     <button class="btn-social">
-      <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg
-                                                                              " alt="Google" />
+      <img
+        src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
+        alt="Google"
+      />
       Continuer avec Google
     </button>
 
+    <!-- Connexion avec iCloud -->
     <button class="btn-social">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple" />
-      Continuer avec Icloud
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
+        alt="Apple"
+      />
+      Continuer avec iCloud
     </button>
 
+    <!-- Mentions légales -->
     <p class="terms">
       En continuant, vous acceptez de recevoir des appels, messages WhatsApp ou SMS/RCS au numéro fourni, y compris de façon automatisée, de la part d’Uber et de ses sociétés affiliées.
     </p>
   </div>
 
   <div class="footer">
-    <div class="row">
-    </div>
+    <div class="row"></div>
   </div>
 </div>
+
 <app-footer></app-footer>

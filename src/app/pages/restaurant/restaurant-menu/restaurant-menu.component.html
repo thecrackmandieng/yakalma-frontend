@@ -1,24 +1,43 @@
 <app-header-restaurant></app-header-restaurant>
 <div class="menu-list">
-  <h1>Votre Menu</h1>
-  <button class="add-dish-button" (click)="openAddDishModal()">Ajouter un plat</button>
+<ng-container>
+  <div class="restaurant-card">
+    <h1 class="restaurant-title">Menu du Restaurant</h1>
+<h2 class="restaurant-title">{{ restaurantName }}</h2>
+  </div>
+</ng-container>
+
+
+
+  <!-- Bouton Ajouter -->
+  <button *ngIf="isRestaurant" class="add-dish-button" (click)="openAddDishModal()">
+    Ajouter un plat
+  </button>
+
   <div class="menu-grid">
-    <div
-      class="menu-card"
-      *ngFor="let item of menuItems"
-      (click)="openModal(item, $event)"
-    >
+    <div class="menu-card" *ngFor="let item of menuItems" (click)="openModal(item, $event)">
       <div class="menu-image">
-        <img [src]="item.image" alt="Image plat" />
+        <img [src]="getImageUrl(item.image)" alt="Image plat" />
       </div>
       <div class="menu-details">
         <h2>{{ item.name }}</h2>
         <p><strong>Description:</strong> {{ item.description }}</p>
-        <p><strong>Prix:</strong> {{ item.price | currency }}</p>
+        <p><strong>Prix:</strong> {{ item.price | currency:'XOF' }}</p>
+      </div>
+
+      <!-- Boutons Modifier et Supprimer -->
+      <div class="menu-actions" *ngIf="isRestaurant">
+        <button (click)="openEditDishModal(item); $event.stopPropagation()" title="Modifier" class="icon-button">
+          <i class="fas fa-pen"></i>
+        </button>
+        <button (click)="openDeleteConfirmModal(item); $event.stopPropagation()" title="Supprimer" class="icon-button">
+          <i class="fas fa-trash"></i>
+        </button>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- Modal pour ajouter un plat -->
 <div class="modal-backdrop" *ngIf="showAddDishModal" (click)="closeAddDishModal()"></div>
@@ -34,9 +53,10 @@
       </div>
       <div style="margin-bottom:12px;">
         <input type="number" [(ngModel)]="newDish.price" name="price" placeholder="Prix" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
-        <div *ngIf="newDish.price" style="margin-top:6px;color:#2563EB;"></div>
+        <div *ngIf="newDish.price" style="margin-top:6px;color:#2563EB;">
           Prix du plat : {{ newDish.price | currency:'XOF' }}
         </div>
+      </div>
       <div style="margin-bottom:12px;">
         <input type="file" (change)="onImageSelected($event)" accept="image/*" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
       </div>
@@ -59,7 +79,7 @@
     <!-- Étape 1 : Choix quantité -->
     <ng-container *ngIf="!showOperatorChoice && !showPaymentForm">
       <div class="menu-image" style="margin-bottom: 20px;">
-        <img [src]="modalItem?.image" alt="Image plat" />
+        <img [src]="getImageUrl(modalItem?.image || '')" alt="Image plat" />
       </div>
       <h2>{{ modalItem?.name }}</h2>
       <p><strong>Description:</strong> {{ modalItem?.description }}</p>
@@ -95,6 +115,13 @@
       <h2>Paiement - {{ selectedOperator?.name }}</h2>
       <form (ngSubmit)="validatePayment()" #payForm="ngForm" style="width:100%;max-width:350px;">
         <div style="margin-bottom:12px;">
+  <input type="text" [(ngModel)]="payment.address" name="address" placeholder="Adresse de livraison" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+</div>
+<div style="margin-bottom:12px;">
+  <input type="text" [(ngModel)]="payment.contact" name="contact" placeholder="Numéro de contact" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+</div>
+
+        <div style="margin-bottom:12px;">
           <input type="text" [(ngModel)]="payment.name" name="name" placeholder="Nom sur la carte" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
         </div>
         <div style="margin-bottom:12px;">
@@ -109,8 +136,52 @@
           <button class="cancel-button" type="button" (click)="showPaymentForm = false; showOperatorChoice = true;">Retour</button>
         </div>
       </form>
+      <div *ngIf="successMessage" class="success-message" style="margin-top:20px;color:green;text-align:center;">
+        {{ successMessage }}
+      </div>
     </ng-container>
 
   </div>
 </div>
+<!-- Modal d'édition -->
+<div class="modal-backdrop" *ngIf="showEditDishModal" (click)="closeEditDishModal()"></div>
+<div class="modal" *ngIf="showEditDishModal">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>Modifier un plat</h2>
+    <form (ngSubmit)="updateDish()" #editDishForm="ngForm" enctype="multipart/form-data">
+      <div style="margin-bottom:12px;">
+        <input type="text" [(ngModel)]="editDish.name" name="editName" placeholder="Nom du plat" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <input type="text" [(ngModel)]="editDish.description" name="editDescription" placeholder="Description" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <input type="number" [(ngModel)]="editDish.price" name="editPrice" placeholder="Prix" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <input type="file" (change)="onEditImageSelected($event)" accept="image/*" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+      </div>
+      <div *ngIf="editImagePreview" style="margin-bottom:12px;text-align:center;">
+        <img [src]="editImagePreview" alt="Aperçu de l'image" style="max-width:100%;max-height:150px;border-radius:8px;">
+      </div>
+      <div class="modal-actions">
+        <button class="order-button" type="submit">Enregistrer</button>
+        <button class="cancel-button" type="button" (click)="closeEditDishModal()">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- Modal confirmation suppression -->
+<div class="modal-backdrop" *ngIf="showDeleteConfirmModal" (click)="closeDeleteConfirmModal()"></div>
+<div class="modal" *ngIf="showDeleteConfirmModal">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>Confirmer la suppression</h2>
+    <p>Voulez-vous vraiment supprimer le plat <strong>{{ dishToDelete?.name }}</strong> ?</p>
+    <div class="modal-actions">
+      <button class="order-button" (click)="confirmDelete()">Oui, supprimer</button>
+      <button class="cancel-button" (click)="closeDeleteConfirmModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
 <app-footer></app-footer>

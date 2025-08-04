@@ -1,26 +1,95 @@
 <header class="header">
-    <div class="logo">
-        <h1>Yakalma</h1>
+  <div class="logo">
+    <h1>Yakalma</h1>
+  </div>
+
+  <div class="button-container">
+    <!-- Bouton Code -->
+    <button *ngIf="!showInput" class="contact-button" (click)="toggleInput()">Code</button>
+
+    <!-- Champ d'entrée et bouton Valider -->
+    <div *ngIf="showInput" class="input-group">
+      <input
+        type="text"
+        placeholder="Enter validation code"
+        class="validation-input"
+        [(ngModel)]="validationCode"
+      />
+      <button class="validate-button" (click)="validateCode()">Valider</button>
+    </div>
+  </div>
+
+  <!-- Menu Profil Dropdown -->
+  <div class="profile-menu">
+    <div class="profile-icon" (click)="toggleDropdown()">
+      <img src="assets/li.webp" alt="Avatar" />
+      <span>Mon Compte</span>
+      <span class="chevron">&#9662;</span>
     </div>
 
-    <div class="button-container">
-        <!-- Bouton Code -->
-        <button *ngIf="!showInput" class="contact-button" (click)="toggleInput()">Code</button>
-
-        <!-- Champ d'entrée et bouton Valider -->
-        <div *ngIf="showInput" class="input-group">
-            <input type="text" placeholder="Enter validation code" class="validation-input" [(ngModel)]="validationCode">
-            <button class="validate-button" (click)="validateCode()">Valider</button>
-        </div>
+    <div *ngIf="dropdownOpen" class="dropdown-content">
+      <a (click)="goToProfile()">👤 Profil</a>
+      <a (click)="changePassword()">🔑 Changer mot de passe</a>
+      <a (click)="logout()">🚪 Déconnexion</a>
     </div>
+  </div>
 
-    <!-- Message de succès -->
-    <div *ngIf="showSuccessModal" class="message success-message">
-        Code validé avec succès !
-    </div>
+  <!-- Message de succès -->
+  <div *ngIf="showSuccessModal" class="message success-message">
+    Code validé avec succès !
+  </div>
 
-    <!-- Message d'erreur -->
-    <div *ngIf="showErrorModal" class="message error-message">
-        {{ errorMessage }}
-    </div>
+  <!-- Message d'erreur -->
+  <div *ngIf="showErrorModal" class="message error-message">
+    {{ errorMessage }}
+  </div>
 </header>
+
+<!-- MODALE DU PROFIL -->
+<div class="modal-backdrop" *ngIf="showProfileModal">
+  <div class="modal-profile">
+    <h2>Mon Profil</h2>
+    <form (submit)="saveProfile(); $event.preventDefault()">
+      <label>Prénom</label>
+      <input type="text" [(ngModel)]="firstName" name="firstName" required />
+
+      <label>Nom</label>
+      <input type="text" [(ngModel)]="lastName" name="lastName" required />
+
+      <label>Email</label>
+      <input type="email" [(ngModel)]="email" name="email" required />
+
+      <label>Téléphone</label>
+      <input type="text" [(ngModel)]="phone" name="phone" required />
+
+      <div class="modal-actions">
+        <button type="submit" class="btn save">Enregistrer</button>
+        <button type="button" class="btn cancel" (click)="closeProfileModal()">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODALE CHANGEMENT MOT DE PASSE -->
+<div class="modal-backdrop" *ngIf="showPasswordModal">
+  <div class="modal-profile">
+    <h2>Changer le mot de passe</h2>
+    <form (submit)="submitPasswordChange(); $event.preventDefault()">
+      <label>Mot de passe actuel</label>
+      <input type="password" [(ngModel)]="currentPassword" name="currentPassword" required />
+
+      <label>Nouveau mot de passe</label>
+      <input type="password" [(ngModel)]="newPassword" name="newPassword" required />
+
+      <label>Confirmer le mot de passe</label>
+      <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" required />
+
+      <div class="error" *ngIf="passwordError">{{ passwordError }}</div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn save">Modifier</button>
+        <button type="button" class="btn cancel" (click)="closePasswordModal()">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>

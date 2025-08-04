@@ -64,6 +64,8 @@ export const routes: Routes = [
 
   // Restaurant
   { path: 'restaurant/dashboard', component: RestaurantDashboardComponent },
+  { path: 'restaurant/:id/menu', component: RestaurantMenuComponent },
+
   { path: 'restaurant/menu-management', component: RestaurantMenuManagementComponent },
   { path: 'restaurant/menu', component: RestaurantMenuComponent },
   { path: 'restaurant/orders-tracking', component: RestaurantOrdersTrackingComponent },
