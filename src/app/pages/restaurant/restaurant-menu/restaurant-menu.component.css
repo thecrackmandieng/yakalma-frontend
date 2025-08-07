@@ -106,35 +106,7 @@
   border-color: #2563EB;
 }
 
-.menu-image img {
-  width: 100%;
-  height: 190px;
-  object-fit: cover;
-  display: block;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
 
-.menu-details {
-  padding: 18px;
-  text-align: left;
-}
-
-.menu-details h2 {
-  margin: 0 0 10px;
-  font-size: 1.5em;
-  color: #333;
-  font-weight: bold;
-}
-
-.menu-details p {
-  margin: 6px 0;
-  color: #555;
-}
-
-.menu-details p strong {
-  color: #2563EB;
-}
 
 .menu-actions {
   display: flex;
@@ -172,19 +144,18 @@
 /* Modal window */
 .modal {
   position: fixed;
-  top: 50%; left: 50%;
+  top: 40%; left: 50%;
   transform: translate(-50%, -50%);
   background: transparent;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.25);
   padding: 0; /* Remove padding to allow the image to take full space */
   z-index: 2100; /* Plus haut que le backdrop */
-  min-width: 320px;
-  max-width: 50vw;
-  max-height: 70vh;
+  min-width: 200px;
+  max-width: 35vw;
+  max-height: 58vh;
   overflow: hidden; /* Ensure content stays within the modal */
   display: flex;
-  flex-direction: column;
   align-items: center;
 }
 
@@ -198,16 +169,7 @@
 
 }
 
-.modal-content img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Ensure the image covers the entire modal */
-  border-radius: 16px; /* Match the modal's border radius */
-  margin-bottom: 20px; /* Space between image and text */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.10);
-  transition: transform 0.2s;
 
-}
 
 .menu-image img {
   width: 100%;

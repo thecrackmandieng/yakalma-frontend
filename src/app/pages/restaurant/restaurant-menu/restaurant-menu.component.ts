@@ -1,10 +1,10 @@
 import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { HeaderRestaurantComponent } from "../../header-restaurant/header-restaurant.component";
 import { FooterComponent } from "../../footer/footer.component";
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PartenaireService } from '../../../services/partenaire.service';
+import { CartService } from '../../../services/cart.service';
 import { MenuItem } from '../../models/menu-item.model';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -27,7 +27,7 @@ export class RestaurantMenuComponent implements OnInit {
 
   showOperatorChoice = false;
   showPaymentForm = false;
-  selectedOperator: any = null;
+  selectedOperator: { name: string, image: string } | null = null;
 
   payment = {
     name: '',
@@ -39,12 +39,7 @@ export class RestaurantMenuComponent implements OnInit {
   };
 
   showAddDishModal = false;
-  newDish: Partial<MenuItem> = {
-    name: '',
-    description: '',
-    price: 0,
-    image: ''
-  };
+  newDish: Partial<MenuItem> = { name: '', description: '', price: 0, image: '' };
 
   showEditDishModal = false;
   editDish: Partial<MenuItem> = {};
@@ -64,70 +59,73 @@ export class RestaurantMenuComponent implements OnInit {
   restaurantId: string = '';
   isRestaurant: boolean = false;
 
+  deliveryFee = 500;
+  serviceFee = 300;
+
+  extras = [
+    { name: 'Fromage', price: 200, selected: false },
+    { name: 'Frites', price: 300, selected: false },
+    { name: 'Sauce', price: 100, selected: false }
+  ];
+
   constructor(
     private partenaireService: PartenaireService,
     private route: ActivatedRoute,
     private router: Router,
+    private cartService: CartService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
-ngOnInit() {
-  if (isPlatformBrowser(this.platformId)) {
+
+  ngOnInit() {
+    if (!isPlatformBrowser(this.platformId)) return;
+
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('profile') || '{}');
     this.isRestaurant = user?.role === 'restaurant';
 
     if (token && this.isRestaurant) {
-      // Utilisateur restaurant connecté : afficher son propre nom
-      this.restaurantName = user?.name || '';
-
-      const storedId = localStorage.getItem('restaurantId');
-      if (storedId) {
-        this.restaurantId = storedId;
-        this.loadMenuFromRoute();
-      } else {
-        this.loadRestaurantProfile();
-      }
-
+      this.initAsRestaurant(user);
     } else {
-      // Pas connecté en restaurant : récupérer id dans l'URL
-      this.route.params.subscribe(params => {
-        this.restaurantId = params['id'];
-        if (this.restaurantId) {
-          this.getRestaurantName(this.restaurantId);  // récupère et set le nom du restaurant
-          this.loadMenuFromRoute();                   // charge le menu du restaurant
-        } else {
-          console.error("⚠️ Aucun ID restaurant trouvé dans l'URL.");
-        }
-      });
+      this.initAsVisitor();
     }
   }
-}
 
+  private initAsRestaurant(user: any) {
+    this.restaurantName = user?.name || '';
+    const storedId = localStorage.getItem('restaurantId');
+    if (storedId) {
+      this.restaurantId = storedId;
+      this.loadMenuFromRoute();
+    } else {
+      this.loadRestaurantProfile();
+    }
+  }
+
+  private initAsVisitor() {
+    this.route.params.subscribe(params => {
+      this.restaurantId = params['id'];
+      if (this.restaurantId) {
+        this.getRestaurantName(this.restaurantId);
+        this.loadMenuFromRoute();
+      } else {
+        console.error('Aucun ID restaurant trouvé dans l\'URL.');
+      }
+    });
+  }
 
   getRestaurantName(id: string) {
     this.partenaireService.getPartenaireById(id).subscribe({
-      next: (restaurant) => {
-        this.restaurantName = restaurant.name;
-      },
+      next: (restaurant) => this.restaurantName = restaurant.name,
       error: (err) => console.error('Erreur récupération nom restaurant:', err)
     });
   }
 
   private loadMenuFromRoute() {
-    let id = this.restaurantId;
-    if (!id && isPlatformBrowser(this.platformId)) {
-      id = localStorage.getItem('restaurantId') || '';
-    }
-
-    if (!id) {
-      console.error("❌ ID du restaurant introuvable.");
-      return;
-    }
+    const id = this.restaurantId || localStorage.getItem('restaurantId') || '';
+    if (!id) return console.error('ID du restaurant introuvable.');
 
     this.partenaireService.getMenuByRestaurantId(id).subscribe({
-      next: (menus) => {
-        this.menuItems = menus;
-      },
+      next: (menus) => this.menuItems = menus,
       error: (err) => {
         console.error('Erreur récupération menus:', err);
         this.menuItems = [];
@@ -146,16 +144,6 @@ ngOnInit() {
       },
       error: (err) => console.error('Erreur récupération profil restaurant:', err)
     });
-  }
-
-  getImageUrl(imagePath: string): string {
-    if (!imagePath) return '';
-    if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
-    return `https://yakalma.onrender.com/${imagePath}`;
-  }
-
-  get totalPrice(): number {
-    return this.modalItem ? this.modalItem.price * this.quantity : 0;
   }
 
   openModal(item: MenuItem, event: Event) {
@@ -185,6 +173,27 @@ ngOnInit() {
     if (this.quantity > 1) this.quantity--;
   }
 
+  calculateTotalPrice(): number {
+    if (!this.modalItem) return 0;
+    const basePrice = this.modalItem.price * this.quantity;
+    const extrasTotal = this.extras.filter(e => e.selected).reduce((sum, e) => sum + e.price, 0);
+    return basePrice + extrasTotal + this.deliveryFee + this.serviceFee;
+  }
+
+  addToCart() {
+    if (!this.modalItem) return;
+
+    const selectedExtras = this.extras.filter(extra => extra.selected);
+    const itemToAdd = {
+      ...this.modalItem,
+      quantity: this.quantity,
+      extras: selectedExtras,
+      total: this.calculateTotalPrice()
+    };
+    this.cartService.addToCart(itemToAdd);
+    this.closeModal();
+  }
+
   placeOrderWithQuantity() {
     this.showOperatorChoice = true;
   }
@@ -194,49 +203,52 @@ ngOnInit() {
     if (operator.name === 'Wave') {
       window.open('https://www.wave.com/sn/', '_blank');
       this.closeModal();
-      return;
+    } else {
+      this.showOperatorChoice = false;
+      this.showPaymentForm = true;
     }
-    this.showOperatorChoice = false;
-    this.showPaymentForm = true;
   }
 
   validatePayment() {
-    if (!this.modalItem || !this.modalItem.name) return;
+    if (!this.modalItem) return;
 
     const restaurantId = localStorage.getItem('restaurantId');
     if (!restaurantId) {
-      this.successMessage = "Erreur : Identifiant du restaurant non trouvé. Veuillez vous reconnecter.";
-      setTimeout(() => this.successMessage = '', 3000);
+      this.successMessage = 'Erreur : Identifiant du restaurant non trouvé.';
       return;
     }
 
     const orderPayload = {
-      items: [
-        {
-          name: this.modalItem.name,
-          quantity: this.quantity,
-          image: this.modalItem.image || ''
-        }
-      ],
+      items: [{
+        name: this.modalItem.name,
+        quantity: this.quantity,
+        image: this.modalItem.image || ''
+      }],
       customerName: this.payment.name.trim(),
       address: this.payment.address.trim(),
       contact: this.payment.contact.trim(),
-      restaurantId: restaurantId
+      restaurantId
     };
 
     this.partenaireService.createOrder(orderPayload).subscribe({
       next: () => {
-        this.successMessage = "✅ Commande envoyée avec succès !";
+        this.successMessage = '✅ Commande envoyée avec succès !';
         setTimeout(() => {
           this.successMessage = '';
           this.closeModal();
         }, 2000);
       },
       error: () => {
-        this.successMessage = "Erreur lors de l'envoi de la commande.";
+        this.successMessage = 'Erreur lors de l\'envoi de la commande.';
         setTimeout(() => this.successMessage = '', 3000);
       }
     });
+  }
+
+  getImageUrl(imagePath: string): string {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
+    return `https://yakalma.onrender.com/${imagePath}`;
   }
 
   openAddDishModal() {
@@ -277,7 +289,7 @@ ngOnInit() {
         this.menuItems.push(res.menuItem);
         this.closeAddDishModal();
       },
-      error: () => alert("Erreur lors de l'ajout du plat.")
+      error: () => alert('Erreur lors de l\'ajout du plat.')
     });
   }
 
@@ -322,9 +334,7 @@ ngOnInit() {
     this.partenaireService.updateMenuItem(this.editDish._id, formData).subscribe({
       next: (res: any) => {
         const index = this.menuItems.findIndex(i => i._id === this.editDish._id);
-        if (index !== -1) {
-          this.menuItems[index] = res.menuItem;
-        }
+        if (index !== -1) this.menuItems[index] = res.menuItem;
         this.closeEditDishModal();
       },
       error: () => alert('Erreur lors de la modification du plat.')
