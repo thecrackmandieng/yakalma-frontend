@@ -66,6 +66,8 @@
   border-color: #2563EB;
 }
 
+
+
 .menu-actions {
   display: flex;
   justify-content: center;
@@ -104,12 +106,12 @@
   background: transparent;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-  padding: 0;
-  z-index: 2100;
+  padding: 0; /* Remove padding to allow the image to take full space */
+  z-index: 2100; /* Plus haut que le backdrop */
   min-width: 200px;
   max-width: 35vw;
   max-height: 58vh;
-  overflow: hidden;
+  overflow: hidden; /* Ensure content stays within the modal */
   display: flex;
   align-items: center;
 }
@@ -121,7 +123,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
 }
+
+
 
 .menu-image img {
   width: 100%;
