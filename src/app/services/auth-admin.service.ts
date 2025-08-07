@@ -16,7 +16,7 @@ interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthAdminService {
-  private baseUrl = 'http://localhost:3000/api/admins';
+  private baseUrl = 'https://yakalma.onrender.com/api/admins';
 
   constructor(private http: HttpClient) {}
 

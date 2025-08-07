@@ -27,7 +27,7 @@ interface ProfileResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:3000/api';
+  private baseUrl = 'https://yakalma.onrender.com/api';
 
   constructor(
     private http: HttpClient,
