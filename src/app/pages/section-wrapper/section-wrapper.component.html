@@ -1,27 +1,42 @@
-<section class="section-wrapper">
-    <div class="header">
-      <h2 class="title">
-        <span>Choisir</span>
-        <span>Un</span>
-        <span>Categorie</span>
-      </h2>
-      <div class="underline"></div>
-    </div>
-  
-    <div class="cards-container">
-      <div *ngFor="let card of categoryCards" class="card">
-        <div class="card-image" [style.backgroundImage]="'url(' + card.imagePath + ')'"></div>
-        <div class="card-content">
-          <h3 class="card-title">{{ card.title }}</h3>
-          <p class="card-dish-count">{{ card.dishCount }}</p>
+<section class="relative bg-gray-50 w-full overflow-hidden py-16">
+  <div class="flex flex-col items-center mb-12">
+    <h2 class="flex justify-center gap-4 font-fredoka text-5xl text-black leading-[4.5rem] text-center">
+      <span>Fast</span>
+      <span>Food</span>
+      <span>Menus</span>
+    </h2>
+    <div class="w-[270px] h-2.5 mt-4 bg-[#5371ff] rounded-[30px]"></div>
+  </div>
+
+  <!-- MARQUEE SECTION -->
+  <div class="relative w-full overflow-hidden">
+    <div
+      class="flex animate-marquee whitespace-nowrap hover:[animation-play-state:paused]"
+    >
+      <!-- 2x listes pour effet loop parfait -->
+      <ng-container *ngFor="let repeat of [1, 2]">
+        <div
+          *ngFor="let card of categoryCards"
+          class="group w-72 mx-4 flex-shrink-0 transform transition-transform duration-300 hover:scale-105"
+        >
+          <div
+            class="relative w-72 h-44 rounded-[100px] overflow-hidden bg-cover bg-center"
+            [style.backgroundImage]="'url(' + card.imagePath + ')'"
+          >
+            <div class="absolute top-1 left-3.5 w-[274px] h-[168px] border-[3px] border-white rounded-[100px]"></div>
+          </div>
+          <div class="mt-6 text-center">
+            <h3 class="font-fredoka text-xl text-black leading-7">{{ card.title }}</h3>
+            <p class="font-fredoka text-sm text-[#5371ff] mt-2 leading-6">{{ card.dishCount }}</p>
+          </div>
         </div>
-      </div>
+      </ng-container>
     </div>
-  
-    <div class="dots-container">
-      <div class="dot active"></div>
-      <div class="dot"></div>
-      <div class="dot"></div>
-    </div>
-  </section>
-  
+  </div>
+
+  <div class="flex justify-center gap-4 mt-12">
+    <div class="w-[15px] h-[15px] rounded-full bg-white border-[5px] border-[#5371ff]"></div>
+    <div class="w-[15px] h-[15px] rounded-full bg-[#b5b5b5]"></div>
+    <div class="w-[15px] h-[15px] rounded-full bg-[#b5b5b5]"></div>
+  </div>
+</section>

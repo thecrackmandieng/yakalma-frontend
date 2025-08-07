@@ -1,89 +1,134 @@
-<header class="header">
-  <div class="container">
+<!-- client-dashboard.component.html (HEADER SECTION) -->
+<header class="sticky top-0 w-full shadow-md bg-white z-1000">
+  <div class="max-w-7xl mx-auto flex items-center justify-between h-21 px-4 sm:px-2">
     <!-- Logo Section -->
-    <div class="logo-section">
-      <div class="logo-wrapper">
-        <div class="logo-background"></div>
-        <div class="logo-border"></div>
-        <img class="logo-image" alt="Yakalma Logo" src="/assets/logo.png" />
+    <div class="flex items-center">
+      <div class="relative w-28 sm:w-32 md:w-36 h-14 sm:h-16">
+        <div class="absolute w-full h-full bg-[#5371ff] rounded-xl"></div>
+        <div class="relative w-full h-18 left-2 border-[3px] border-[#5371ff] rounded-xl"></div>
+        <img class="absolute w-20 sm:w-25 top-0 left-4 object-contain" src="/assets/logo.png" alt="Yakalma Logo" />
       </div>
-      <div class="logo-text">yakalma</div>
     </div>
 
-    <!-- Navigation Menu -->
-    <nav class="navigation-menu" [class.active]="isMenuOpen">
-      <ul class="nav-list">
-        <li *ngFor="let item of navItems" class="nav-item">
-          <a class="nav-link" [routerLink]="item.href">{{ item.label }}</a>
+    <!-- Navigation Menu (Desktop only) -->
+    <nav class="hidden mt-4 lg:block">
+      <ul class="flex gap-6">
+        <li *ngFor="let item of navItems" class="group relative"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <a
+            [routerLink]="item.href"
+            class="font-oswald text-base font-medium !text-[#212121] relative !no-underline transition-colors duration-300 ease-in-out group-hover:!text-[#5371ff]"
+          >
+            {{ item.label }}
+            <!-- Ligne animée sous le lien -->
+            <span
+              class="absolute left-0 -bottom-1 h-0.5 bg-[#5371ff] transition-all duration-300 w-0 group-hover:w-full group-[.active-link]:w-full"
+            ></span>
+          </a>
         </li>
       </ul>
     </nav>
 
-    <!-- Right Side Actions -->
-    <div class="actions">
+    <!-- Right Side -->
+    <div class="flex items-center gap-4">
       <!-- Search Input -->
-      <div class="search-wrapper" style="position: relative;">
+      <div class="relative hidden sm:flex items-center gap-1">
         <input
           type="text"
           placeholder="Rechercher une adresse..."
           [(ngModel)]="searchTerm"
           (input)="onSearchChange()"
-          class="search-input"
-          autocomplete="off"
+          class="px-3 py-1 rounded border border-gray-300 text-sm focus:outline-none w-48 sm:w-40 md:w-56"
         />
-        <button class="search-button">
+        <button class="text-xl text-gray-700">
           <i class="fas fa-search"></i>
         </button>
 
         <!-- Résultats -->
-        <div
-          *ngIf="searchTerm && filteredRestaurants.length > 0"
-          class="search-results"
-          style="position: absolute; background: white; border: 1px solid #ddd; width: 300px; max-height: 200px; overflow-y: auto; z-index: 1000;"
-        >
-          <ul style="list-style: none; margin: 0; padding: 0;">
-            <li
-              *ngFor="let restaurant of filteredRestaurants"
-              style="padding: 8px; cursor: pointer;"
-              (click)="goToRestaurantMenu(restaurant._id)"
-              (mouseenter)="onMouseEnter($event)"
-              (mouseleave)="onMouseLeave($event)"
-            >
+        <div *ngIf="searchTerm && filteredRestaurants.length > 0" class="absolute bg-white border border-gray-300 w-72 max-h-52 overflow-y-auto z-50 mt-2 rounded-md">
+          <ul>
+            <li *ngFor="let restaurant of filteredRestaurants" class="px-3 py-2 hover:bg-gray-100 cursor-pointer" (click)="goToRestaurantMenu(restaurant._id)">
               <strong>{{ restaurant.name }}</strong><br />
               <small>{{ restaurant.address }}</small>
             </li>
           </ul>
         </div>
 
-        <!-- Aucun résultat -->
-        <div
-          *ngIf="searchTerm && filteredRestaurants.length === 0"
-          class="no-result"
-          style="position: absolute; background: white; border: 1px solid #ddd; width: 300px; padding: 8px; z-index: 1000;"
-        >
+        <div *ngIf="searchTerm && filteredRestaurants.length === 0" class="absolute bg-white border border-gray-300 w-72 p-2 z-50 mt-2 rounded-md">
           Aucun restaurant trouvé
         </div>
       </div>
 
-      <!-- Cart Icon with Badge -->
-      <div class="cart-icon-wrapper">
-        <div class="icon cart-icon">
-          <i class="fas fa-shopping-cart"></i>
-        </div>
-        <span class="cart-badge">0</span>
+      <!-- Panier -->
+      <div class="relative w-9 h-9 flex items-center justify-center">
+        <i class="fas fa-shopping-cart text-xl text-[#00a149]"></i>
+        <span class="absolute -top-1 -right-1 w-4 h-4 bg-[#212121] text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
       </div>
 
-      <!-- Login Button -->
-      <button class="login-button" routerLink="/login">
-        <span class="login-text">Connexion</span>
+      <!-- Connexion -->
+      <button class="hidden sm:block bg-[#ffc222] hover:bg-[#e6ae1f] text-white text-sm font-semibold py-1.5 px-4 rounded whitespace-nowrap">
+        Connexion
       </button>
 
-      <!-- Hamburger Menu -->
-      <div class="hamburger-menu" (click)="toggleMenu()">
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
+      <!-- Burger Menu -->
+      <div class="lg:hidden text-2xl cursor-pointer" (click)="toggleMenu()">
+        <fa-icon [icon]="isMenuOpen ? faTimes : faBars"></fa-icon>
       </div>
+    </div>
+  </div>
+
+  <!-- Mobile Slide-in Menu (Always in DOM) -->
+  <div class="lg:hidden fixed inset-0 z-20" [class.pointer-events-none]="!isMenuOpen" [class.pointer-events-auto]="isMenuOpen">
+    <!-- Backdrop -->
+    <div
+      class="absolute inset-0 bg-black transition-opacity duration-300 ease-in-out"
+      [class.opacity-0]="!isMenuOpen"
+      [class.opacity-40]="isMenuOpen"
+      [class.pointer-events-none]="!isMenuOpen"
+      [class.pointer-events-auto]="isMenuOpen"
+      (click)="closeMenu()"
+    ></div>
+
+    <!-- Slide-in panel -->
+    <div
+      class="absolute top-0 left-0 h-full w-4/5 sm:max-w-sm bg-white shadow-lg p-4 transform transition-transform duration-300 ease-in-out"
+      [class.-translate-x-full]="!isMenuOpen"
+      [class.translate-x-0]="isMenuOpen"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Navigation -->
+      <ul class="flex flex-col gap-4 mb-6">
+        <li *ngFor="let item of navItems">
+          <a
+            class="font-oswald text-base text-[#212121] hover:text-[#5371ff]"
+            [routerLink]="item.href"
+            (click)="navigateAndClose(item.href)"
+          >
+            {{ item.label }}
+          </a>
+        </li>
+      </ul>
+
+      <!-- Mobile Search -->
+      <div class="mb-4">
+        <input
+          type="text"
+          placeholder="Rechercher une adresse..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none"
+        />
+      </div>
+
+      <!-- Mobile Connexion -->
+      <button
+        class="w-full py-2 bg-[#ffc222] hover:bg-[#e6ae1f] text-white text-base font-semibold rounded"
+        (click)="onLoginClick()"
+      >
+        Connexion
+      </button>
     </div>
   </div>
 </header>

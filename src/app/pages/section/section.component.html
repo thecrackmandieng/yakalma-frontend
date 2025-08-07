@@ -1,51 +1,75 @@
-<section class="section">
-    <div class="container">
-      <!-- Heading Section -->
-      <div class="heading">
-        <h3 class="subtitle">POUR VOTRE FOOD RESTAURANT</h3>
-        <div class="title-wrapper">
-          <h2 class="title">parfait</h2>
-          <h2 class="title">lieu</h2>
-          <h2 class="title">Pour</h2>
-          <h2 class="title">vos</h2>
-          <h2 class="title">Besoin</h2>
-        </div>
-        <h2 class="title">En tous securité</h2>
+<section class="w-full py-16 px-4 bg-white">
+  <div class="max-w-7xl mx-auto">
+    <!-- Titre -->
+    <div class="text-center mb-12 animate-fade-in-down">
+      <h3 class="text-blue-500 text-lg tracking-widest font-bold mb-2">POUR VOTRE FOOD RESTAURANT</h3>
+      <div class="flex flex-wrap justify-center gap-2 text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
+        <h2>Un</h2>
+        <h2>espace</h2>
+        <h2>culinaire</h2>
+        <h2>moderne</h2>
+        <h2>et</h2>
+        <h2>sécurisé</h2>
       </div>
-  
-      <!-- Content Section -->
-      <div class="content">
-        <!-- Left side - Images -->
-        <div class="images">
-          <div class="image-bg"></div>
-          <div class="image-bg-1"></div>
-        </div>
-  
-        <!-- Right side - Text and Features -->
-        <div class="text-features">
-          <div class="description">
-            Nisl quam nestibulum ac quam nec odio elementu sceisue
-            <br />
-            the aucan ligula. Orci varius natoque pena culus mus
-            <br />
-            nellentesque ha um ac quam nec odio aibulum ac quam nec
-            <br />
-            odio elrbine.
-          </div>
-  
-          <!-- Feature Cards -->
-          <div class="feature-cards">
-            <div *ngFor="let feature of features" class="feature-card">
-              <div class="feature-icon">
-                <i [class]="feature.icon"></i>
-              </div>
-              <div class="feature-content">
-                <h3 class="feature-title">{{ feature.title }}</h3>
-                <p class="feature-description">{{ feature.description }}</p>
-              </div>
+      <h2 class="text-3xl sm:text-4xl font-bold mt-2 text-gray-800">Équipements professionnels certifiés</h2>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="flex flex-col lg:flex-row items-center gap-12 animate-fade-in-up">
+      <!-- Partie images -->
+     <div class="relative w-full lg:w-1/2 h-[30rem] flex items-center justify-center">
+  <!-- Cercle central invisible (pour positionnement) -->
+  <div class="relative w-80 h-80 rounded-full">
+    <!-- Image 1 -->
+    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-35 h-35 rounded-full overflow-hidden shadow-lg border-4 border-white bg-cover bg-center hover:scale-110 transition-all duration-300"
+         style="background-image: url('/assets/pause.webp');">
+    </div>
+    <!-- Image 2 -->
+    <div class="absolute top-1/4 left-full transform -translate-x-1/2 -translate-y-1/2 w-35 h-35 rounded-full overflow-hidden shadow-lg border-4 border-white bg-cover bg-center hover:scale-110 transition-all duration-300"
+         style="background-image: url('/assets/cui.avif');">
+    </div>
+    <!-- Image 3 -->
+    <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-35 h-35 rounded-full overflow-hidden shadow-lg border-4 border-white bg-cover bg-center hover:scale-110 transition-all duration-300"
+         style="background-image: url('/assets/cuisiniere.jpg');">
+    </div>
+    <!-- Image 4 -->
+    <div class="absolute top-1/4 left-0 transform -translate-x-1/2 -translate-y-1/2 w-35 h-35 rounded-full overflow-hidden shadow-lg border-4 border-white bg-cover bg-center hover:scale-110 transition-all duration-300"
+         style="background-image: url('/assets/serveur2.jpg');">
+    </div>
+    <!-- Image 5 -->
+    <div class="absolute bottom-0 left-1 transform -translate-x-1/2 w-35 h-35 rounded-full overflow-hidden shadow-lg border-4 border-white bg-cover bg-center hover:scale-110 transition-all duration-300"
+         style="background-image: url('/assets/serveur3.jpg');">
+    </div>
+    <!-- Image 6 -->
+    <div class="absolute bottom-0 left-full transform -translate-x-1/2 w-35 h-35 rounded-full overflow-hidden shadow-lg border-4 border-white bg-cover bg-center hover:scale-110 transition-all duration-300"
+         style="background-image: url('/assets/pausefille.jpg');">
+    </div>
+  </div>
+</div>
+
+
+      <!-- Partie texte + features -->
+      <div class="lg:w-1/2 space-y-10 text-center lg:text-left">
+        <p class="text-gray-600 text-base leading-relaxed">
+          Offrez à votre clientèle une expérience culinaire unique dans un environnement parfaitement équipé.
+          Nos installations modernes respectent les normes de sécurité alimentaire les plus strictes,
+          tout en garantissant un confort optimal pour vos équipes en cuisine.
+        </p>
+
+        <!-- Cartes -->
+        <div class="space-y-8">
+          <div *ngFor="let feature of features" class="flex items-start gap-6 animate-pop-in">
+            <div class="flex items-center justify-center w-20 h-20 rounded-full border-4 border-[#5371ff] text-[#5371ff] text-2xl">
+              <i [class]="feature.icon"></i>
+            </div>
+            <div class="flex-1 text-left">
+              <h3 class="text-xl font-semibold text-gray-800">{{ feature.title }}</h3>
+              <p class="text-gray-600">{{ feature.description }}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+

@@ -1,64 +1,27 @@
-<section class="div-wrapper">
-    <div class="container">
-      <div class="header">
-        <div class="title-wrapper">
-          <h2 class="title">Fast</h2>
-          <h2 class="title">Food</h2>
-          <h2 class="title">Menus</h2>
-        </div>
-        <div class="underline"></div>
+<section class="py-20 bg-gray-50">
+  <div class="max-w-8xl px-4">
+    <h2 class="text-center text-3xl md:text-4xl font-bold text-gray-800 mb-8">Pourquoi choisir Yakalma ?</h2>
+    <div class="grid md:grid-cols-4  mt-10 gap-10">
+      <div class="bg-white p-8 rounded shadow-md text-center hover:scale-105 transition">
+        <i class="fas fa-hamburger text-4xl text-[#5371ff] mb-4"></i>
+        <h4 class="text-xl font-semibold mb-2">Plats variés et savoureux</h4>
+        <p>Une diversité culinaire qui répond à tous les goûts.</p>
       </div>
-  
-      <div class="menu-grid">
-        <div *ngFor="let item of menuItems" class="menu-item">
-          <div class="card">
-            <div class="card-content">
-              <div class="image-wrapper">
-                <div class="image-bg"></div>
-                <div class="image" [style.backgroundImage]="'url(' + item.image + ')'"></div>
-              </div>
-              <div class="item-details">
-                <div class="stars">
-                  <span *ngFor="let _ of [].constructor(5)" class="star"></span>
-                </div>
-                <div class="item-name">
-                  <h3>{{ item.name.split(" ").slice(0, -1).join(" ") }}</h3>
-                  <h3>{{ item.name.split(" ").slice(-1) }}</h3>
-                </div>
-                <div class="item-price">{{ item.price }}</div>
-                <button class="add-to-cart" aria-label="Add to cart">
-                  <svg-icon src="path-to-plus-icon" class="plus-icon"></svg-icon>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-  
-        <!-- Opening hours card -->
-        <div class="opening-hours-card">
-          <div class="card-content">
-            <h3 class="opening-hours-title">HORAIRES D'OUVERTURE</h3>
-            <div class="underline-small"></div>
-            <div class="opening-hours">
-              <div class="day">
-                <span>Mon</span>
-                <span>17:00 to 23:00</span>
-              </div>
-              <div class="day">
-                <span>Tue</span>
-                <span>17:00 to 23:00</span>
-              </div>
-            </div>
-            <div class="contact-info">
-              <div class="contact-bg"></div>
-              <div class="contact-details">
-                <div class="phone-number">+221771506749</div>
-                <div class="address">Dakar Avenu Cheikh Anta Diop</div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="bg-white p-8 rounded shadow-md text-center hover:scale-105 transition">
+        <i class="fas fa-motorcycle text-4xl text-[#5371ff] mb-4"></i>
+        <h4 class="text-xl font-semibold mb-2">Livraison Express</h4>
+        <p>Vos commandes livrées rapidement et en toute sécurité.</p>
+      </div>
+      <div class="bg-white p-8 rounded shadow-md text-center hover:scale-105 transition">
+        <i class="fas fa-shield-alt text-4xl text-[#5371ff] mb-4"></i>
+        <h4 class="text-xl font-semibold mb-2">Paiement Sécurisé</h4>
+        <p>Des transactions protégées pour votre tranquillité d'esprit.</p>
+      </div>
+      <div class="bg-white p-8 rounded shadow-md text-center hover:scale-105 transition">
+        <i class="fas fa-clock text-4xl text-[#5371ff] mb-4"></i>
+        <h4 class="text-xl font-semibold mb-2">Horaires D'ouverture</h4>
+        <p>Disponible tous les jours de 17h à 23h.</p>
       </div>
     </div>
-  </section>
-  
+  </div>
+</section>

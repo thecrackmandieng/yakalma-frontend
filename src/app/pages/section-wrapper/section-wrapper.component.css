@@ -1,111 +1,27 @@
 
-.section-wrapper {
-  width: 100%;
-  max-width: 1316px;
-  margin: 0 auto;
-  padding: 4rem 0;
-}
+ @keyframes scroll-bg {
+    0% {
+      background-position: center;
+    }
+    100% {
+      background-position: right;
+    }
+  }
 
-.header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 3rem;
-}
+  .animate-scroll-bg {
+    animation: scroll-bg 10s linear infinite;
+    background-size: 150%;
+  }
 
-.title {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  font-family: 'Fredoka One', Helvetica, sans-serif;
-  font-size: 3.75rem;
-  font-weight: normal;
-  color: black;
-  line-height: 4.5rem;
-  text-align: center;
-}
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
 
-.underline {
-  width: 16.875rem;
-  height: 0.625rem;
-  margin-top: 1rem;
-  background-color: #5371ff;
-  border-radius: 1.875rem;
-}
-
-.cards-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
-}
-
-.card {
-  width: 18rem;
-  border: none;
-  box-shadow: none;
-}
-
-.card-image {
-  width: 18rem;
-  height: 11rem;
-  border-radius: 6.25rem;
-  overflow: hidden;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-}
-
-.card-image::before {
-  content: '';
-  position: absolute;
-  top: 0.25rem;
-  left: 0.875rem;
-  width: 17.125rem;
-  height: 10.5rem;
-  border-radius: 6.25rem;
-  border: 0.1875rem solid white;
-}
-
-.card-content {
-  margin-top: 1.5rem;
-  text-align: center;
-}
-
-.card-title {
-  font-family: 'Fredoka One', Helvetica, sans-serif;
-  font-size: 1.25rem;
-  font-weight: normal;
-  color: black;
-  line-height: 1.8rem;
-}
-
-.card-dish-count {
-  font-family: 'Fredoka One', Helvetica, sans-serif;
-  font-size: 0.9375rem;
-  color: #5371ff;
-  line-height: 1.5625rem;
-  margin-top: 0.625rem;
-}
-
-.dots-container {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 3rem;
-}
-
-.dot {
-  width: 0.9375rem;
-  height: 0.9375rem;
-  border-radius: 0.46875rem;
-}
-
-.dot.active {
-  background-color: white;
-  border: 0.3125rem solid #5371ff;
-}
-
-.dot:not(.active) {
-  background-color: #b5b5b5;
-}
+  .animate-marquee {
+    animation: marquee 25s linear infinite;
+  }

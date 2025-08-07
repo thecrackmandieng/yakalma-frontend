@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { PartenaireService } from '../../services/partenaire.service';
 import { Partenaire } from '../../pages/models/partenaire.model';
 
@@ -31,6 +32,8 @@ export class HeaderComponent implements OnInit {
   searchTerm: string = '';
   allRestaurants: Partenaire[] = [];
   filteredRestaurants: Partenaire[] = [];
+  faBars = faBars;
+  faTimes = faTimes;
 
   constructor(
     private partenaireService: PartenaireService,
@@ -84,5 +87,20 @@ export class HeaderComponent implements OnInit {
     if (target) {
       target.style.backgroundColor = 'transparent';
     }
+  }
+
+  closeMenu(): void {
+    this.isMenuOpen = false;
+  }
+
+  onLoginClick(): void {
+    this.router.navigate(['/login']);
+    this.closeMenu();
+  }
+
+  navigateAndClose(href: string): void {
+    this.router.navigate([href]).then(() => {
+      this.closeMenu();
+    });
   }
 }

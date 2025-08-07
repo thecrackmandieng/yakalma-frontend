@@ -35,5 +35,23 @@ export class SectionWrapperComponent {
       dishCount: "12 plats au menu",
       imagePath: "/assets/poisson.jpg",
     },
+    {
+      id: 5,
+      title: "Thièbe",
+      dishCount: "04 Plats au Menu",
+      imagePath: "/assets/riz.png",
+    },
+    {
+      id: 6,
+      title: "Grillades",
+      dishCount: "12 plats au menu",
+      imagePath: "/assets/griade.webp",
+    },
+    {
+      id: 7,
+      title: "Poisson",
+      dishCount: "12 plats au menu",
+      imagePath: "/assets/poisson.jpg",
+    },
   ];
 }
