@@ -38,8 +38,8 @@ export interface Order {
 
 @Injectable({ providedIn: 'root' })
 export class PartenaireService {
-  private baseUrl = 'http://localhost:3000/api/restaurants';
-  private ordersUrl = 'http://localhost:3000/api/orders';
+  private baseUrl = 'https://yakalma.onrender.com/api/restaurants';
+  private ordersUrl = 'https://yakalma.onrender.com/api/orders';
 
   constructor(
     private http: HttpClient,

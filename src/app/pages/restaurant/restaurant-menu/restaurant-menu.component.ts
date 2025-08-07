@@ -151,7 +151,7 @@ ngOnInit() {
   getImageUrl(imagePath: string): string {
     if (!imagePath) return '';
     if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
-    return `http://localhost:3000/${imagePath}`;
+    return `https://yakalma.onrender.com/${imagePath}`;
   }
 
   get totalPrice(): number {

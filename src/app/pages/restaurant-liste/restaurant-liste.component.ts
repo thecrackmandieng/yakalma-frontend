@@ -52,6 +52,6 @@ onRestaurantClick(restaurant: Partenaire): void {
     }
 
     // Sinon, on concatène l'URL de base du backend avec le chemin relatif
-    return `http://localhost:3000/${restaurant.photo}`;
+    return `https://yakalma.onrender.com/${restaurant.photo}`;
   }
 }

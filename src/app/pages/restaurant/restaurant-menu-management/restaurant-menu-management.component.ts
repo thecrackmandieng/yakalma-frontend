@@ -82,7 +82,7 @@ loadOrders(): void {
       return imagePath;
     }
     // Assure que l'URL ne commence pas par '/' pour éviter '//' dans l'URL finale
-    return `http://localhost:3000/${imagePath.replace(/^\/+/, '')}`;
+    return `https://yakalma.onrender.com/${imagePath.replace(/^\/+/, '')}`;
   }
 
   // Récupère l'image de la première item de la commande ou une image par défaut

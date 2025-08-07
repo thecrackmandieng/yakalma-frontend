@@ -178,12 +178,12 @@ submitPasswordChange(): void {
   });
 }
 
-
-  logout(): void {
-    this.authService.logout();
-    this.dropdownOpen = false;
-    this.router.navigate(['/login']);
-  }
+logout() {
+  this.authService.logout();
+  localStorage.clear(); // 🧹 Vider entièrement le localStorage
+  this.dropdownOpen = false;
+  this.router.navigate(['/login']);
+}
 
   private showSuccessMessage(message: string): void {
     this.errorMessage = message;

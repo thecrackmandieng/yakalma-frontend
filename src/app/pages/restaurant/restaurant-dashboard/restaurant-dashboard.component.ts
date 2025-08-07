@@ -20,7 +20,7 @@ export class RestaurantDashboardComponent implements OnInit {
   backgroundImage: string = "url('/assets/partb.png')"; // image par défaut
 
   // URL de base backend (adapter si nécessaire)
-  private backendUrl = 'http://localhost:3000';
+  private backendUrl = 'https://yakalma.onrender.com';
 
   constructor(private partenaireService: PartenaireService) {}
 

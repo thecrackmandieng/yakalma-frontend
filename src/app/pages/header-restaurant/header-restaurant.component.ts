@@ -102,7 +102,7 @@ export class HeaderRestaurantComponent implements OnInit {
     this.email = r.email || '';
     this.phone = r.phone || '';
 
-    const baseUrl = 'http://localhost:3000/';
+    const baseUrl = 'https://yakalma.onrender.com/';
 
     this.uploadedFilesUrl['permisUrl'] = r.permis ? baseUrl + r.permis : null;
     this.uploadedFilesUrl['certificatUrl'] = r.certificat ? baseUrl + r.certificat : null;
@@ -195,10 +195,12 @@ export class HeaderRestaurantComponent implements OnInit {
   }
 
   logout() {
-    this.authService.logout();
-    this.dropdownOpen = false;
-    this.router.navigate(['/login']);
-  }
+  this.authService.logout();
+  localStorage.clear(); // 🧹 Vider entièrement le localStorage
+  this.dropdownOpen = false;
+  this.router.navigate(['/login']);
+}
+
 
   openSuccessModal(message: string) {
     this.modalMessage = message;

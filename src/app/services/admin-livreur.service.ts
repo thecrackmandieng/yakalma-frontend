@@ -16,7 +16,7 @@ export interface Livreur {
 })
 export class AdminLivreurService {
 
-  private apiUrl = 'http://localhost:3000/api/livreurs'; // à adapter selon ton backend
+  private apiUrl = 'https://yakalma.onrender.com/api/livreurs'; // à adapter selon ton backend
 
   constructor(private http: HttpClient) {}
 

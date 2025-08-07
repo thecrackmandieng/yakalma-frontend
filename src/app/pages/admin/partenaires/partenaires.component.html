@@ -180,16 +180,16 @@
               <td>
                 <img
                   *ngIf="partenaire.photo"
-                  [src]="'http://localhost:3000/' + partenaire.photo"
+                  [src]="'https://yakalma.onrender.com/' + partenaire.photo"
                   alt="Photo de {{ partenaire.name }}"
                   width="80"
                 />
               </td>
               <td>
-                <a *ngIf="partenaire.permis" [href]="'http://localhost:3000/' + partenaire.permis" target="_blank">Permis</a> |
-                <a *ngIf="partenaire.certificat" [href]="'http://localhost:3000/' + partenaire.certificat" target="_blank">Certificat</a> |
-                <a *ngIf="partenaire.autresDocs" [href]="'http://localhost:3000/' + partenaire.autresDocs" target="_blank">Autres</a> |
-                <a *ngIf="partenaire.idCardCopy" [href]="'http://localhost:3000/' + partenaire.idCardCopy" target="_blank">CNI</a>
+                <a *ngIf="partenaire.permis" [href]="'https://yakalma.onrender.com/' + partenaire.permis" target="_blank">Permis</a> |
+                <a *ngIf="partenaire.certificat" [href]="'https://yakalma.onrender.com/' + partenaire.certificat" target="_blank">Certificat</a> |
+                <a *ngIf="partenaire.autresDocs" [href]="'https://yakalma.onrender.com/' + partenaire.autresDocs" target="_blank">Autres</a> |
+                <a *ngIf="partenaire.idCardCopy" [href]="'https://yakalma.onrender.com/' + partenaire.idCardCopy" target="_blank">CNI</a>
               </td>
               <td>
                 <span [ngClass]="{

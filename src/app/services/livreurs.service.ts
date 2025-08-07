@@ -7,7 +7,7 @@ import { Livreur } from '../pages/models/livreur.model';
   providedIn: 'root'
 })
 export class LivreursService {
-  private baseUrl = 'http://localhost:3000/api/livreurs';
+  private baseUrl = 'https://yakalma.onrender.com/api/livreurs';
 
   constructor(private http: HttpClient) {}
 
