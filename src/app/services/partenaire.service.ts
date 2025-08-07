@@ -144,7 +144,6 @@ export class PartenaireService {
 
     return this.http.get<Order[]>(`${this.ordersUrl}/my`, { ...this.getAuthHeaders(), params }).pipe(
       map((orders) => {
-        console.log('Orders reçues du backend:', orders);
         return orders;
       })
     );
