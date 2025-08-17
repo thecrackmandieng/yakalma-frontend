@@ -2,6 +2,7 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, EMPTY } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { TokenService } from './token.service';
 
 interface Profile {
   firstName?: string;
@@ -34,9 +35,7 @@ export class AuthService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
-  /**
-   * Génère les headers d'authentification avec le token JWT
-   */
+
   private getAuthHeaders(): HttpHeaders {
     if (!isPlatformBrowser(this.platformId)) {
       return new HttpHeaders();

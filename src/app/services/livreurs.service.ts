@@ -15,7 +15,7 @@ export class LivreursService {
   private getAuthHeaders(isFormData: boolean = false): { headers: HttpHeaders } {
     let token = '';
     if (typeof window !== 'undefined') {
-      token = localStorage.getItem('authToken') || '';
+      token = localStorage.getItem('token') || '';
     }
 
     const headersConfig = {
