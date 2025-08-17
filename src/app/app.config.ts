@@ -4,12 +4,14 @@ import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/c
 
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
+import { authInterceptorProvider } from './providers/auth-interceptor.provider';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideClientHydration(),
-    provideHttpClient(withFetch(), withInterceptorsFromDi())
+    provideHttpClient(withFetch(), withInterceptorsFromDi()),
+    authInterceptorProvider
   ]
 };
