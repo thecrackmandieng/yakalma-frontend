@@ -1,5 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @keyframes fade-in-down {
   0% {
@@ -84,4 +86,3 @@
 .smoke-delay-3 {
   animation-delay: 2.4s;
 }
-
