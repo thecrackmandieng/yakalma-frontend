@@ -10,15 +10,16 @@ export function app(): express.Express {
   const server = express();
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
   const browserDistFolder = resolve(serverDistFolder, '../browser');
-  const indexHtml = join(serverDistFolder, 'index.server.html');
+  const indexHtml = join(browserDistFolder, 'index.html');
 
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
   // Example Express Rest API endpoints
   // server.get('/api/**', (req, res) => { });
+
   // Serve static files from /browser
-  server.get('**', express.static(browserDistFolder, {
+  server.use(express.static(browserDistFolder, {
     maxAge: '1y',
     index: 'index.html',
   }));
@@ -27,13 +28,21 @@ export function app(): express.Express {
   server.get('**', (req, res, next) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
 
+    // Skip API routes and static files
+    if (req.path.startsWith('/api') || req.path.includes('.')) {
+      return next();
+    }
+
     renderApplication(bootstrap, {
       document: indexHtml,
       url: `${protocol}://${headers.host}${originalUrl}`,
       platformProviders: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
     })
       .then((html: string) => res.send(html))
-      .catch((err: Error) => next(err));
+      .catch((err: Error) => {
+        console.error('Error rendering application:', err);
+        next(err);
+      });
   });
 
   return server;

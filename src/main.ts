@@ -9,6 +9,13 @@ import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { RouterModule } from '@angular/router';
 
+// Ensure DOM is available for SSR
+declare global {
+  interface Window {
+    localStorage: Storage;
+  }
+}
+
 bootstrapApplication(AppComponent, {
   providers: [
     // Rendu des routes Angular standalone
@@ -19,13 +26,16 @@ bootstrapApplication(AppComponent, {
       withFetch(),
       withInterceptors([
         (req, next) => {
-          const token = localStorage.getItem('token');
-          if (token) {
-            req = req.clone({
-              setHeaders: {
-                Authorization: `Bearer ${token}`
-              }
-            });
+          // Check if localStorage is available (browser only)
+          if (typeof window !== 'undefined' && window.localStorage) {
+            const token = window.localStorage.getItem('token');
+            if (token) {
+              req = req.clone({
+                setHeaders: {
+                  Authorization: `Bearer ${token}`
+                }
+              });
+            }
           }
           return next(req);
         }
