@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { LivreursService } from '../../../services/livreurs.service';
 import { HeaderComponent } from '../header/header.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
-import { SafeUrlPipe } from '../../../pipes/safe-url.pipe';
 
 interface Livreur {
   id: string;
@@ -21,7 +20,7 @@ interface Livreur {
 @Component({
   selector: 'app-livreurs',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, SidebarComponent, SafeUrlPipe],
+  imports: [CommonModule, FormsModule, HeaderComponent, SidebarComponent],
   templateUrl: './livreurs.component.html',
   styleUrls: ['./livreurs.component.css']
 })
