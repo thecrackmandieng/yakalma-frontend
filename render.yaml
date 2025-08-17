@@ -9,7 +9,3 @@ services:
         value: production
       - key: PORT
         value: 10000
-    disk:
-      name: data
-      mountPath: /opt/render/project/src/dist
-      sizeGB: 1
