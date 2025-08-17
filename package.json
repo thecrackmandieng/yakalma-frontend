@@ -3,11 +3,14 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "node dist/yakalma-frontend/server/server.mjs",
+    "build": "ng build && ng run yakalma-frontend:server && ng run yakalma-frontend:prerender",
+    "build:prod": "ng build --configuration production && ng run yakalma-frontend:server && ng run yakalma-frontend:prerender",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:yakalma-frontend": "node dist/yakalma-frontend/server/server.mjs"
+    "serve:ssr:yakalma-frontend": "node dist/yakalma-frontend/server/server.mjs",
+    "dev": "ng serve",
+    "prod": "npm run build:prod && npm run start"
   },
   "private": true,
   "dependencies": {

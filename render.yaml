@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: yakalma-frontend
+    runtime: node
+    buildCommand: npm run build:prod
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    disk:
+      name: data
+      mountPath: /opt/render/project/src/dist
+      sizeGB: 1
