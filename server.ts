@@ -2,6 +2,7 @@ import { APP_BASE_HREF } from '@angular/common';
 import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
 import bootstrap from './src/main.server';
 import { renderApplication } from '@angular/platform-server';
 
@@ -24,6 +25,15 @@ export function app(): express.Express {
     index: 'index.html',
   }));
 
+  // Read and validate the index.html file
+  let documentTemplate: string;
+  try {
+    documentTemplate = readFileSync(indexHtml, 'utf8');
+  } catch (err) {
+    console.error('Failed to read index.html:', err);
+    throw new Error('Cannot read index.html file');
+  }
+
   // All regular routes use the Angular engine
   server.get('**', (req, res, next) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
@@ -33,15 +43,31 @@ export function app(): express.Express {
       return next();
     }
 
+    // Ensure we have a valid document
+    if (!documentTemplate.includes('<app-root>')) {
+      console.error('Document template missing <app-root> element');
+      return res.status(500).send('Server configuration error');
+    }
+
     renderApplication(bootstrap, {
-      document: indexHtml,
+      document: documentTemplate,
       url: `${protocol}://${headers.host}${originalUrl}`,
       platformProviders: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
     })
       .then((html: string) => res.send(html))
       .catch((err: Error) => {
         console.error('Error rendering application:', err);
-        next(err);
+        console.error('Stack trace:', err.stack);
+        res.status(500).send(`
+          <html>
+            <head><title>Server Error</title></head>
+            <body>
+              <h1>Server Error</h1>
+              <p>Failed to render the application.</p>
+              <pre>${err.message}</pre>
+            </body>
+          </html>
+        `);
       });
   });
 

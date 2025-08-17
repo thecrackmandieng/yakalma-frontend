@@ -1,4 +1,4 @@
-import { importProvidersFrom } from '@angular/core';
+import { importProvidersFrom, PLATFORM_ID, Injector } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import {
   provideHttpClient,
@@ -8,6 +8,7 @@ import {
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { RouterModule } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 
 // Ensure DOM is available for SSR
 declare global {
@@ -26,8 +27,8 @@ bootstrapApplication(AppComponent, {
       withFetch(),
       withInterceptors([
         (req, next) => {
-          // Check if localStorage is available (browser only)
-          if (typeof window !== 'undefined' && window.localStorage) {
+          // Simple browser check without injector access
+          if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
             const token = window.localStorage.getItem('token');
             if (token) {
               req = req.clone({
