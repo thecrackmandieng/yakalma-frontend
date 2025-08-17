@@ -1,330 +1,40 @@
-.header {
-  width: 100%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  position: relative;
-}
-
-.container {
-  max-width: 100%;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 8vh; /* Utilisation de vh */
-  padding: 0 1rem;
-}
-
-.logo-section {
-  display: flex;
-  align-items: center;
-}
-
-.logo-wrapper {
-  position: relative;
-  width: 10vw; /* Utilisation de vw */
-  height: 7vh; /* Utilisation de vh */
-}
-
-.logo-background {
-  position: absolute;
-  width: 10vw; /* Utilisation de vw */
-  height: 6vh; /* Utilisation de vh */
-  top: 0.5rem;
-  left: 0;
-  background-color: #5371ff;
-  border-radius: 0.75rem;
-}
-
-.logo-border {
-  position: relative;
-  width: 9vw; /* Utilisation de vw */
-  height: 4vh; /* Utilisation de vh */
-  top: -0.5rem;
-  left: 1vw; /* Utilisation de vw */
-  border: 3px solid #5371ff;
-  border-radius: 0.75rem;
-}
-
-.logo-image {
-  position: absolute;
-  width: 7vw; /* Utilisation de vw */
-  height: 7vh; /* Utilisation de vh */
-  top: 0;
-  left: 1.5vw; /* Utilisation de vw */
-  object-fit: cover;
-}
-
-.logo-text {
-  color: #5371ff;
-  margin-left: 1rem;
-  font-family: 'Fugaz One', Helvetica, sans-serif;
-  font-size: 1.25rem;
-  font-weight: normal;
-  letter-spacing: 0;
-  line-height: 1.67rem;
-  white-space: nowrap;
-}
-
-.navigation-menu {
-  margin: 0 auto;
-}
-
-.nav-list {
-  display: flex;
-  gap: 2rem;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.nav-item {
-  display: inline-block;
-}
-
-.nav-link {
-  font-family: 'Oswald', Helvetica, sans-serif;
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: #212121;
-  letter-spacing: 0;
-  line-height: 1.75rem;
-  white-space: nowrap;
-  text-decoration: none;
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 5rem; /* Réduction de l'écart pour déplacer à gauche */
-  margin-left: -5rem; /* Ajout d'une marge négative pour déplacer davantage à gauche */
-}
-.search-icon {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: #212121;
-  margin-left: -5.5rem; /* Déplacement vers la gauche */
-}
-
-.cart-icon-wrapper {
-  position: relative;
-}
-
-.cart-icon {
-  width: 1.1875rem;
-  height: 1.0625rem;
-  color: #00a149;
-}
-
-.cart-badge {
-  position: absolute;
-  top: -0.5rem;
-  right: -0.5rem;
-  width: 1rem;
-  height: 1rem;
-  background-color: #212121;
-  border-radius: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  font-family: 'Oswald', Helvetica, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #fff;
-}
-
-.login-button {
-  width: 11vw; /* Utilisation de vw */
-  height: 5vh; /* Utilisation de vh */
-  background-color: #ffc222;
-  border-radius: 0.4375rem;
-  border: none;
-  cursor: pointer;
-}
-
-.login-button:hover {
-  background-color: rgba(255, 194, 34, 0.9);
-}
-
-.login-text {
-  font-family: 'Oswald', Helvetica, sans-serif;
-  font-size: 1.25rem;
+.active-link a {
+  color: #5371ff !important;
   font-weight: 600;
-  color: #fff;
-  letter-spacing: 0.05rem;
-  line-height: 1.0625rem;
-  white-space: nowrap;
 }
 
-.hamburger-menu {
-  display: none;
-  flex-direction: column;
-  gap: 0.375rem;
-  width: 1.9375rem;
-  height: 1.125rem;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.hamburger-line {
-  width: 1.9375rem;
-  height: 0.125rem;
-  background-color: #212121;
-}
-
-/* Styles pour le menu déroulant */
-@media (max-width: 768px) {
-  .container {
-    height: 10vh; /* Ajustement de la hauteur */
-    padding: 0 0.5rem;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-
-  .logo-wrapper {
-    width: 15vw; /* Ajustement de la largeur */
-    height: 8vh; /* Ajustement de la hauteur */
-  }
-
-  .logo-background {
-    width: 15vw; /* Ajustement de la largeur */
-    height: 7vh; /* Ajustement de la hauteur */
-  }
-
-  .logo-border {
-    width: 14vw; /* Ajustement de la largeur */
-    height: 5vh; /* Ajustement de la hauteur */
-    left: 1.5vw; /* Ajustement de la position */
-  }
-
-  .logo-image {
-    width: 12vw; /* Ajustement de la largeur */
-    height: 7vh; /* Ajustement de la hauteur */
-    left: 2vw; /* Ajustement de la position */
-  }
-
-  .nav-list {
-    gap: 1rem;
-  }
-
-  .nav-link {
-    font-size: 1rem; /* Réduction de la taille de police */
-  }
-
-  .login-button {
-    width: 15vw; /* Ajustement de la largeur */
-    height: 6vh; /* Ajustement de la hauteur */
-  }
-
-  .login-text {
-    font-size: 1rem; /* Réduction de la taille de police */
-  }
-
-  .hamburger-menu {
-    display: flex; /* Affichage du menu hamburger */
-  }
-
-  .navigation-menu {
-    position: absolute;
-    top: 10vh;
-    left: 0;
-    width: 100%;
-    background-color: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: none; /* Masquer le menu de navigation par défaut */
-  }
-
-  .navigation-menu.active {
-    display: block; /* Afficher le menu de navigation lorsque la classe active est ajoutée */
-  }
-
-  .nav-list {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
+/* Animation simple fadeIn */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease forwards;
+}
 
-@media (max-width: 480px) {
-  .container {
-    height: 12vh; /* Ajustement de la hauteur */
-    padding: 0 0.25rem;
-  }
+/* Active link underline styling */
+.active-link > a > span {
+  width: 100% !important;
+}
 
-  .logo-wrapper {
-    width: 20vw; /* Ajustement de la largeur */
-    height: 9vh; /* Ajustement de la hauteur */
-  }
-
-  .logo-background {
-    width: 20vw; /* Ajustement de la largeur */
-    height: 8vh; /* Ajustement de la hauteur */
-  }
-
-  .logo-border {
-    width: 19vw; /* Ajustement de la largeur */
-    height: 6vh; /* Ajustement de la hauteur */
-    left: 2vw; /* Ajustement de la position */
-  }
-
-  .logo-image {
-    width: 17vw; /* Ajustement de la largeur */
-    height: 8vh; /* Ajustement de la hauteur */
-    left: 2.5vw; /* Ajustement de la position */
-  }
-
-  .nav-list {
-    gap: 0.5rem;
-  }
-
-  .nav-link {
-    font-size: 0.9rem; /* Réduction de la taille de police */
-  }
-
-  .login-button {
-    width: 20vw; /* Ajustement de la largeur */
-    height: 7vh; /* Ajustement de la hauteur */
-  }
-
-  .login-text {
-    font-size: 0.9rem; /* Réduction de la taille de police */
-  }
-  .hamburger-menu {
-    width: 1.5rem; /* Ajustement de la largeur */
-    height: 1rem; /* Ajustement de la hauteur */
-  }
-  .hamburger-line {
-    width: 1.5rem; /* Ajustement de la largeur */
-    height: 0.125rem; /* Ajustement de la hauteur */
-  }
-  .search-icon {
-    width: 0.8rem; /* Ajustement de la largeur */
-    height: 0.8rem; /* Ajustement de la hauteur */
-  }
-  .cart-icon {
-    width: 0.8rem; /* Ajustement de la largeur */
-    height: 0.8rem; /* Ajustement de la hauteur */
-  }
-  .cart-badge {
-    width: 0.8rem; /* Ajustement de la largeur */
-    height: 0.8rem; /* Ajustement de la hauteur */
-    font-size: 0.6rem; /* Ajustement de la taille de police */
-  }
-  .cart-icon-wrapper {
-    width: 2rem; /* Ajustement de la largeur */
-    height: 2rem; /* Ajustement de la hauteur */
-  }
-  .cart-icon {
-    width: 1.5rem; /* Ajustement de la largeur */
-    height: 1.5rem; /* Ajustement de la hauteur */
-  }
-  .login-button {
-    width: 25vw; /* Ajustement de la largeur */
-    height: 8vh; /* Ajustement de la hauteur */
-  }
-  .login-text {
-    font-size: 1rem; /* Ajustement de la taille de police */
-  }
-  .login-button:hover {
-    background-color: rgba(255, 194, 34, 0.8); /* Ajustement de la couleur au survol */
-  }
+/* Scroll bar style for dropdown */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #5371ff;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-track {
+  background-color: #f0f0f0;
 }

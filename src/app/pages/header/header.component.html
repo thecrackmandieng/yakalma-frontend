@@ -1,49 +1,362 @@
-<header class="header">
-  <div class="container">
-    <!-- Logo Section -->
-    <div class="logo-section">
-      <div class="logo-wrapper">
-        <div class="logo-background"></div>
-        <div class="logo-border"></div>
-        <img class="logo-image" alt="Yakalma Logo" src="/assets/logo.png" />
+<header class="sticky top-0 w-full shadow-md bg-white z-50">
+  <div class="max-w-7xl mx-auto flex items-center justify-between h-20 px-4 sm:px-6">
+    <!-- Logo -->
+    <div class="flex items-center">
+      <div class="relative w-28 h-14">
+        <div class="absolute w-full h-full bg-[#5371ff] rounded-xl"></div>
+        <div class="relative w-full h-14 left-2 border-[3px] border-[#5371ff] rounded-xl"></div>
+        <img
+          class="absolute w-20 top-0 left-4 object-contain"
+          src="/assets/logo.png"
+          alt="Yakalma Logo"
+        />
       </div>
-      <div class="logo-text">yakalma</div>
     </div>
 
-    <!-- Navigation Menu -->
-    <nav class="navigation-menu" [class.active]="isMenuOpen">
-      <ul class="nav-list">
-        <li *ngFor="let item of navItems" class="nav-item">
-          <a class="nav-link" [href]="item.href">{{ item.label }}</a>
+    <!-- Desktop Navigation -->
+    <nav class="hidden lg:block">
+      <ul class="flex gap-8 font-oswald text-base font-medium text-[#212121]">
+        <li *ngFor="let item of navItems" class="group relative" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+          <a
+            [routerLink]="item.href"
+            class="relative no-underline transition-colors duration-300 hover:text-[#5371ff]"
+          >
+            {{ item.label }}
+            <span
+              class="absolute left-0 -bottom-1 h-0.5 bg-[#5371ff] transition-all duration-300 w-0 group-hover:w-full group-[.active-link]:w-full"
+            ></span>
+          </a>
         </li>
       </ul>
     </nav>
 
-    <!-- Right Side Actions -->
-    <div class="actions">
-      <!-- Search Icon -->
-      <div class="icon search-icon"></div>
-      <i class="fas fa-search"></i>
+    <!-- Right Side -->
+    <div class="flex items-center gap-5">
+
+      <!-- Search -->
+      <div class="relative hidden sm:flex items-center gap-2">
+        <input
+          type="text"
+          placeholder="Rechercher une adresse..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          class="px-4 py-2 rounded-lg border border-gray-300 text-sm w-56 focus:outline-none focus:ring-2 focus:ring-[#5371ff]"
+        />
+        <button
+          class="text-[#5371ff] hover:text-[#425ac7] transition"
+          aria-label="Rechercher"
+        >
+          <i class="fas fa-search"></i>
+        </button>
+
+        <!-- Dropdown résultats -->
+        <div
+          *ngIf="searchTerm && filteredRestaurants.length > 0"
+          class="absolute top-full left-0 bg-white border border-gray-300 w-72 max-h-56 overflow-y-auto rounded-md shadow-lg mt-2 z-50"
+        >
+          <ul>
+            <li
+              *ngFor="let restaurant of filteredRestaurants"
+              class="px-4 py-2 cursor-pointer hover:bg-[#e0e7ff]"
+              (click)="goToRestaurantMenu(restaurant._id)"
+              tabindex="0"
+              (keydown.enter)="goToRestaurantMenu(restaurant._id)"
+            >
+              <strong>{{ restaurant.name }}</strong><br />
+              <small class="text-gray-600">{{ restaurant.address }}</small>
+            </li>
+          </ul>
+        </div>
+        <div
+          *ngIf="searchTerm && filteredRestaurants.length === 0"
+          class="absolute top-full left-0 bg-white border border-gray-300 w-72 p-3 rounded-md shadow-md mt-2 z-50 text-gray-600"
+        >
+          Aucun restaurant trouvé
+        </div>
       </div>
 
-      <!-- Cart Icon with Badge -->
-      <div class="cart-icon-wrapper">
-      <div class="icon cart-icon">
-        <i class="fas fa-shopping-cart"></i>
-      </div>
-      <span class="cart-badge">0</span>
-    </div>
+      <!-- Panier Icon + Dropdown -->
+      <div class="relative" (click)="toggleCartDropdown()" tabindex="0" (keydown.enter)="toggleCartDropdown()">
+        <fa-icon [icon]="faShoppingCart" size="lg" class="text-[#5371ff] cursor-pointer"></fa-icon>
+        <span
+          *ngIf="cartCount > 0"
+          class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-semibold rounded-full px-1.5 py-0.5 select-none"
+          >{{ cartCount }}</span
+        >
 
-      <!-- Login Button -->
-      <button class="login-button" routerLink="/login">
-        <span class="login-text">Connexion</span>
+        <!-- Mini Panier -->
+        <div
+          *ngIf="showCartDropdown"
+          class="absolute right-0 mt-3 w-80 bg-white border border-gray-300 rounded-lg shadow-lg z-50 p-4 animate-fadeIn"
+          (click)="$event.stopPropagation()"
+        >
+          <h3 class="text-lg font-semibold mb-4 border-b border-gray-200 pb-2">
+            Panier ({{ cartCount }})
+          </h3>
+          <div *ngIf="cartItems.length > 0; else emptyCartTemplate">
+            <ul class="max-h-48 overflow-auto mb-4 divide-y divide-gray-200">
+              <li
+                *ngFor="let item of cartItems"
+                class="py-2 flex items-center gap-3"
+              >
+                <img
+                  [src]="item.image"
+                  alt="plat"
+                  class="w-14 h-14 object-cover rounded-lg shadow-sm"
+                />
+                <div class="flex-1">
+                  <p class="text-sm font-semibold truncate">{{ item.name }}</p>
+                  <p class="text-xs text-gray-500 truncate">
+                    {{ item.restaurantName }}
+                  </p>
+                  <p class="text-xs text-gray-600">Quantité: {{ item.quantity }}</p>
+                </div>
+                <p class="text-sm font-bold text-[#5371ff]">
+                  {{ (item.price * item.quantity) | currency : 'XOF' }}
+                </p>
+              </li>
+            </ul>
+
+            <button
+              (click)="emptyCart()"
+              class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md font-semibold transition"
+            >
+              Vider le panier
+            </button>
+
+            <button
+              (click)="openOrderModal()"
+              class="w-full mt-3 bg-green-600 hover:bg-green-700 text-white py-2 rounded-md font-semibold transition"
+            >
+              Commander
+            </button>
+          </div>
+
+          <ng-template #emptyCartTemplate>
+            <p class="text-center text-gray-500 py-6">Votre panier est vide.</p>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Connexion -->
+      <button
+        class="hidden sm:inline-block bg-[#ffc222] hover:bg-[#e6ae1f] text-white text-sm font-semibold py-2 px-5 rounded-lg shadow-md transition"
+        (click)="onLoginClick()"
+      >
+        Connexion
       </button>
 
-      <!-- Hamburger Menu -->
-      <div class="hamburger-menu" (click)="toggleMenu()">
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
+      <!-- Burger menu -->
+      <div
+        class="lg:hidden text-3xl cursor-pointer text-[#5371ff]"
+        (click)="toggleMenu()"
+        aria-label="Menu mobile"
+        tabindex="0"
+        (keydown.enter)="toggleMenu()"
+      >
+        <fa-icon [icon]="isMenuOpen ? faTimes : faBars"></fa-icon>
+      </div>
     </div>
   </div>
+
+  <!-- Menu mobile -->
+  <div
+    class="lg:hidden fixed inset-0 z-30"
+    [class.pointer-events-none]="!isMenuOpen"
+    [class.pointer-events-auto]="isMenuOpen"
+  >
+    <div
+      class="absolute inset-0 bg-black transition-opacity duration-300"
+      [class.opacity-0]="!isMenuOpen"
+      [class.opacity-50]="isMenuOpen"
+      (click)="closeMenu()"
+    ></div>
+
+    <div
+      class="absolute top-0 left-0 h-full w-4/5 max-w-xs bg-white shadow-lg p-6 transform transition-transform duration-300 overflow-y-auto"
+      [class.-translate-x-full]="!isMenuOpen"
+      [class.translate-x-0]="isMenuOpen"
+      (click)="$event.stopPropagation()"
+    >
+      <ul class="flex flex-col gap-6 text-[#212121] font-oswald text-lg font-semibold mb-8">
+        <li *ngFor="let item of navItems">
+          <a
+            [routerLink]="item.href"
+            (click)="navigateAndClose(item.href)"
+            class="hover:text-[#5371ff]"
+            tabindex="0"
+            (keydown.enter)="navigateAndClose(item.href)"
+            >{{ item.label }}</a
+          >
+        </li>
+      </ul>
+
+      <input
+        type="text"
+        placeholder="Rechercher une adresse..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        class="w-full px-4 py-2 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-2 focus:ring-[#5371ff]"
+      />
+
+      <button
+        class="mt-6 w-full py-3 bg-[#ffc222] hover:bg-[#e6ae1f] text-white font-semibold rounded-lg shadow-md transition"
+        (click)="onLoginClick()"
+      >
+        Connexion
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal multi-étapes -->
+  <div
+    *ngIf="showOrderModal"
+    class="fixed inset-0 bg-black/60 flex justify-center items-center z-50 px-4"
+    (click)="closeOrderModal()"
+  >
+    <div
+      class="bg-white rounded-xl p-6 w-full max-w-3xl relative shadow-lg"
+      (click)="$event.stopPropagation()"
+      @modalAnimation
+    >
+      <button
+        (click)="closeOrderModal()"
+        class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-3xl font-bold"
+        aria-label="Fermer"
+      >
+        &times;
+      </button>
+
+      <!-- Choix opérateur -->
+      <ng-container *ngIf="showOperatorChoice">
+        <h2 class="text-2xl font-semibold text-center mb-6">Choisissez un opérateur</h2>
+        <div class="flex justify-center gap-6 flex-wrap">
+          <div
+            *ngFor="let op of operators"
+            (click)="chooseOperator(op)"
+            class="cursor-pointer border-2 border-[#5371ff] rounded-xl p-3 flex flex-col items-center gap-2 hover:bg-[#5371ff] hover:text-white transition"
+            tabindex="0"
+            (keydown.enter)="chooseOperator(op)"
+          >
+            <img
+              [src]="op.image"
+              [alt]="op.name"
+              class="w-20 h-20 object-contain rounded-lg"
+              loading="lazy"
+            />
+            <div class="font-semibold">{{ op.name }}</div>
+          </div>
+        </div>
+        <div class="mt-6 text-center">
+          <button
+            class="px-5 py-2 rounded-lg border border-gray-400 hover:bg-gray-100"
+            (click)="closeOrderModal()"
+          >
+            Annuler
+          </button>
+        </div>
+      </ng-container>
+
+<!-- Formulaire paiement -->
+<ng-container *ngIf="showPaymentForm">
+<h2 class="text-2xl font-semibold text-center mb-6 w-[600px] mx-auto">
+  Paiement - {{ selectedOperator?.name }}
+</h2>
+
+ <form
+  (ngSubmit)="validatePayment()"
+  #payForm="ngForm"
+  class="space-y-6 w-full max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg"
+  style="min-width: 500px;"
+>
+
+    <input
+      type="text"
+      [(ngModel)]="payment.address"
+      name="address"
+      placeholder="Adresse de livraison"
+      required
+      class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5371ff]"
+    />
+    <input
+      type="text"
+      [(ngModel)]="payment.contact"
+      name="contact"
+      placeholder="Numéro de contact"
+      required
+      class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5371ff]"
+    />
+    <input
+      type="text"
+      [(ngModel)]="payment.name"
+      name="name"
+      placeholder="Nom sur la carte"
+      required
+      class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5371ff]"
+    />
+    <input
+      type="text"
+      [(ngModel)]="payment.card"
+      name="card"
+      placeholder="Numéro de carte"
+      maxlength="19"
+      required
+      class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5371ff]"
+    />
+    <div class="flex gap-4">
+      <input
+        type="text"
+        [(ngModel)]="payment.exp"
+        name="exp"
+        placeholder="MM/AA"
+        maxlength="5"
+        required
+        class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5371ff]"
+      />
+      <input
+        type="text"
+        [(ngModel)]="payment.cvc"
+        name="cvc"
+        placeholder="CVC"
+        maxlength="4"
+        required
+        class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5371ff]"
+      />
+    </div>
+
+    <div class="flex justify-between">
+      <button
+        type="submit"
+        class="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700 font-semibold transition"
+      >
+        Valider le paiement
+      </button>
+      <button
+        type="button"
+        class="bg-gray-300 py-2 px-6 rounded-lg hover:bg-gray-400 transition"
+        (click)="showPaymentForm = false; showOperatorChoice = true;"
+      >
+        Retour
+      </button>
+    </div>
+  </form>
+
+  <div *ngIf="successMessage" class="mt-6 text-center text-green-700 font-semibold">
+    {{ successMessage }}
+  </div>
+</ng-container>
+
+    </div>
+  </div>
+  <!-- Messages -->
+<div *ngIf="successMessage" class="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50">
+  {{ successMessage }}
+</div>
+<div *ngIf="errorMessage" class="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-lg z-50">
+  {{ errorMessage }}
+</div>
+<div *ngIf="infoMessage" class="fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow-lg z-50">
+  {{ infoMessage }}
+</div>
+
 </header>

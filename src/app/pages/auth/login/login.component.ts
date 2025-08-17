@@ -1,42 +1,80 @@
 import { Component } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // Assure-toi d'importer FormsModule
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { AuthAdminService } from '../../../services/auth-admin.service'; // ✅ Ton service admin
+import { FooterComponent } from "../../footer/footer.component";
+import { HeaderComponent } from "../../header/header.component";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   standalone: true,
-  imports: [FormsModule, HttpClientModule] // Ajout de HttpClientModule ici
+  imports: [
+    FormsModule,
+    HttpClientModule,
+    CommonModule,
+    FooterComponent,
+    HeaderComponent
+  ],
 })
 export class LoginComponent {
-  email = '';
-  password = '';
+  emailOrPhone: string = '';
+  password: string = '';
+  errorMessage: string = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private authAdminService: AuthAdminService,
+    private router: Router
+  ) {}
 
-  login(event: Event) {
-    event.preventDefault();
-    this.http.post('http://localhost:5000/api/auth/login', { email: this.email, password: this.password })
-      .subscribe({
-        next: (response: any) => {
-          localStorage.setItem('token', response.token);
-          this.redirectBasedOnRole(response.role);
-        },
-        error: (err) => console.error('Erreur lors de la connexion :', err),
-      });
+  onLogin(): void {
+    if (!this.isFormValid()) {
+      this.errorMessage = 'Veuillez remplir tous les champs.';
+      return;
+    }
+
+    this.authAdminService.login(this.emailOrPhone, this.password).subscribe({
+      next: (response) => {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('role', response.admin?.role || '');
+        this.redirectBasedOnRole(response.admin?.role || '');
+      },
+      error: (error) => {
+        console.error('Erreur de connexion :', error);
+        this.errorMessage = error.error?.message || 'Identifiants invalides ou serveur indisponible.';
+      },
+    });
   }
 
-  private redirectBasedOnRole(role: string) {
-    if (role === 'admin') {
-      this.router.navigate(['/admin/dashboard']);
-    } else if (role === 'restaurant') {
-      this.router.navigate(['/restaurant/dashboard']);
-    } else if (role === 'livreur') {
-      this.router.navigate(['/livreur/dashboard']);
-    } else {
-      this.router.navigate(['/client/dashboard']);
+  validateEmailOrPhone(): void {
+    this.errorMessage = '';
+  }
+
+  validatePassword(): void {
+    this.errorMessage = '';
+  }
+
+  isFormValid(): boolean {
+    return this.emailOrPhone.trim() !== '' && this.password.trim() !== '';
+  }
+
+  private redirectBasedOnRole(role: string): void {
+    switch (role) {
+      case 'Admin':
+        this.router.navigate(['/admin/dashboard']);
+        break;
+      case 'restaurant':
+        this.router.navigate(['/restaurant/dashboard']);
+        break;
+      case 'livreur':
+        this.router.navigate(['/livreur/dashboard']);
+        break;
+      default:
+        this.router.navigate(['/client/dashboard']);
+        break;
     }
   }
 }

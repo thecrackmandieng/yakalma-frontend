@@ -1,0 +1,49 @@
+<app-header-l></app-header-l>
+
+<div class="page-container">
+  <h1>Inscription Livreur</h1>
+  <p>
+    Merci de compléter les informations ci-dessous pour finaliser votre inscription.
+  </p>
+
+  <div class="dropdown-container">
+    <!-- Informations personnelles -->
+    <button class="dropdown-btn" (click)="toggleDropdown('personalInfo')">Informations Personnelles</button>
+    <div id="personalInfo" class="dropdown-content">
+      <form #personalForm="ngForm">
+        <input type="text" name="nom" placeholder="Nom" [(ngModel)]="formData.nom" required />
+        <input type="text" name="prenom" placeholder="Prénom" [(ngModel)]="formData.prenom" required />
+        <input type="email" name="email" placeholder="Email" [(ngModel)]="formData.email" required />
+        <input type="tel" name="telephone" placeholder="Téléphone" [(ngModel)]="formData.telephone" required />
+      </form>
+    </div>
+
+    <!-- Informations du véhicule -->
+    <button class="dropdown-btn" (click)="toggleDropdown('vehicleInfo')">Informations du Véhicule</button>
+    <div id="vehicleInfo" class="dropdown-content">
+      <form #vehicleForm="ngForm">
+        <input type="text" name="typeVehicule" placeholder="Type de véhicule" [(ngModel)]="formData.typeVehicule" required />
+        <input type="text" name="immatriculation" placeholder="Immatriculation" [(ngModel)]="formData.immatriculation" required />
+      </form>
+    </div>
+
+    <!-- Papiers du véhicule -->
+    <button class="dropdown-btn" (click)="toggleDropdown('vehiclePapers')">Papiers du Véhicule</button>
+    <div id="vehiclePapers" class="dropdown-content">
+      <form #papersForm="ngForm">
+        <label>Carte d'identité</label>
+        <input type="file" (change)="onFileSelected($event, 'carteGrise')" />
+
+        <label>Assurance</label>
+        <input type="file" (change)="onFileSelected($event, 'assurance')" />
+      </form>
+    </div>
+  </div>
+
+  <button class="btn-save-all" (click)="saveAll()">Enregistrer</button>
+
+  <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+</div>
+
+<app-footer></app-footer>

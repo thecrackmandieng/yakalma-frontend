@@ -1,57 +1,59 @@
+<section class="relative w-full h-screen lg:h-[90vh] overflow-hidden bg-gray-900">
+  <!-- Vidéo de fond -->
+  <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover brightness-25 z-0">
+    <source src="/assets/plat1.mp4" type="video/mp4" />
+    Votre navigateur ne supporte pas la vidéo HTML5.
+  </video>
 
-<section class="banniere">
-    <div class="banniere-container">
-      <!-- Background with image overlay -->
-      <div class="background-overlay">
-        <img class="background-image" alt="Food background" src="/assets/lo.png" />
+  <!-- Image fallback -->
+  <img src="/assets/plat1fr.jpeg" class="absolute inset-0 w-full h-full object-cover brightness-20 z-0 hidden" alt="Arrière-plan plats" />
+
+  <!-- Contenu principal -->
+  <div class="relative z-10 w-full h-full flex flex-col lg:flex-row items-center ">
+
+    <!-- Colonne gauche : Logo + Texte -->
+    <div class="flex flex-col lg:flex-row items-center lg:items-start text-white gap-6 animate-fade-in-down w-full lg:w-1/2">
+      <!-- Logo -->
+      <div class="relative w-90 h-90 flex-shrink-0">
+        <img src="/assets/logo.png" alt="Logo" class="w-full h-full object-contain relative z-10" />
+
+        <!-- Fumée SVG -->
+        <svg class="absolute top-[-40px] left-1/2 transform -translate-x-1/2 z-0 pointer-events-none w-65 h-65" viewBox="0 0 200 200">
+          <circle cx="100" cy="150" r="10" class="smoke-svg smoke-delay-1" />
+          <circle cx="80" cy="160" r="8" class="smoke-svg smoke-delay-2" />
+          <circle cx="120" cy="140" r="12" class="smoke-svg smoke-delay-3" />
+        </svg>
       </div>
-  
-      <!-- Content container -->
-      <div class="content-container">
-        <!-- Left side text content -->
-        <div class="left-content">
-          <div class="text-content">
-            <h2 class="subtitle">livraison Rapide & Facile</h2>
-            <h1 class="title">Roi Des Bon Plats</h1>
+
+      <!-- Texte -->
+      <div class="text-left max-w-xl space-y-4 lg:space-y-6">
+        <h2 class="text-xl sm:text-2xl font-bold text-blue-400">Livraison Rapide & Facile</h2>
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white">Roi Des Bon Plats</h1>
+        <p class="text-sm sm:text-base md:text-lg leading-relaxed text-white/80">
+          Vous offrir une qualité de repas est notre <br> préoccupation chaque jour.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-start gap-4 sm:gap-8 mt-6">
+          <button
+          class="px-6 py-3 bg-[#5371ff] hover:bg-[#415ad8] text-white font-semibold rounded-xl shadow-md transition transform hover:scale-105 animate-pop-in"
+          (click)="onRestaurantClick()">
+            Voir les Restaurants
+          </button>
+          <div class="flex items-center gap-2">
+            <img src="/assets/etoile.png" alt="rating" class="w-16 h-auto">
+            <span class="text-white font-bold text-lg">4.8</span>
           </div>
-  
-          <div class="description">
-            <p>vous offrir une qualité de repas est notre preoccupation pour tous jours</p>
-          </div>
-  
-          <div class="actions">
-            <button class="menu-button">
-              <div class="button-inner">
-                <span class="button-text">votre menu</span>
-              </div>
-            </button>
-  
-            <div class="rating">
-              <div class="rating-image"></div>
-              <div class="rating-text">4.8</div>
-            </div>
-          </div>
-        </div>
-  
-        <!-- Right side image -->
-        <div class="right-image">
-          <div class="image-container"></div>
-        </div>
-  
-        <!-- Navigation arrows -->
-        <button class="nav-button left-arrow">
-          <svg-icon src="path-to-chevron-left-icon" class="nav-icon"></svg-icon>
-        </button>
-  
-        <button class="nav-button right-arrow">
-          <svg-icon src="path-to-chevron-right-icon" class="nav-icon"></svg-icon>
-        </button>
-  
-        <!-- Navigation dots -->
-        <div class="nav-dots">
-          <div *ngFor="let dot of navigationDots; let i = index" [ngClass]="{'active': dot.active, 'dot': true}"></div>
         </div>
       </div>
     </div>
-  </section>
-  
+
+    <!-- Colonne droite : Image serveur alignée en bas avec un rectangle de fond -->
+    <div class="relative w-full lg:w-1/2 flex justify-center items-end overflow-hidden h-full">
+
+      <!-- Image serveur -->
+      <img src="/assets/serveur.png" alt="Serveur"
+      class="relative z-10 h-[90vh] w-auto max-w-none object-bottom object-cover animate-fade-in-up">
+
+    </div>
+  </div>
+</section>

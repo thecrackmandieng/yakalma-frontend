@@ -1,14 +1,21 @@
 <app-header-restaurant></app-header-restaurant>
 
 <div class="partner-pub-page">
-    <header class="header">
-      <div class="hero" style="display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center;">
-        <h1>LES MEILLEURS DELICES<br />LES MAMELS</h1>
-        <p>Nous prenons en compte tous les facteurs de changement et vous fournissons les composants <br/>
-           dont vous avez besoin pour changer et <br/>
-           créer un événement qui se produit réellement.</p>
-      </div>
-    </header>
+<header class="header" [ngStyle]="{'background-image': backgroundImage}">
+  <div
+    class="hero"
+    style="display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center;"
+  >
+    <h1>LES MEILLEURS DELICES<br />{{ restaurantName | uppercase }}</h1>
+    <p>
+      Nous prenons en compte tous les facteurs de changement et vous fournissons les composants <br />
+      dont vous avez besoin pour changer et <br />
+      créer un événement qui se produit réellement.
+    </p>
+  </div>
+</header>
+
+
 
     <!-- Section 2: Hero Section -->
     <section class="hero">
@@ -143,7 +150,7 @@
           <p>Description du blog 2.</p>
         </div>
         <div class="blog-card">
-          <img src="path-to-blog-image-3.jpg" alt="Blog 3">
+          <img src="assets/annif.webp" alt="Blog 3">
           <h3>Titre du blog 3</h3>
           <p>Description du blog 3.</p>
         </div>

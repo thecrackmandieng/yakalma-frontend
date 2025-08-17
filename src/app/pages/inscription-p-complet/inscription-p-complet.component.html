@@ -1,0 +1,65 @@
+<app-header-p></app-header-p>
+
+<div class="page-container">
+  <h1>Inscription Partenaire</h1>
+  <p>
+    Merci de compléter les informations ci-dessous pour finaliser votre inscription.
+  </p>
+
+  <div class="dropdown-container">
+    <!-- Informations Personnelles -->
+    <button class="dropdown-btn" (click)="toggleDropdown('personalInfo')">Informations Personnelles</button>
+    <div id="personalInfo" class="dropdown-content">
+      <form #personalForm="ngForm">
+        <input type="text" name="nom" placeholder="Nom" [(ngModel)]="formData.nom" required />
+        <input type="text" name="prenom" placeholder="Prénom" [(ngModel)]="formData.prenom" required />
+        <input type="email" name="email" placeholder="Email" [(ngModel)]="formData.email" required />
+        <input type="tel" name="telephone" placeholder="Téléphone" [(ngModel)]="formData.telephone" required />
+      </form>
+    </div>
+
+    <!-- Informations Restaurant -->
+    <button class="dropdown-btn" (click)="toggleDropdown('restaurantInfo')">Informations du Restaurant</button>
+    <div id="restaurantInfo" class="dropdown-content">
+      <form #restaurantForm="ngForm">
+        <input type="text" name="nomResto" placeholder="Nom du Restaurant" [(ngModel)]="formData.nomResto" required />
+        <input type="text" name="adresse" placeholder="Adresse" [(ngModel)]="formData.adresse" required />
+        <input type="text" name="ville" placeholder="Ville" [(ngModel)]="formData.ville" required />
+        <input type="text" name="codePostal" placeholder="Code Postal" [(ngModel)]="formData.codePostal" required />
+        <input type="text" name="ninea" placeholder="NINEA" [(ngModel)]="formData.ninea" required />
+      </form>
+    </div>
+
+    <!-- Papiers nécessaires -->
+    <button class="dropdown-btn" (click)="toggleDropdown('requiredPapers')">Papiers Nécessaires</button>
+    <div id="requiredPapers" class="dropdown-content">
+      <form #papersForm="ngForm">
+        <label>Registre de commerce</label>
+        <input type="file" (change)="onFileSelected($event, 'permis')" required />
+
+        <label>Certificat d'hygiène</label>
+        <input type="file" (change)="onFileSelected($event, 'certificat')" required />
+
+        <label>Copie d'identité</label>
+        <input type="file" (change)="onFileSelected($event, 'idCardCopy')" required />
+
+        <label>Photo</label>
+        <input type="file" (change)="onFileSelected($event, 'photo')" required />
+
+         <label>Autres documents légaux</label>
+        <input type="file" (change)="onFileSelected($event, 'autresDocs')" required />
+
+
+      </form>
+    </div>
+  </div>
+
+  <button class="btn-save-all" (click)="saveAll(personalForm, restaurantForm, papersForm)">
+    Enregistrer
+  </button>
+
+  <div class="success-message" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+</div>
+
+<app-footer></app-footer>

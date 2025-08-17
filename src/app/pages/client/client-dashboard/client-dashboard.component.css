@@ -1,0 +1,27 @@
+/* landing.component.css */
+.primary {
+  color: #4169E1;
+}
+
+.bg-primary {
+  background-color: #4169E1;
+}
+
+.hover\:bg-primary:hover {
+  background-color: #365acb;
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

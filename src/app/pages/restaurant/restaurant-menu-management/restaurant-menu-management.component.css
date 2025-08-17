@@ -1,0 +1,347 @@
+/* ------------------------ */
+/* Page globale */
+.page-container {
+  min-height: 100vh;
+  background-color: white;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+}
+
+/* Titre principal */
+.page-container h1 {
+  font-size: 6rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* Paragraphe principal */
+.page-container p {
+  color: #4B5563;
+  max-width: 600px;
+  margin-bottom: 2.5rem;
+}
+
+/* ------------------------ */
+/* Footer */
+.footer {
+  margin-top: 2.5rem;
+  max-width: 470px;
+  font-size: 1.5rem;
+  color: #4B5563;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer .row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer a {
+  color: #2563EB;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* ------------------------ */
+/* Restaurant List */
+.restaurant-list {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin: 20px auto;
+  max-width: 1500px;
+  text-align: center;
+}
+
+.restaurant-list h1 {
+  color: #333;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 8px;
+}
+
+.restaurant-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.restaurant-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.card-image img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-details {
+  padding: 15px;
+}
+
+.card-details h2 {
+  margin: 0 0 10px;
+  font-size: 2em;
+  color: #444;
+}
+
+.card-details p {
+  margin: 5px 0;
+  color: #666;
+}
+
+/* ------------------------ */
+/* Order List */
+.order-list {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin: 20px auto;
+  max-width: 1500px;
+  text-align: center;
+}
+
+.order-list h1 {
+  color: #333;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.order-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.order-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.order-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.order-image img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.order-image {
+  position: relative;
+}
+
+.order-details {
+  padding: 15px;
+  text-align: left;
+}
+
+.order-details h2 {
+  margin: 0 0 10px;
+  font-size: 1.5em;
+  color: #444;
+}
+
+.order-details p {
+  margin: 5px 0;
+  color: #666;
+}
+
+.order-details ul {
+  margin-left: 20px;
+  padding: 0;
+  list-style: disc;
+  color: #555;
+}
+
+/* ------------------------ */
+/* Boutons & Actions */
+.order-actions {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+/* Bouton Accepter */
+.accept-button {
+  background-color: #0ae427;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-family: 'Playfair Display', serif;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  margin-bottom: 6px;
+  opacity: 0.95;
+}
+
+.accept-button:hover {
+  background-color: #06801a;
+  opacity: 1;
+}
+
+.accept-button[disabled] {
+  background-color: #aaa;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Bouton Livrer */
+.deliver-button {
+  background-color: #2563EB;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-family: 'Playfair Display', serif;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  opacity: 0.95;
+}
+
+.deliver-button:hover {
+  background-color: #1e40af;
+  opacity: 1;
+}
+
+/* ------------------------ */
+/* Statut */
+.status {
+  margin-top: 8px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  text-align: right;
+  align-self: flex-end;
+}
+
+.status .en-attente {
+  color: #f59e0b;
+}
+
+.status .en-cours {
+  color: #3b82f6;
+}
+
+.status .livre {
+  color: #10b981;
+}
+
+/* ------------------------ */
+/* Modal de succès */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  animation: fadeInModal 0.3s ease-in-out;
+  width: 90%;
+  max-width: 400px; /* ✅ largeur réduite */
+}
+
+
+.modal-content h2 {
+  color: #10b981;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.modal-content p {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.modal-content button {
+  background-color: #2563EB;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.modal-content button:hover {
+  background-color: #1e40af;
+}
+
+@keyframes fadeInModal {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

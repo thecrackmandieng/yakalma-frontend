@@ -1,4 +1,4 @@
- import { Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 
 // Import des composants
 import { LoginComponent } from './pages/auth/login/login.component';
@@ -15,6 +15,7 @@ import { RestaurantMenuManagementComponent } from './pages/restaurant/restaurant
 import { RestaurantOrdersTrackingComponent } from './pages/restaurant/restaurant-orders-tracking/restaurant-orders-tracking.component';
 import { RestaurantOrdersHistoryComponent } from './pages/restaurant/restaurant-orders-history/restaurant-orders-history.component';
 import { RestaurantSettingsComponent } from './pages/restaurant/restaurant-settings/restaurant-settings.component';
+import { RestaurantMenuComponent } from './pages/restaurant/restaurant-menu/restaurant-menu.component';
 
 import { LivreurDashboardComponent } from './pages/livreur/livreur-dashboard/livreur-dashboard.component';
 import { LivreurMapComponent } from './pages/livreur/livreur-map/livreur-map.component';
@@ -28,16 +29,22 @@ import { ClientOrdersTrackingComponent } from './pages/client/client-orders-trac
 import { ClientOrdersHistoryComponent } from './pages/client/client-orders-history/client-orders-history.component';
 import { PartenairePubComponent } from './pages/partenaire-pub/partenaire-pub.component';
 import { InscriptionPartenaireComponent } from './pages/inscription-partenaire/inscription-partenaire.component';
+import { InscriptionPCompletComponent } from './pages/inscription-p-complet/inscription-p-complet.component';
+
 import { InscriptionLivreurComponent } from './pages/inscription-livreur/inscription-livreur.component';
+import { InscriptionLCompletComponent } from './pages/inscription-l-complet/inscription-l-complet.component';
 import { ConnexionPartenaireComponent } from './pages/connexion-partenaire/connexion-partenaire.component';
 import { ConnexionLivreurComponent } from './pages/connexion-livreur/connexion-livreur.component';
-
-
+import { ContactsComponent } from './pages/contacts/contacts.component';
+import { RestaurantListeComponent } from './pages/restaurant-liste/restaurant-liste.component';
 
 import { SupportComponent } from './pages/support/support.component';
 import { FaqComponent } from './pages/faq/faq.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { LivreurPubComponent } from './pages/livreur-pub/livreur-pub.component';
+import { LivreursComponent } from './pages/admin/livreurs/livreurs.component';
+import { PartenairesComponent } from './pages/admin/partenaires/partenaires.component';
+
 
 export const routes: Routes = [
   // Authentification
@@ -48,8 +55,6 @@ export const routes: Routes = [
   { path: 'partenaire-pub', component: PartenairePubComponent },
   { path: 'livreur-pub', component: LivreurPubComponent },
 
-
-
   // Admin
   { path: 'admin/dashboard', component: AdminDashboardComponent },
   { path: 'admin/users-management', component: AdminUsersManagementComponent },
@@ -59,14 +64,18 @@ export const routes: Routes = [
 
   // Restaurant
   { path: 'restaurant/dashboard', component: RestaurantDashboardComponent },
+  { path: 'restaurant/:id/menu', component: RestaurantMenuComponent },
+
   { path: 'restaurant/menu-management', component: RestaurantMenuManagementComponent },
+  { path: 'restaurant/menu', component: RestaurantMenuComponent },
   { path: 'restaurant/orders-tracking', component: RestaurantOrdersTrackingComponent },
   { path: 'restaurant/orders-history', component: RestaurantOrdersHistoryComponent },
   { path: 'restaurant/settings', component: RestaurantSettingsComponent },
   { path: 'inscription-partenaire', component: InscriptionPartenaireComponent },
-  { path: 'inscription-livreur', component: InscriptionLivreurComponent },
+  { path: 'inscription-p-complet', component: InscriptionPCompletComponent },
   { path: 'connexion-partenaire', component: ConnexionPartenaireComponent },
-  { path: 'connexion-livreur', component: ConnexionLivreurComponent },
+  { path: 'restaurants', component: RestaurantListeComponent },
+  { path: 'admin/partenaires', component: PartenairesComponent }, // Nouvelle route pour LivreursComponent
 
 
   // Livreur
@@ -74,6 +83,10 @@ export const routes: Routes = [
   { path: 'livreur/map', component: LivreurMapComponent },
   { path: 'livreur/deliveries-history', component: LivreurDeliveriesHistoryComponent },
   { path: 'livreur/profile', component: LivreurProfileComponent },
+  { path: 'connexion-livreur', component: ConnexionLivreurComponent },
+  { path: 'inscription-livreur', component: InscriptionLivreurComponent },
+  { path: 'inscription-l-complet', component: InscriptionLCompletComponent },
+  { path: 'admin/livreurs', component: LivreursComponent }, // Nouvelle route pour LivreursComponent
 
   // Client
   { path: 'client/dashboard', component: ClientDashboardComponent },
@@ -83,6 +96,7 @@ export const routes: Routes = [
   { path: 'client/orders-history', component: ClientOrdersHistoryComponent },
 
   // Autres
+  { path: 'contacts', component: ContactsComponent },
   { path: 'support', component: SupportComponent },
   { path: 'faq', component: FaqComponent },
   { path: '**', component: NotFoundComponent }, // Page 404
