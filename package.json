@@ -5,9 +5,12 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:ssr": "ng build --configuration production && ng build --configuration production --output-hashing=none",
+    "build:ssr:prod": "ng build --configuration production && ng build --configuration production --output-hashing=none",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:yakalma-frontend": "node dist/yakalma-frontend/server/server.mjs"
+    "serve:ssr": "node --max-old-space-size=512 dist/yakalma-frontend/server/server.mjs",
+    "serve:ssr:yakalma-frontend": "node --max-old-space-size=512 dist/yakalma-frontend/server/server.mjs"
   },
   "private": true,
   "dependencies": {

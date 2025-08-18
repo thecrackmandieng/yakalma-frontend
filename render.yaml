@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: yakalma-frontend
+    runtime: node
+    buildCommand: npm run build:ssr
+    startCommand: npm run serve:ssr
+    envVars:
+      - key: NODE_ENV
+        value: production
