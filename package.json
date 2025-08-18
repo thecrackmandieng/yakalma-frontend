@@ -9,9 +9,9 @@
     "build:ssr:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr": "node --max-old-space-size=384 dist/yakalma-frontend/server/server.mjs",
-    "serve:ssr:yakalma-frontend": "node --max-old-space-size=384 dist/yakalma-frontend/server/server.mjs",
-    "start:prod": "node --max-old-space-size=384 dist/yakalma-frontend/server/server.mjs"
+    "serve:ssr": "node --max-old-space-size=512 dist/yakalma-frontend/server/server.mjs",
+    "serve:ssr:yakalma-frontend": "node --max-old-space-size=512 dist/yakalma-frontend/server/server.mjs",
+    "start:prod": "node --max-old-space-size=512 dist/yakalma-frontend/server/server.mjs"
   },
   "private": true,
   "dependencies": {
