@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map, throwError } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID, inject } from '@angular/core';
 import { Livreur } from '../pages/models/livreur.model';
 
 @Injectable({
@@ -11,57 +13,112 @@ export class LivreursService {
 
   constructor(private http: HttpClient) {}
 
-  /** Récupère le token JWT depuis localStorage */
+  /** SSR-safe auth headers */
   private getAuthHeaders(isFormData: boolean = false): { headers: HttpHeaders } {
-    let token = '';
-    if (typeof window !== 'undefined') {
-      token = localStorage.getItem('token') || localStorage.getItem('authToken') || '';
+    // Skip auth headers during SSR
+    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+      return { headers: new HttpHeaders() };
     }
 
-    const headersConfig = {
-      'Authorization': `Bearer ${token}`,
-      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-    };
+    const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+    
+    if (token) {
+      const headersConfig = {
+        'Authorization': `Bearer ${token}`,
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+      };
+      return { headers: new HttpHeaders(headersConfig) };
+    }
 
-    const headers = new HttpHeaders(headersConfig);
-    return { headers };
+    return { headers: new HttpHeaders() };
   }
 
-  /** Récupère tous les livreurs */
+  /** SSR-safe method to get livreurs */
   getLivreurs(): Observable<Livreur[]> {
+    // Return empty array during SSR to avoid API calls
+    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+      return new Observable(observer => {
+        observer.next([]);
+        observer.complete();
+      });
+    }
+
     return this.http
       .get<{ livreurs: Livreur[] }>(`${this.baseUrl}/all`, this.getAuthHeaders())
       .pipe(map(response => response.livreurs));
   }
 
-  /** Étape 1 : pré-inscription avec email uniquement */
+  /** SSR-safe pre-registration */
   preRegisterLivreur(email: string): Observable<any> {
+    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+      return new Observable(observer => {
+        observer.next({ success: true, message: 'SSR mode - skipped' });
+        observer.complete();
+      });
+    }
+
     return this.http.post(`${this.baseUrl}/pre-register`, { email }, this.getAuthHeaders());
   }
 
-  /** Étape 2 : inscription complète avec FormData pour fichiers */
+  /** SSR-safe registration */
   registerLivreur(formData: FormData): Observable<any> {
+    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+      return new Observable(observer => {
+        observer.next({ success: true, message: 'SSR mode - skipped' });
+        observer.complete();
+      });
+    }
+
     return this.http.post(`${this.baseUrl}/register`, formData, this.getAuthHeaders(true));
   }
 
-  /** Met à jour un livreur par ID (informations générales) */
-updateLivreur(id: string | number, data: Partial<Livreur> | FormData): Observable<any> {
-  const isFormData = data instanceof FormData;
-  return this.http.put(`${this.baseUrl}/${id}`, data, this.getAuthHeaders(isFormData));
-}
+  /** SSR-safe update */
+  updateLivreur(id: string | number, data: Partial<Livreur> | FormData): Observable<any> {
+    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+      return new Observable(observer => {
+        observer.next({ success: true, message: 'SSR mode - skipped' });
+        observer.complete();
+      });
+    }
 
+    const isFormData = data instanceof FormData;
+    return this.http.put(`${this.baseUrl}/${id}`, data, this.getAuthHeaders(isFormData));
+  }
 
-  /** Met à jour uniquement le statut d’un livreur */
+  /** SSR-safe status update */
   updateLivreurStatus(livreurId: string, status: string): Observable<any> {
+    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+      return new Observable(observer => {
+        observer.next({ success: true, message: 'SSR mode - skipped' });
+        observer.complete();
+      });
+    }
+
     const body = { livreurId, status };
     return this.http.put(`${this.baseUrl}/status`, body, this.getAuthHeaders());
   }
-updateLivreurWithFiles(id: string, formData: FormData): Observable<any> {
-  return this.http.put(`${this.baseUrl}/${id}`, formData, this.getAuthHeaders(true));
-}
 
-  /** Supprime un livreur par son ID */
+  /** SSR-safe file update */
+  updateLivreurWithFiles(id: string, formData: FormData): Observable<any> {
+    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+      return new Observable(observer => {
+        observer.next({ success: true, message: 'SSR mode - skipped' });
+        observer.complete();
+      });
+    }
+
+    return this.http.put(`${this.baseUrl}/${id}`, formData, this.getAuthHeaders(true));
+  }
+
+  /** SSR-safe delete */
   deleteLivreur(id: string | number): Observable<any> {
+    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+      return new Observable(observer => {
+        observer.next({ success: true, message: 'SSR mode - skipped' });
+        observer.complete();
+      });
+    }
+
     if (!id) return throwError(() => new Error('ID invalide'));
     return this.http.delete(`${this.baseUrl}/${id}`, this.getAuthHeaders());
   }
