@@ -6,20 +6,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
   font-family: 'Playfair Display', serif;
 }
 
-/* Titre principal */
 .page-container h1 {
-  font-size: 6rem;
+  font-size: 3rem;
   font-weight: bold;
-  font-family: 'Playfair Display', serif;
   margin-bottom: 1rem;
 }
 
-/* Paragraphe principal */
 .page-container p {
   color: #4B5563;
   max-width: 600px;
@@ -30,9 +26,8 @@
 .footer {
   margin-top: 2.5rem;
   max-width: 470px;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: #4B5563;
-  text-align: left;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -40,9 +35,6 @@
 
 .footer .row {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
   gap: 1.5rem;
 }
 
@@ -55,162 +47,70 @@
   text-decoration: underline;
 }
 
-/* Liste des restaurants */
-.restaurant-list {
+/* Restaurant list */
+.restaurant-list, .order-list {
   padding: 10px;
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin: 20px auto;
-  max-width: 1500px;
+  max-width: 1200px;
   width: 100%;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   text-align: center;
-  font-family: 'Playfair Display', serif;
 }
 
-.restaurant-list h1 {
-  text-align: center;
+.restaurant-list h1, .order-list h1 {
   margin-bottom: 20px;
   color: #333;
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: bold;
 }
 
-.restaurant-grid {
+.restaurant-grid, .order-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
   padding: 20px;
-  margin: 0 auto;
-  max-width: 1200px;
-  width: 100%;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s;
 }
 
-.restaurant-card {
+.restaurant-card, .order-card {
   border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s, box-shadow 0.2s;
-  cursor: pointer;
   background-color: #fff;
 }
 
-.restaurant-card:hover {
+.restaurant-card:hover, .order-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
-.card-image img {
+.card-image img, .order-image img {
   width: 100%;
-  height: 200px;
+  height: 180px;
   object-fit: cover;
 }
 
-.card-details {
+.card-details, .order-details {
   padding: 15px;
-  background-color: #fff;
-}
-
-.card-details h2 {
-  margin: 0 0 10px;
-  font-size: 2em;
-  color: #444;
-  font-weight: bold;
-  font-family: 'Playfair Display', serif;
-}
-
-.card-details p {
-  margin: 5px 0;
-  color: #666;
-}
-
-.card-details p strong {
-  color: #333;
-}
-
-/* Page container commandes */
-.order-list {
-  padding: 10px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin: 20px auto;
-  max-width: 1500px;
-  width: 100%;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-family: 'Playfair Display', serif;
-}
-
-.order-list h1 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #333;
-  font-size: 2.5rem;
-  font-weight: bold;
-}
-
-.order-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
-  padding: 20px;
-  margin: 0 auto;
-  max-width: 1200px;
-  width: 100%;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s;
-}
-
-.order-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s, box-shadow 0.2s;
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.order-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-}
-
-.order-details {
-  padding: 15px;
-  background-color: #fff;
   text-align: left;
 }
 
-.order-details h2 {
+.card-details h2, .order-details h2 {
   margin: 0 0 10px;
   font-size: 1.5em;
   color: #444;
   font-weight: bold;
-  font-family: 'Playfair Display', serif;
 }
 
-.order-details p {
+.card-details p, .order-details p {
   margin: 5px 0;
   color: #666;
 }
 
-.order-details p strong {
+.card-details p strong, .order-details p strong {
   color: #333;
 }
 
@@ -218,55 +118,30 @@
   margin: 0 0 10px 20px;
   padding: 0;
   color: #555;
-  font-size: 1em;
 }
 
-/* Image & actions container */
-.order-image {
-  position: relative;
-}
-
-.order-image img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  display: block;
-}
-
-/* Actions container on image */
+/* Order actions */
 .order-actions {
   position: absolute;
   bottom: 12px;
   right: 12px;
-  z-index: 2;
-  padding: 0;
-  background: none;
-  box-shadow: none;
   display: flex;
   gap: 10px;
-  align-items: center;
 }
 
-/* Bouton Accepter */
 .accept-button {
   background-color: #0ae427;
   color: #fff;
   border: none;
   border-radius: 6px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-family: 'Playfair Display', serif;
+  padding: 8px 16px;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  opacity: 0.92;
 }
 
 .accept-button:hover {
   background-color: #06801a;
-  opacity: 1;
 }
 
 .accept-button:disabled {
@@ -275,28 +150,31 @@
   cursor: not-allowed;
 }
 
-/* Bouton icône localisation en bas à gauche */
 .map-icon-button {
   position: absolute;
   bottom: 12px;
   left: 12px;
-  background-color: #e63946; /* Rouge vif */
+  background-color: #e63946;
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   color: white;
-  font-size: 20px;
+  font-size: 16px;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
   box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-  transition: background-color 0.2s;
 }
 
 .map-icon-button:hover {
-  background-color: #b8323b; /* Rouge plus foncé au hover */
+  background-color: #b8323b;
+}
+
+.map-icon-button:disabled {
+  background-color: #999;
+  opacity: 0.6;
 }
 
 /* Modal */
@@ -319,54 +197,10 @@
   border-radius: 8px;
   width: 80%;
   max-width: 600px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.modal-content button {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.modal-content button:hover {
-  background-color: #0056b3;
-}
-
-/* Ajoutez d'autres styles CSS selon vos besoins */
-.map-icon-button {
-  background-color: #e63946 !important; /* rouge vif */
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  color: white !important;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-  transition: background-color 0.2s;
-  margin-bottom: -60px;
-}
-
-.map-icon-button:hover {
-  background-color: #b8323b !important; /* rouge plus foncé */
-}
 .order-image.disabled {
   filter: grayscale(1);
   opacity: 0.5;
   pointer-events: none;
-}
-
-.map-icon-button:disabled {
-  background-color: #999 !important;
-  cursor: not-allowed;
-  opacity: 0.6;
 }
