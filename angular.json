@@ -55,12 +55,7 @@
                 }
               ],
               "outputHashing": "none",
-              "optimization": true,
-              "aot": true,
-              "buildOptimizer": true,
-              "vendorChunk": true,
-              "commonChunk": true,
-              "namedChunks": false
+              "optimization": true
             },
             "development": {
               "optimization": false,
