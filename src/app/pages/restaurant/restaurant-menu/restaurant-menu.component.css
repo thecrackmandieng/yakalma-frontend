@@ -6,61 +6,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
   font-family: 'Playfair Display', serif;
 }
 
-/* Titre principal */
 .page-container h1 {
-  font-size: 6rem;
+  font-size: 3rem;
   font-weight: bold;
-  font-family: 'Playfair Display', serif;
   margin-bottom: 1rem;
 }
 
-/* Paragraphe principal */
 .page-container p {
   color: #4B5563;
   max-width: 600px;
   margin-bottom: 2.5rem;
 }
 
-
-
-/* Footer */
-.footer {
-  margin-top: 2.5rem;
-  max-width: 470px;
-  font-size: 1.5rem;
-  color: #4B5563;
-  text-align: left;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.footer .row {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1.5rem;
-
-}
-
-.footer a {
-  color: #2563EB;
-  text-decoration: none;
-}
-
-.footer a:hover {
-  text-decoration: underline;
-}
-
-
-
-/* Menu principal */
+/* Menu */
 .menu-list {
   padding: 20px;
   background-color: #f9f9f9;
@@ -76,10 +38,8 @@
   text-align: center;
   margin-bottom: 30px;
   color: black;
-  font-size: 5rem;
+  font-size: 3rem;
   font-weight: bold;
-  font-family: 'Playfair Display', serif;
-
 }
 
 .menu-grid {
@@ -106,8 +66,6 @@
   border-color: #2563EB;
 }
 
-
-
 .menu-actions {
   display: flex;
   justify-content: center;
@@ -125,23 +83,20 @@
   cursor: pointer;
   transition: background 0.2s;
   font-weight: bold;
-  box-shadow: 0 2px 8px rgba(37,99,235,0.07);
 }
 
 .order-button:hover {
   background-color: #1d4ed8;
 }
-/* ...votre CSS existant... */
 
-/* Modal backdrop */
+/* Modal */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45); /* Plus sombre pour bien voir le modal */
+  background: rgba(0,0,0,0.45);
   z-index: 2000;
 }
 
-/* Modal window */
 .modal {
   position: fixed;
   top: 40%; left: 50%;
@@ -149,27 +104,24 @@
   background: transparent;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-  padding: 0; /* Remove padding to allow the image to take full space */
-  z-index: 2100; /* Plus haut que le backdrop */
+  padding: 0;
+  z-index: 2100;
   min-width: 200px;
   max-width: 35vw;
   max-height: 58vh;
-  overflow: hidden; /* Ensure content stays within the modal */
+  overflow: hidden;
   display: flex;
   align-items: center;
 }
 
 .modal-content {
   width: 100%;
-  height: 100%; /* Ensure the content takes the full height of the modal */
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
 }
-
-
 
 .menu-image img {
   width: 100%;
@@ -196,7 +148,6 @@
   height: 36px;
   font-size: 1.5rem;
   cursor: pointer;
-  font-family: 'Playfair Display', serif;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -205,7 +156,6 @@
 .quantity-selector span {
   font-size: 1.5rem;
   min-width: 32px;
-  display: inline-block;
   text-align: center;
 }
 
@@ -216,24 +166,6 @@
   margin-top: 16px;
 }
 
-.order-button {
-  background-color: #2563EB;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 28px;
-  font-size: 1.1rem;
-  font-family: 'Playfair Display', serif;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-weight: bold;
-  box-shadow: 0 2px 8px rgba(37,99,235,0.07);
-}
-
-.order-button:hover {
-  background-color: #1d4ed8;
-}
-
 .cancel-button {
   background: #eee;
   color: #333;
@@ -242,7 +174,6 @@
   padding: 10px 24px;
   font-size: 1rem;
   cursor: pointer;
-  font-family: 'Playfair Display', serif;
   transition: background 0.2s;
 }
 
@@ -250,10 +181,7 @@
   background: #ccc;
 }
 
-/* Pour éviter que le modal soit masqué par d'autres éléments */
-body, html {
-  overflow-x: hidden;
-}
+/* Buttons */
 .add-dish-button {
   background-color: #2563EB;
   color: white;
@@ -268,46 +196,6 @@ body, html {
   background-color: #1D4ED8;
 }
 
-/* Ajoutez d'autres styles CSS selon vos besoins */
-.add-dish-button {
-  background-color: #2563EB;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 20px;
-}
-
-.add-dish-button:hover {
-  background-color: #1D4ED8;
-}
-
-/* Ajoutez d'autres styles CSS selon vos besoins */
-.menu-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 12px;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
-  transition: box-shadow 0.3s ease;
-}
-
-.menu-card:hover {
-  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
-}
-
-.menu-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 12px;
-}
-
-/* Style boutons icônes */
 .icon-button {
   background: transparent;
   border: none;
@@ -321,13 +209,6 @@ body, html {
   color: #1d4ed8;
 }
 
-.icon-button:focus {
-  outline: none;
-}
-
-.success-message {
-  animation: fadeOut 3s forwards;
-}
 .success-message {
   background-color: #4caf50;
   color: white;
@@ -336,21 +217,22 @@ body, html {
   border-radius: 4px;
   text-align: center;
   font-weight: bold;
+  animation: fadeOut 3s forwards;
 }
-
 
 @keyframes fadeOut {
   0% { opacity: 1; }
   80% { opacity: 1; }
   100% { opacity: 0; }
 }
+
 .restaurant-card {
   background: white;
   border-radius: 20px;
-  padding: 0.2rem 2rem; /* Réduction du padding vertical */
+  padding: 0.2rem 2rem;
   margin: 1.5rem auto;
   max-width: 600px;
-  box-shadow: 0 15px 35px rgba(0, 12, 26, 0.35); /* Utilisation de #004085 */
+  box-shadow: 0 15px 35px rgba(0, 12, 26, 0.35);
   text-align: center;
   border: 2px solid #2563eb;
   animation: pulseBorder 2.5s infinite;
@@ -359,24 +241,12 @@ body, html {
 .restaurant-title {
   color: #2563eb;
   font-weight: 700;
-  font-size: 2rem; /* Taille un peu réduite */
+  font-size: 2rem;
   margin: 0.5rem 0;
-
   animation: shimmerText 2s infinite;
 }
 
-
-
-
 @keyframes pulseBorder {
-  0% {
-    box-shadow: 0 0 10px #2563eb;
-  }
-  50% {
-    box-shadow: 0 0 20px #3b82f6;
-  }
-  100% {
-    box-shadow: 0 0 10px #2563eb;
-  }
+  0%, 100% { box-shadow: 0 0 10px #2563eb; }
+  50% { box-shadow: 0 0 20px #3b82f6; }
 }
-
