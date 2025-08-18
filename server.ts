@@ -50,7 +50,7 @@ function run(): void {
   // Start up the Node server
   const server = app();
   server.listen(port, '0.0.0.0', () => {
-    console.log(`Node Express server listening on http://localhost:${port}`);
+    console.log(`Node Express server listening on http://0.0.0.0:${port}`);
   });
 }
 
