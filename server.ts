@@ -45,7 +45,7 @@ export function app(): express.Express {
 }
 
 function run(): void {
-  const port = parseInt(process.env['PORT'] || '4000', 10);
+  const port = parseInt(process.env['PORT'] || '10000', 10);
 
   // Start up the Node server
   const server = app();
