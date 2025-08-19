@@ -1,9 +1,43 @@
 // Production server for deployment
 const express = require('express');
 const path = require('path');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+
+// CORS middleware
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://yakalma-frontend.onrender.com');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
+// Proxy middleware for API calls
+const apiProxy = createProxyMiddleware('/api', {
+  target: 'https://yakalma.onrender.com',
+  changeOrigin: true,
+  secure: true,
+  pathRewrite: {
+    '^/api': '/api'
+  },
+  onProxyReq: (proxyReq, req, res) => {
+    console.log(`🔄 Proxying: ${req.method} ${req.url} -> https://yakalma.onrender.com${req.url}`);
+  },
+  onError: (err, req, res) => {
+    console.error('❌ Proxy error:', err);
+    res.status(500).json({ error: 'Proxy error' });
+  }
+});
+
+// Use the proxy
+app.use('/api', apiProxy);
 
 // Determine the correct dist path
 const distPath = path.join(__dirname, 'dist', 'yakalma-frontend', 'browser');
