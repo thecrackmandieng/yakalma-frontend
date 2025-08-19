@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "build": "ng build --configuration production",
-    "start": "serve -s dist/yakalma-frontend -l $PORT",
+  "start": "node server.js",
     "build:ssr": "ng build --configuration production",
     "build:ssr:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
