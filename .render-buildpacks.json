@@ -1,5 +1,7 @@
 {
   "buildpacks": [
-    "heroku/nodejs"
+    {
+      "url": "https://github.com/render-examples/node-buildpack.git"
+    }
   ]
 }

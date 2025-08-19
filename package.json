@@ -4,12 +4,12 @@
   "scripts": {
     "ng": "ng",
     "build": "ng build --configuration production",
-  "start": "node server.js",
+    "start": "node dist/yakalma-frontend/server/server.mjs",
     "build:ssr": "ng build --configuration production",
     "build:ssr:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr": "node --max-old-space-size=384 dist/yakalma-frontend/server/server.mjs",
+    "serve:ssr": "node dist/yakalma-frontend/server/server.mjs",
     "serve:ssr:yakalma-frontend": "node --max-old-space-size=384 dist/yakalma-frontend/server/server.mjs",
     "start:prod": "node --max-old-space-size=384 dist/yakalma-frontend/server/server.mjs"
   },
