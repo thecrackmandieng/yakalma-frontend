@@ -1,8 +1,8 @@
 import { APP_BASE_HREF } from '@angular/common';
 import { CommonEngine } from '@angular/ssr';
-import express from 'express';
-import { fileURLToPath } from 'node:url';
-import { dirname, join, resolve } from 'node:path';
+import express, { Request, Response, NextFunction } from 'express';
+import { fileURLToPath } from 'url';
+import { dirname, join, resolve } from 'path';
 import bootstrap from './src/main.server';
 
 // The Express app is exported so that it can be used by serverless Functions.
@@ -26,7 +26,7 @@ export function app(): express.Express {
   }));
 
   // All regular routes use the Angular engine
-  server.get('**', (req, res, next) => {
+  server.get('**', (req: Request, res: Response, next: NextFunction) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
 
     commonEngine
@@ -46,6 +46,10 @@ export function app(): express.Express {
 
 function run(): void {
   const port = parseInt(process.env['PORT'] || '10000', 10);
+
+  console.log(`Starting server with PORT: ${port}`);
+  console.log(`NODE_ENV: ${process.env['NODE_ENV']}`);
+  console.log(`NODE_OPTIONS: ${process.env['NODE_OPTIONS']}`);
 
   // Start up the Node server
   const server = app();
