@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: process.env['API_URL'] || 'https://your-api-url.com',
+  apiUrl: '/api', // Use relative URL for proxy
   enableDebug: false
 };
