@@ -51,7 +51,7 @@ export class PartenaireService {
     let token = '';
 
     if (isPlatformBrowser(this.platformId)) {
-      token = localStorage.getItem('authToken') || '';
+      token = localStorage.getItem('token') || '';
     }
 
     const headersConfig: Record<string, string> = {
@@ -61,6 +61,13 @@ export class PartenaireService {
     if (!isFormData) headersConfig['Content-Type'] = 'application/json';
 
     return { headers: new HttpHeaders(headersConfig) };
+  }
+
+  /** 🔍 Vérifie si l'utilisateur est authentifié */
+  public isAuthenticated(): boolean {
+    if (!isPlatformBrowser(this.platformId)) return false;
+    const token = localStorage.getItem('token');
+    return !!(token && token !== 'undefined' && token !== 'null' && token.trim() !== '');
   }
 
   // -------------------- PARTENAIRES --------------------

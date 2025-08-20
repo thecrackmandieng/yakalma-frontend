@@ -1,30 +1,60 @@
-import { Injectable, Inject } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { isPlatformBrowser } from '@angular/common';
-import { PLATFORM_ID } from '@angular/core';
+import { HttpInterceptorFn } from '@angular/common/http';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
-
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Skip adding auth headers during SSR
-    if (!isPlatformBrowser(this.platformId)) {
-      return next.handle(req);
-    }
-
-    const token = localStorage.getItem('token') || localStorage.getItem('authToken');
-    
-    if (token) {
-      const authReq = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return next.handle(authReq);
-    }
-
-    return next.handle(req);
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  // Skip auth headers during SSR
+  if (typeof window === 'undefined') {
+    return next(req);
   }
-}
+
+  // Skip auth for public endpoints
+  const publicEndpoints = ['/auth/login', '/auth/register', '/auth/refresh', '/api/public'];
+  const isPublicEndpoint = publicEndpoints.some(endpoint =>
+    req.url.includes(endpoint) || req.url.includes('assets/')
+  );
+
+  if (isPublicEndpoint) {
+    return next(req);
+  }
+
+  // Get token from localStorage - check multiple possible keys
+  const tokenKeys = ['token', 'authToken', 'accessToken', 'jwt'];
+  let token: string | null = null;
+
+  for (const key of tokenKeys) {
+    token = localStorage.getItem(key);
+    if (token) break;
+  }
+
+  if (token) {
+    try {
+      // Decode JWT payload
+      const tokenData = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+
+      // Check if token is expired
+      if (tokenData.exp && tokenData.exp < currentTime) {
+        console.warn('⚠️ Token expiré');
+        localStorage.removeItem('token');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('jwt');
+        return next(req);
+      }
+    } catch (error) {
+      console.error('❌ Format de token invalide:', error);
+    }
+
+    // Clone request & add Authorization header
+    const authReq = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    console.log('👉 Authorization header ajouté:', authReq.headers.get('Authorization'));
+    return next(authReq);
+  }
+
+  // No token found
+  return next(req);
+};

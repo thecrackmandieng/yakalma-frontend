@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map, throwError } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
-import { PLATFORM_ID, inject } from '@angular/core';
 import { Livreur } from '../pages/models/livreur.model';
 
 @Injectable({
@@ -11,17 +10,20 @@ import { Livreur } from '../pages/models/livreur.model';
 export class LivreursService {
   private baseUrl = 'https://yakalma.onrender.com/api/livreurs';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   /** SSR-safe auth headers */
   private getAuthHeaders(isFormData: boolean = false): { headers: HttpHeaders } {
     // Skip auth headers during SSR
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+    if (!isPlatformBrowser(this.platformId)) {
       return { headers: new HttpHeaders() };
     }
 
     const token = localStorage.getItem('token') || localStorage.getItem('authToken');
-    
+
     if (token) {
       const headersConfig = {
         'Authorization': `Bearer ${token}`,
@@ -36,7 +38,7 @@ export class LivreursService {
   /** SSR-safe method to get livreurs */
   getLivreurs(): Observable<Livreur[]> {
     // Return empty array during SSR to avoid API calls
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+    if (!isPlatformBrowser(this.platformId)) {
       return new Observable(observer => {
         observer.next([]);
         observer.complete();
@@ -50,7 +52,7 @@ export class LivreursService {
 
   /** SSR-safe pre-registration */
   preRegisterLivreur(email: string): Observable<any> {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+    if (!isPlatformBrowser(this.platformId)) {
       return new Observable(observer => {
         observer.next({ success: true, message: 'SSR mode - skipped' });
         observer.complete();
@@ -62,7 +64,7 @@ export class LivreursService {
 
   /** SSR-safe registration */
   registerLivreur(formData: FormData): Observable<any> {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+    if (!isPlatformBrowser(this.platformId)) {
       return new Observable(observer => {
         observer.next({ success: true, message: 'SSR mode - skipped' });
         observer.complete();
@@ -74,7 +76,7 @@ export class LivreursService {
 
   /** SSR-safe update */
   updateLivreur(id: string | number, data: Partial<Livreur> | FormData): Observable<any> {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+    if (!isPlatformBrowser(this.platformId)) {
       return new Observable(observer => {
         observer.next({ success: true, message: 'SSR mode - skipped' });
         observer.complete();
@@ -87,7 +89,7 @@ export class LivreursService {
 
   /** SSR-safe status update */
   updateLivreurStatus(livreurId: string, status: string): Observable<any> {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+    if (!isPlatformBrowser(this.platformId)) {
       return new Observable(observer => {
         observer.next({ success: true, message: 'SSR mode - skipped' });
         observer.complete();
@@ -100,7 +102,7 @@ export class LivreursService {
 
   /** SSR-safe file update */
   updateLivreurWithFiles(id: string, formData: FormData): Observable<any> {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+    if (!isPlatformBrowser(this.platformId)) {
       return new Observable(observer => {
         observer.next({ success: true, message: 'SSR mode - skipped' });
         observer.complete();
@@ -112,7 +114,7 @@ export class LivreursService {
 
   /** SSR-safe delete */
   deleteLivreur(id: string | number): Observable<any> {
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) {
+    if (!isPlatformBrowser(this.platformId)) {
       return new Observable(observer => {
         observer.next({ success: true, message: 'SSR mode - skipped' });
         observer.complete();
