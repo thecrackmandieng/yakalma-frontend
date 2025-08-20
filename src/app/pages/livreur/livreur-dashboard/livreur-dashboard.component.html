@@ -58,18 +58,57 @@
   </div>
 </div>
 
-<!-- ─── Modal Google Map ─────────────────────────────────── -->
+<!-- ─── Modal Google Map avec Navigation ─────────────────────────────────── -->
 <div *ngIf="selectedOrder" class="modal-overlay" (click)="closeModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
-    <google-map
-      *ngIf="selectedOrder.center"
-      [center]="selectedOrder.center"
-      [zoom]="13"
-      height="400px"
-      width="100%"
-    ></google-map>
+    <div class="navigation-header">
+      <h3>Navigation vers le client</h3>
+      <button class="close-btn" (click)="closeModal()">×</button>
+    </div>
 
-    <button (click)="closeModal()">Fermer</button>
+    <!-- Informations de route -->
+    <div class="route-info" *ngIf="selectedOrder.routeInfo">
+      <div class="info-item">
+        <i class="fas fa-route"></i>
+        <span>Distance: {{ selectedOrder.routeInfo.distance }}</span>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-clock"></i>
+        <span>Temps estimé: {{ selectedOrder.routeInfo.duration }}</span>
+      </div>
+    </div>
+
+    <!-- Carte OpenStreetMap -->
+    <div id="map-container" style="height: 400px; width: 100%; border: 1px solid #ccc; border-radius: 8px;">
+      <div *ngIf="!selectedOrder" style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666;">
+        <i class="fas fa-map-marked-alt" style="font-size: 2rem; margin-right: 10px;"></i>
+        <span>Carte de navigation</span>
+      </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="navigation-actions">
+      <button class="btn-start-navigation" (click)="startNavigation(selectedOrder)">
+        <i class="fas fa-play"></i>
+        Démarrer la navigation
+      </button>
+      <button class="btn-close" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+        Fermer
+      </button>
+    </div>
+
+    <!-- Indicateur de chargement -->
+    <div class="loading-indicator" *ngIf="isLoadingLocation">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Chargement de votre position...</span>
+    </div>
+
+    <!-- Erreur de géolocalisation -->
+    <div class="error-message" *ngIf="locationError">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>{{ locationError }}</span>
+    </div>
   </div>
 </div>
 
