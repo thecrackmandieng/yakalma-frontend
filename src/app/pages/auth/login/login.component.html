@@ -1,4 +1,4 @@
-<app-header></app-header>
+<!-- <app-header></app-header>
 
 <div class="page-container">
   <h1 class="text-center">Connexion</h1>
@@ -11,9 +11,9 @@
   <div class="card form-card shadow p-4 mx-auto" style="max-width: 500px;">
     <h2 class="mb-3 text-center">Connectez-vous</h2>
 
-    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm"> -->
       <!-- Champ Email ou Téléphone -->
-      <div class="mb-3">
+      <!-- <div class="mb-3">
         <label for="emailOrPhone" class="form-label">Adresse email ou numéro de téléphone</label>
         <input
           type="text"
@@ -25,10 +25,10 @@
           (input)="validateEmailOrPhone()"
           placeholder="Entrez votre adresse email ou numéro"
         />
-      </div>
+      </div> -->
 
       <!-- Champ Mot de passe -->
-      <div class="mb-3">
+      <!-- <div class="mb-3">
         <label for="password" class="form-label">Mot de passe</label>
         <input
           type="password"
@@ -40,33 +40,113 @@
           (input)="validatePassword()"
           placeholder="Entrez votre mot de passe"
         />
-      </div>
+      </div> -->
 
       <!-- Bouton de soumission -->
-      <button
+      <!-- <button
         type="submit"
         class="btn btn-primary w-100"
         [disabled]="!isFormValid()"
       >
         Se connecter
-      </button>
+      </button> -->
 
       <!-- Message d'erreur -->
-      <div *ngIf="errorMessage" class="alert alert-danger mt-3 text-center">
+      <!-- <div *ngIf="errorMessage" class="alert alert-danger mt-3 text-center">
         {{ errorMessage }}
       </div>
-    </form>
+    </form> -->
 
     <!-- Texte conditions -->
-    <p class="terms text-muted mt-4 text-center" style="font-size: 12px;">
+    <!-- <p class="terms text-muted mt-4 text-center" style="font-size: 12px;">
       En continuant, vous acceptez de recevoir des appels, messages WhatsApp ou SMS/RCS au numéro fourni, y compris
       de façon automatisée, de la part d’Uber et de ses sociétés affiliées.
     </p>
   </div>
 
   <div class="footer mt-5">
-    <div class="row">
+    <div class="row"> -->
       <!-- Tu peux ajouter des éléments ici si besoin -->
+    <!-- </div>
+  </div>
+</div>
+
+<app-footer></app-footer> -->
+<app-header></app-header>
+
+<div class="mt-8 mb-8 bg-white px-4 flex flex-col items-center justify-center text-center font-serif">
+  <!-- Titre -->
+  <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold mb-6">Connexion</h1>
+
+  <!-- Description -->
+  <p class="text-gray-600 max-w-xl mb-8 text-base sm:text-lg">
+    Nous prenons en compte tous les facteurs de changement et vous fournissons les composants dont vous avez besoin
+    pour créer une expérience unique et sécurisée.
+  </p>
+
+  <!-- Carte du formulaire -->
+  <div class="bg-white shadow-2xl rounded-2xl p-6 sm:p-10 w-full max-w-md">
+    <h2 class="text-2xl sm:text-3xl font-bold mb-6">Connectez-vous</h2>
+
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="space-y-6">
+      <!-- Champ Email ou Téléphone -->
+      <div class="text-left">
+        <label for="emailOrPhone" class="block font-semibold text-gray-700 mb-1">Adresse email ou numéro de téléphone</label>
+        <input
+          type="text"
+          id="emailOrPhone"
+          name="emailOrPhone"
+          [(ngModel)]="emailOrPhone"
+          required
+          (input)="validateEmailOrPhone()"
+          placeholder="Entrez votre adresse email / téléphone"
+          class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[#5371ff] placeholder-gray-400"
+        />
+      </div>
+
+      <!-- Champ Mot de passe -->
+      <div class="text-left">
+        <label for="password" class="block font-semibold text-gray-700 mb-1">Mot de passe</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+          (input)="validatePassword()"
+          placeholder="Entrez votre mot de passe"
+          class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[#5371ff] placeholder-gray-400"
+        />
+      </div>
+
+      <!-- Bouton -->
+      <button
+        type="submit"
+        [disabled]="!isFormValid()"
+        class="w-full py-3 bg-[#5371ff] text-white font-semibold rounded-md hover:bg-[#415ad8] disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+      >
+        Se connecter
+      </button>
+
+      <!-- Message d'erreur -->
+      <div *ngIf="errorMessage" class="bg-red-100 text-red-600 border border-red-300 p-3 rounded-md text-sm text-center">
+        {{ errorMessage }}
+      </div>
+    </form>
+
+    <!-- Conditions -->
+    <p class="text-xs text-gray-500 mt-6 text-center leading-relaxed">
+      En continuant, vous acceptez de recevoir des appels, messages WhatsApp ou SMS/RCS au numéro fourni,
+      y compris de façon automatisée, de la part d’Uber et de ses sociétés affiliées.
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="mt-10 w-full max-w-2xl flex justify-center text-sm text-gray-600">
+    <div class="flex flex-wrap gap-6 justify-center">
+      <a href="#" class="!text-gray-900 !no-underline hover:!underline">Mentions légales</a>
+      <a href="#" class="!text-gray-900 !no-underline hover:!underline">Confidentialité</a>
+      <a href="#" class="!text-gray-900 !no-underline hover:!underline">Aide</a>
     </div>
   </div>
 </div>
