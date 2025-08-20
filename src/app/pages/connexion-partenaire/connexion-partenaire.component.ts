@@ -33,7 +33,7 @@ export class ConnexionPartenaireComponent {
   }
 
   validatePassword() {
-    this.isPasswordValid = this.password.length >= 4;
+    this.isPasswordValid = this.password.length >= 6;
     this.updateErrorMessage();
   }
 
@@ -48,6 +48,8 @@ export class ConnexionPartenaireComponent {
   }
 
   isFormValid() {
+    this.validateEmailOrPhone();
+    this.validatePassword();
     return this.isEmailValid && this.isPasswordValid;
   }
 

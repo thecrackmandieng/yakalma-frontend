@@ -1,33 +1,81 @@
 <app-header-p></app-header-p>
 
-<div class="page-container">
-  <h1>Connexion Partenaire</h1>
-  <p>
-    Nous prenons en compte tous les facteurs de changement et vous fournissons les composants dont vous avez besoin pour changer et créer un événement qui se produit réellement.
+<div class="mt-8 mb-8 bg-white px-4 flex flex-col items-center justify-center text-center font-['Playfair_Display']">
+
+  <!-- Titre principal -->
+  <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold mb-4">Connexion Partenaire</h1>
+
+  <!-- Description -->
+  <p class="text-gray-600 max-w-xl mb-8 text-sm md:text-base">
+    Nous prenons en compte tous les facteurs de changement et vous fournissons les composants dont vous avez besoin
+    pour changer et créer un événement qui se produit réellement.
   </p>
-  <div class="card">
-    <h2>Connectez-vous</h2>
-    <label for="email" class="label">Adresse email</label>
-    <input type="email" id="email" placeholder="Entrez votre adresse email ou numero telephone" class="inp" [(ngModel)]="email" (input)="validateEmailOrPhone()" />
 
-    <label for="password" class="label">Mot de passe</label>
-    <input type="password" id="password" placeholder="Entrez votre mot de passe" class="inp" [(ngModel)]="password" (input)="validatePassword()" />
+  <!-- Carte principale -->
+  <div class="bg-white shadow-2xl rounded-2xl px-6 py-8 w-full max-w-md">
 
-    <button class="btn-primary" (click)="onLogin()" [disabled]="!isFormValid()">Se connecter</button>
+    <!-- Titre formulaire -->
+    <h2 class="text-2xl sm:text-3xl font-bold mb-6">Connectez-vous</h2>
+
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="space-y-5">
+      <!-- Email -->
+      <div class="text-left">
+         <label for="email" class="block text-left font-semibold text-gray-700 mb-2">Adresse email ou numéro de téléphone</label>
+         <input
+         type="email"
+         id="email"
+         name="email"
+         placeholder="Entrez votre adresse email ou numéro"
+         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5371ff] placeholder-gray-400"
+         [(ngModel)]="email"
+         required
+         (input)="validateEmailOrPhone()"
+         />
+      </div>
+
+      <!-- Password -->
+      <div class="text-left">
+        <label for="password" class="block text-left font-semibold text-gray-700 mb-2">Mot de passe</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Entrez votre mot de passe"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5371ff] placeholder-gray-400"
+          [(ngModel)]="password"
+          required
+          (input)="validatePassword()"
+        />
+      </div>
+
+      <!-- Bouton -->
+      <button
+      type="submit"
+      [disabled]="!isFormValid()"
+      class="w-full py-3 bg-[#5371ff] text-white font-medium rounded-lg hover:bg-[#415ad8] disabled:bg-gray-300 disabled:cursor-not-allowed transition"
+      >
+      Se connecter
+    </button>
 
     <!-- Message d'erreur -->
-    <div *ngIf="errorMessage" class="error-message">
+    <div *ngIf="errorMessage" class="mt-4 text-red-700 bg-red-100 border border-red-300 rounded-md p-3 text-sm">
       {{ errorMessage }}
     </div>
+  </form>
 
-    <p class="terms" style="margin-top: 15px; font-size: 12px; color: #777; text-align: center;">
-      En continuant, vous acceptez de recevoir des appels, messages WhatsApp ou SMS/RCS au numéro fourni, y compris de façon automatisée, de la part d’Uber et de ses sociétés affiliées.
+    <!-- Conditions -->
+    <p class="text-gray-400 text-xs mt-6 text-center">
+      En continuant, vous acceptez de recevoir des appels, messages WhatsApp ou SMS/RCS au numéro fourni,
+      y compris de façon automatisée, de la part d’Uber et de ses sociétés affiliées.
     </p>
   </div>
 
-  <div class="footer">
-    <div class="row">
+  <!-- Footer -->
+  <div class="mt-8 w-full max-w-md text-gray-600 text-sm flex justify-between items-center px-4">
+    <div class="flex space-x-4">
+      <!-- Tu peux rajouter des liens si besoin -->
     </div>
   </div>
 </div>
+
 <app-footer></app-footer>

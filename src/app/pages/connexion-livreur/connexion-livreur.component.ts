@@ -33,7 +33,7 @@ export class ConnexionLivreurComponent {
   }
 
   validatePassword() {
-    this.isPasswordValid = this.password.length >= 4;
+    this.isPasswordValid = this.password.length >= 6;
     this.updateErrorMessage();
   }
 
