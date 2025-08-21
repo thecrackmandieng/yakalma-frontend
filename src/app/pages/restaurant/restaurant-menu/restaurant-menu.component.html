@@ -1,192 +1,297 @@
 <app-header-restaurant></app-header-restaurant>
-<div class="menu-list">
-<ng-container>
-  <div class="restaurant-card">
-    <h1 class="restaurant-title">Menu du Restaurant</h1>
-<h2 class="restaurant-title">{{ restaurantName }}</h2>
+
+<!-- Liste des plats modernisée -->
+<div class="container mx-auto px-2 py-6">
+  <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+    <div>
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Menu du Restaurant</h1>
+      <h2 class="text-lg text-gray-500">{{ restaurantName }}</h2>
+    </div>
+    <button
+      *ngIf="isRestaurant"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold shadow transition"
+      (click)="openAddDishModal()"
+    >
+      <i class="fas fa-plus mr-2"></i> Ajouter un plat
+    </button>
   </div>
-</ng-container>
 
-
-
-  <!-- Bouton Ajouter -->
-  <button *ngIf="isRestaurant" class="add-dish-button" (click)="openAddDishModal()">
-    Ajouter un plat
-  </button>
-
-  <div class="menu-grid">
-    <div class="menu-card" *ngFor="let item of menuItems" (click)="openModal(item, $event)">
-      <div class="menu-image">
-        <img [src]="getImageUrl(item.image)" alt="Image plat" />
-      </div>
-      <div class="menu-details">
-        <h2>{{ item.name }}</h2>
-        <p><strong>Description:</strong> {{ item.description }}</p>
-        <p><strong>Prix:</strong> {{ item.price | currency:'XOF' }}</p>
-      </div>
-
-      <!-- Boutons Modifier et Supprimer -->
-      <div class="menu-actions" *ngIf="isRestaurant">
-        <button (click)="openEditDishModal(item); $event.stopPropagation()" title="Modifier" class="icon-button">
-          <i class="fas fa-pen"></i>
-        </button>
-        <button (click)="openDeleteConfirmModal(item); $event.stopPropagation()" title="Supprimer" class="icon-button">
-          <i class="fas fa-trash"></i>
-        </button>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    <div
+      class="bg-white rounded-xl shadow hover:shadow-lg transition cursor-pointer flex flex-col"
+      *ngFor="let item of menuItems"
+      (click)="openModal(item, $event)"
+    >
+      <img
+        [src]="getImageUrl(item.image)"
+        alt="Image plat"
+        class="w-full h-48 object-cover rounded-t-xl"
+      />
+      <div class="flex-1 flex flex-col p-4">
+        <h2 class="text-lg font-bold text-gray-800 mb-1">{{ item.name }}</h2>
+        <p class="text-gray-500 text-sm mb-2 line-clamp-2">{{ item.description }}</p>
+        <div class="flex items-center justify-between mt-auto">
+          <span class="text-blue-700 font-semibold text-base">{{ item.price | currency:'XOF' }}</span>
+          <div *ngIf="isRestaurant" class="flex gap-2">
+            <button
+              (click)="openEditDishModal(item); $event.stopPropagation()"
+              title="Modifier"
+              class="p-2 rounded-full bg-gray-100 hover:bg-blue-100 text-blue-600 transition"
+            >
+              <i class="fas fa-pen"></i>
+            </button>
+            <button
+              (click)="openDeleteConfirmModal(item); $event.stopPropagation()"
+              title="Supprimer"
+              class="p-2 rounded-full bg-gray-100 hover:bg-red-100 text-red-600 transition"
+            >
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-
-<!-- Modal pour ajouter un plat -->
-<div class="modal-backdrop" *ngIf="showAddDishModal" (click)="closeAddDishModal()"></div>
-<div class="modal" *ngIf="showAddDishModal">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <h2>Ajouter un plat</h2>
-    <form (ngSubmit)="addDish()" #addDishForm="ngForm" enctype="multipart/form-data">
-      <div style="margin-bottom:12px;">
-        <input type="text" [(ngModel)]="newDish.name" name="name" placeholder="Nom du plat" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
-      </div>
-      <div style="margin-bottom:12px;">
-        <input type="text" [(ngModel)]="newDish.description" name="description" placeholder="Description" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
-      </div>
-      <div style="margin-bottom:12px;">
-        <input type="number" [(ngModel)]="newDish.price" name="price" placeholder="Prix" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
-        <div *ngIf="newDish.price" style="margin-top:6px;color:#2563EB;">
+<!-- Modal pour ajouter un plat modernisé -->
+<div
+  class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
+  *ngIf="showAddDishModal"
+  (click)="closeAddDishModal()"
+>
+  <div
+    class="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 p-8 relative"
+    (click)="$event.stopPropagation()"
+  >
+    <button
+      class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl"
+      (click)="closeAddDishModal()"
+      type="button"
+    >
+      <i class="fas fa-times"></i>
+    </button>
+    <h2 class="text-2xl font-bold mb-6 text-center text-blue-700">Ajouter un plat</h2>
+    <form (ngSubmit)="addDish()" #addDishForm="ngForm" enctype="multipart/form-data" class="space-y-4">
+      <input
+        type="text"
+        [(ngModel)]="newDish.name"
+        name="name"
+        placeholder="Nom du plat"
+        required
+        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-400"
+      />
+      <input
+        type="text"
+        [(ngModel)]="newDish.description"
+        name="description"
+        placeholder="Description"
+        required
+        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-400"
+      />
+      <div>
+        <input
+          type="number"
+          [(ngModel)]="newDish.price"
+          name="price"
+          placeholder="Prix"
+          required
+          class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-400"
+        />
+        <div *ngIf="newDish.price" class="mt-1 text-blue-600 text-sm">
           Prix du plat : {{ newDish.price | currency:'XOF' }}
         </div>
       </div>
-      <div style="margin-bottom:12px;">
-        <input type="file" (change)="onImageSelected($event)" accept="image/*" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+      <input
+        type="file"
+        (change)="onImageSelected($event)"
+        accept="image/*"
+        required
+        class="w-full px-4 py-2 rounded-lg border border-gray-300"
+      />
+      <div *ngIf="imagePreview" class="mb-2 text-center">
+        <img [src]="imagePreview" alt="Aperçu de l'image" class="max-w-full max-h-40 rounded-lg mx-auto" />
       </div>
-      <div *ngIf="imagePreview" style="margin-bottom:12px;text-align:center;">
-        <img [src]="imagePreview" alt="Aperçu de l'image" style="max-width:100%;max-height:150px;border-radius:8px;">
+      <!-- Suppléments -->
+      <div>
+        <h3 class="text-base font-semibold mb-2">Suppléments</h3>
+        <div *ngFor="let supplement of newDish.supplements; let i = index" class="flex gap-2 mb-2 items-center">
+          <input
+            type="text"
+            [(ngModel)]="supplement.name"
+            [name]="'supplementName' + i"
+            placeholder="Nom du supplément"
+            class="flex-1 px-3 py-2 rounded-lg border border-gray-300"
+          />
+          <input
+            type="number"
+            [(ngModel)]="supplement.price"
+            [name]="'supplementPrice' + i"
+            placeholder="Prix"
+            class="w-24 px-3 py-2 rounded-lg border border-gray-300"
+          />
+          <button
+            type="button"
+            (click)="removeNewSupplement(i)"
+            class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+        <button
+          type="button"
+          (click)="addNewSupplement()"
+          class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          <i class="fas fa-plus mr-1"></i> Ajouter un supplément
+        </button>
       </div>
-      <div class="modal-actions">
-        <button class="order-button" type="submit">Ajouter</button>
-        <button class="cancel-button" type="button" (click)="closeAddDishModal()">Annuler</button>
+      <div class="flex justify-end gap-3 pt-4">
+        <button
+          class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold"
+          type="submit"
+        >
+          Ajouter
+        </button>
+        <button
+          class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold"
+          type="button"
+          (click)="closeAddDishModal()"
+        >
+          Annuler
+        </button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- Modal pour les détails du plat -->
-<div class="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center" *ngIf="showModal" (click)="closeModal()">
-  <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl mx-4 p-6 relative overflow-y-auto max-h-[90vh]" (click)="$event.stopPropagation()">
+
+<!-- Modal pour les détails du plat modernisé et responsive -->
+<div
+  class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50"
+  *ngIf="showModal"
+  (click)="closeModal()"
+>
+  <div
+    class="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl mx-4 p-0 md:p-6 overflow-y-auto max-h-[90vh] flex flex-col"
+    (click)="$event.stopPropagation()"
+  >
     <ng-container *ngIf="!showOperatorChoice && !showPaymentForm">
       <!-- Image + Titre -->
-      <div class="text-center mb-6">
-        <img [src]="getImageUrl(modalItem?.image || '')" alt="Image plat" class="w-full h-48 object-cover rounded-xl mx-auto" />
-        <h2 class="text-2xl font-bold mt-4">{{ modalItem?.name }}</h2>
-        <p class="text-gray-500 mt-2">{{ modalItem?.description }}</p>
+      <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start p-6">
+        <img
+          [src]="getImageUrl(modalItem?.image || '')"
+          alt="Image plat"
+          class="w-full md:w-64 h-48 object-cover rounded-xl shadow"
+        />
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold text-blue-700 mb-2">{{ modalItem?.name }}</h2>
+          <p class="text-gray-500 mb-2">{{ modalItem?.description }}</p>
+          <div class="flex flex-wrap gap-4 mt-4">
+            <div>
+              <p class="text-xs text-gray-600">Prix du plat</p>
+              <p class="text-lg font-semibold text-blue-800">{{ modalItem?.price | currency:'XOF' }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-600">Frais de livraison</p>
+              <p class="text-lg font-semibold text-blue-800">{{ deliveryFee | currency:'XOF' }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-600">Frais de service</p>
+              <p class="text-lg font-semibold text-blue-800">{{ serviceFee | currency:'XOF' }}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Infos et Suppléments -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Prix -->
-        <div>
-          <p class="text-sm text-gray-600">Prix du plat</p>
-          <p class="text-lg font-semibold">{{ modalItem?.price | currency:'XOF' }}</p>
-        </div>
-
-        <!-- Quantité -->
-        <div>
-          <p class="text-sm text-gray-600">Quantité</p>
-          <div class="flex items-center gap-3 mt-2">
-            <button (click)="decrementQuantity()" class="bg-gray-200 text-lg px-3 py-1 rounded">-</button>
-            <span class="text-lg font-medium">{{ quantity }}</span>
-            <button (click)="incrementQuantity()" class="bg-gray-200 text-lg px-3 py-1 rounded">+</button>
+      <!-- Quantité & Suppléments -->
+      <div class="px-6 pb-4">
+        <div class="flex flex-col md:flex-row gap-6">
+          <!-- Quantité -->
+          <div class="flex-1">
+            <p class="text-sm text-gray-600 mb-2">Quantité</p>
+            <div class="flex items-center gap-3">
+              <button (click)="decrementQuantity()" class="bg-gray-200 text-lg px-3 py-1 rounded hover:bg-gray-300">-</button>
+              <span class="text-lg font-medium">{{ quantity }}</span>
+              <button (click)="incrementQuantity()" class="bg-gray-200 text-lg px-3 py-1 rounded hover:bg-gray-300">+</button>
+            </div>
+          </div>
+          <!-- Suppléments -->
+          <div class="flex-1">
+            <p class="text-sm text-gray-600 mb-2">Suppléments</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <label *ngFor="let extra of modalSupplements" class="flex items-center gap-2">
+                <input type="checkbox" [(ngModel)]="extra.selected" class="form-checkbox accent-blue-600">
+                <span class="text-sm">{{ extra.name }} <span class="text-blue-700">(+{{ extra.price | currency:'XOF' }})</span></span>
+              </label>
+            </div>
           </div>
         </div>
-
-        <!-- Livraison -->
-        <div>
-          <p class="text-sm text-gray-600">Frais de livraison</p>
-          <p class="text-lg font-semibold">{{ deliveryFee | currency:'XOF' }}</p>
-        </div>
-
-        <!-- Service -->
-        <div>
-          <p class="text-sm text-gray-600">Frais de service</p>
-          <p class="text-lg font-semibold">{{ serviceFee | currency:'XOF' }}</p>
-        </div>
-
-        <!-- Suppléments -->
-        <div class="md:col-span-2">
-          <p class="text-sm text-gray-600 mb-2">Suppléments</p>
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <label *ngFor="let extra of extras" class="flex items-center gap-2">
-              <input type="checkbox" [(ngModel)]="extra.selected" class="form-checkbox">
-              <span class="text-sm">{{ extra.name }} (+{{ extra.price | currency:'XOF' }})</span>
-            </label>
-          </div>
-        </div>
-
         <!-- Total -->
-        <div class="md:col-span-2 text-right mt-4">
+        <div class="text-right mt-6">
           <p class="text-xl font-bold text-gray-800">Total : {{ calculateTotalPrice() | currency:'XOF' }}</p>
         </div>
       </div>
 
       <!-- Actions -->
-      <div class="flex justify-end gap-4 mt-6">
-        <button class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-semibold" (click)="addToCart()">Ajouter au panier</button>
-        <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-5 py-2 rounded-lg font-semibold" (click)="closeModal()">Annuler</button>
+      <div class="flex flex-col md:flex-row justify-end gap-3 px-6 pb-6">
+        <button class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-semibold transition" (click)="addToCart()">
+          Ajouter au panier
+        </button>
+        <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-5 py-2 rounded-lg font-semibold transition" (click)="closeModal()">
+          Annuler
+        </button>
       </div>
     </ng-container>
   </div>
 </div>
+<!-- ...autres parties du fichier... -->
 
+<!-- Étape 2 : Choix opérateur (inchangé) -->
+<ng-container *ngIf="showOperatorChoice">
+  <h2>Choisissez un opérateur</h2>
+  <div style="display:flex;gap:18px;justify-content:center;margin:24px 0;">
+    <div *ngFor="let op of operators" (click)="chooseOperator(op)" style="cursor:pointer;text-align:center;">
+      <img [src]="op.image" [alt]="op.name" style="width:70px;height:70px;object-fit:contain;border-radius:12px;border:2px solid #2563EB;margin-bottom:8px;">
+      <div>{{ op.name }}</div>
+    </div>
+  </div>
+  <div class="modal-actions">
+    <button class="cancel-button" (click)="closeModal()">Annuler</button>
+  </div>
+</ng-container>
 
+<!-- Étape 3 : Formulaire de paiement (inchangé) -->
+<ng-container *ngIf="showPaymentForm">
+  <h2>Paiement - {{ selectedOperator?.name }}</h2>
+  <form (ngSubmit)="validatePayment()" #payForm="ngForm" style="width:100%;max-width:350px;">
+    <div style="margin-bottom:12px;">
+      <input type="text" [(ngModel)]="payment.address" name="address" placeholder="Adresse de livraison" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <input type="text" [(ngModel)]="payment.contact" name="contact" placeholder="Numéro de contact" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <input type="text" [(ngModel)]="payment.name" name="name" placeholder="Nom sur la carte" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <input type="text" [(ngModel)]="payment.card" name="card" placeholder="Numéro de carte" required maxlength="19" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:12px;">
+      <input type="text" [(ngModel)]="payment.exp" name="exp" placeholder="MM/AA" required maxlength="5" style="flex:1;padding:8px;border-radius:6px;border:1px solid #ccc;">
+      <input type="text" [(ngModel)]="payment.cvc" name="cvc" placeholder="CVC" required maxlength="4" style="flex:1;padding:8px;border-radius:6px;border:1px solid #ccc;">
+    </div>
+    <div class="modal-actions">
+      <button class="order-button" type="submit">Valider le paiement</button>
+      <button class="cancel-button" type="button" (click)="showPaymentForm = false; showOperatorChoice = true;">Retour</button>
+    </div>
+  </form>
+  <div *ngIf="successMessage" class="success-message" style="margin-top:20px;color:green;text-align:center;">
+    {{ successMessage }}
+  </div>
+</ng-container>
 
-    <!-- Étape 2 : Choix opérateur -->
-    <ng-container *ngIf="showOperatorChoice">
-      <h2>Choisissez un opérateur</h2>
-      <div style="display:flex;gap:18px;justify-content:center;margin:24px 0;">
-        <div *ngFor="let op of operators" (click)="chooseOperator(op)" style="cursor:pointer;text-align:center;">
-          <img [src]="op.image" [alt]="op.name" style="width:70px;height:70px;object-fit:contain;border-radius:12px;border:2px solid #2563EB;margin-bottom:8px;">
-          <div>{{ op.name }}</div>
-        </div>
-      </div>
-      <div class="modal-actions">
-        <button class="cancel-button" (click)="closeModal()">Annuler</button>
-      </div>
-    </ng-container>
-
-    <!-- Étape 3 : Formulaire de paiement -->
-    <ng-container *ngIf="showPaymentForm">
-      <h2>Paiement - {{ selectedOperator?.name }}</h2>
-      <form (ngSubmit)="validatePayment()" #payForm="ngForm" style="width:100%;max-width:350px;">
-        <div style="margin-bottom:12px;">
-  <input type="text" [(ngModel)]="payment.address" name="address" placeholder="Adresse de livraison" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
-</div>
-<div style="margin-bottom:12px;">
-  <input type="text" [(ngModel)]="payment.contact" name="contact" placeholder="Numéro de contact" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
-</div>
-
-        <div style="margin-bottom:12px;">
-          <input type="text" [(ngModel)]="payment.name" name="name" placeholder="Nom sur la carte" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
-        </div>
-        <div style="margin-bottom:12px;">
-          <input type="text" [(ngModel)]="payment.card" name="card" placeholder="Numéro de carte" required maxlength="19" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
-        </div>
-        <div style="display:flex;gap:10px;margin-bottom:12px;">
-          <input type="text" [(ngModel)]="payment.exp" name="exp" placeholder="MM/AA" required maxlength="5" style="flex:1;padding:8px;border-radius:6px;border:1px solid #ccc;">
-          <input type="text" [(ngModel)]="payment.cvc" name="cvc" placeholder="CVC" required maxlength="4" style="flex:1;padding:8px;border-radius:6px;border:1px solid #ccc;">
-        </div>
-        <div class="modal-actions">
-          <button class="order-button" type="submit">Valider le paiement</button>
-          <button class="cancel-button" type="button" (click)="showPaymentForm = false; showOperatorChoice = true;">Retour</button>
-        </div>
-      </form>
-      <div *ngIf="successMessage" class="success-message" style="margin-top:20px;color:green;text-align:center;">
-        {{ successMessage }}
-      </div>
-    </ng-container>
-
-
-<!-- Modal d'édition -->
+<!-- Modal d'édition (inchangé) -->
 <div class="modal-backdrop" *ngIf="showEditDishModal" (click)="closeEditDishModal()"></div>
 <div class="modal" *ngIf="showEditDishModal">
   <div class="modal-content" (click)="$event.stopPropagation()">

@@ -197,51 +197,62 @@ export class HeaderComponent implements OnInit {
   }
 
   validatePayment() {
-    if (
-      !this.payment.address ||
-      !this.payment.contact ||
-      !this.payment.name ||
-      !this.payment.card ||
-      !this.payment.exp ||
-      !this.payment.cvc
-    ) {
-      this.showError('Veuillez remplir tous les champs.');
-      return;
-    }
-
-    const restaurantId = this.cartItems.length > 0 ? this.cartItems[0].restaurantId || '' : '';
-    if (!restaurantId) {
-      this.showError('Erreur : restaurant introuvable.');
-      return;
-    }
-
-    const orderPayload = {
-      items: this.cartItems.map(item => ({
-        name: item.name,
-        quantity: item.quantity,
-        image: item.image || '',
-        price: item.price
-      })),
-      customerName: this.payment.name.trim(),
-      address: this.payment.address.trim(),
-      contact: this.payment.contact.trim(),
-      restaurantId: restaurantId,
-      operator: this.selectedOperator?.name || ''
-    };
-
-    this.partenaireService.createOrder(orderPayload).subscribe({
-      next: () => {
-        this.showSuccess('Commande envoyée avec succès !');
-        this.cartService.clearCart();
-        this.payment = { address: '', contact: '', name: '', card: '', exp: '', cvc: '' };
-        setTimeout(() => this.closeOrderModal(), 2000);
-      },
-      error: () => {
-        this.showError('Erreur lors de l\'envoi de la commande.');
-      }
-    });
+  if (
+    !this.payment.address ||
+    !this.payment.contact ||
+    !this.payment.name ||
+    !this.payment.card ||
+    !this.payment.exp ||
+    !this.payment.cvc
+  ) {
+    this.showError('Veuillez remplir tous les champs.');
+    return;
   }
 
+  const restaurantId = this.cartItems.length > 0 ? this.cartItems[0].restaurantId || '' : '';
+  if (!restaurantId) {
+    this.showError('Erreur : restaurant introuvable.');
+    return;
+  }
+
+  const orderPayload = {
+    items: this.cartItems.map(item => ({
+      menuItemId: item._id || item.menuItemId, // <-- Ajoute l'id du plat ici
+      name: item.name,
+      quantity: item.quantity,
+      image: item.image || '',
+      price: item.price,
+      supplements: item.supplements || []
+    })),
+    customerName: this.payment.name.trim(),
+    address: this.payment.address.trim(),
+    contact: this.payment.contact.trim(),
+    restaurantId: restaurantId,
+    operator: this.selectedOperator?.name || ''
+  };
+
+  this.partenaireService.createOrder(orderPayload).subscribe({
+    next: () => {
+      this.showSuccess('Commande envoyée avec succès !');
+      this.cartService.clearCart();
+      this.payment = { address: '', contact: '', name: '', card: '', exp: '', cvc: '' };
+      setTimeout(() => this.closeOrderModal(), 2000);
+    },
+    error: () => {
+      this.showError('Erreur lors de l\'envoi de la commande.');
+    }
+  });
+}
+getCartTotal(): number {
+  return this.cartItems.reduce((total, item) => {
+    if (item.total) return total + item.total;
+    let supplementsTotal = 0;
+    if (item.supplements && Array.isArray(item.supplements)) {
+      supplementsTotal = item.supplements.reduce((s: number, sup: { price?: number }) => s + (sup.price || 0), 0) * (item.quantity || 1);
+    }
+    return total + ((item.price * item.quantity) + supplementsTotal);
+  }, 0);
+}
   cancelOrder() { this.closeOrderModal(); }
 
   onMouseEnter(event: Event) {

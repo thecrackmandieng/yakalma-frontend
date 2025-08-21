@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { PartenaireService } from '../../../services/partenaire.service';
 import { CartService } from '../../../services/cart.service';
 import { MenuItem } from '../../models/menu-item.model';
+import { Supplement } from '../../models/supplement.model';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -39,10 +40,12 @@ export class RestaurantMenuComponent implements OnInit {
   };
 
   showAddDishModal = false;
-  newDish: Partial<MenuItem> = { name: '', description: '', price: 0, image: '' };
+  newDish: any = { name: '', description: '', price: 0, image: '', supplements: [] };
+  newSupplements: Supplement[] = [];
 
   showEditDishModal = false;
-  editDish: Partial<MenuItem> = {};
+  editDish: any = {};
+  editSupplements: Supplement[] = [];
   editImagePreview: string | ArrayBuffer | null = null;
   selectedEditImage: File | null = null;
 
@@ -62,11 +65,8 @@ export class RestaurantMenuComponent implements OnInit {
   deliveryFee = 500;
   serviceFee = 300;
 
-  extras = [
-    { name: 'Fromage', price: 200, selected: false },
-    { name: 'Frites', price: 300, selected: false },
-    { name: 'Sauce', price: 100, selected: false }
-  ];
+  // Pour les suppléments dynamiques du plat sélectionné
+  modalSupplements: { name: string, price: number, selected: boolean }[] = [];
 
   constructor(
     private partenaireService: PartenaireService,
@@ -155,6 +155,12 @@ export class RestaurantMenuComponent implements OnInit {
     this.showPaymentForm = false;
     this.selectedOperator = null;
     this.payment = { name: '', card: '', exp: '', cvc: '', address: '', contact: '' };
+
+    // Initialiser les suppléments du plat courant (avec case à cocher)
+    this.modalSupplements = (item.supplements || []).map((s: any) => ({
+      ...s,
+      selected: false
+    }));
   }
 
   closeModal() {
@@ -163,6 +169,7 @@ export class RestaurantMenuComponent implements OnInit {
     this.showOperatorChoice = false;
     this.showPaymentForm = false;
     this.selectedOperator = null;
+    this.modalSupplements = [];
   }
 
   incrementQuantity() {
@@ -176,18 +183,20 @@ export class RestaurantMenuComponent implements OnInit {
   calculateTotalPrice(): number {
     if (!this.modalItem) return 0;
     const basePrice = this.modalItem.price * this.quantity;
-    const extrasTotal = this.extras.filter(e => e.selected).reduce((sum, e) => sum + e.price, 0);
-    return basePrice + extrasTotal + this.deliveryFee + this.serviceFee;
+    const supplementsTotal = this.modalSupplements
+      .filter(s => s.selected)
+      .reduce((sum, s) => sum + (s.price * this.quantity), 0);
+    return basePrice + supplementsTotal + this.deliveryFee + this.serviceFee;
   }
 
   addToCart() {
     if (!this.modalItem) return;
 
-    const selectedExtras = this.extras.filter(extra => extra.selected);
+    const selectedSupplements = this.modalSupplements.filter(s => s.selected);
     const itemToAdd = {
       ...this.modalItem,
       quantity: this.quantity,
-      extras: selectedExtras,
+      supplements: selectedSupplements,
       total: this.calculateTotalPrice()
     };
     this.cartService.addToCart(itemToAdd);
@@ -222,7 +231,8 @@ export class RestaurantMenuComponent implements OnInit {
       items: [{
         name: this.modalItem.name,
         quantity: this.quantity,
-        image: this.modalItem.image || ''
+        image: this.modalItem.image || '',
+        supplements: this.modalSupplements.filter(s => s.selected)
       }],
       customerName: this.payment.name.trim(),
       address: this.payment.address.trim(),
@@ -257,7 +267,7 @@ export class RestaurantMenuComponent implements OnInit {
 
   closeAddDishModal() {
     this.showAddDishModal = false;
-    this.newDish = { name: '', description: '', price: 0, image: '' };
+    this.newDish = { name: '', description: '', price: 0, image: '', supplements: [] };
     this.imagePreview = null;
     this.selectedImage = null;
   }
@@ -283,6 +293,9 @@ export class RestaurantMenuComponent implements OnInit {
     formData.append('description', this.newDish.description);
     formData.append('price', this.newDish.price.toString());
     formData.append('image', this.selectedImage);
+    if (this.newDish.supplements && this.newDish.supplements.length > 0) {
+      formData.append('supplements', JSON.stringify(this.newDish.supplements));
+    }
 
     this.partenaireService.addMenuItem(formData).subscribe({
       next: (res: any) => {
@@ -330,6 +343,9 @@ export class RestaurantMenuComponent implements OnInit {
     if (this.selectedEditImage) {
       formData.append('image', this.selectedEditImage);
     }
+    if (this.editDish.supplements && this.editDish.supplements.length > 0) {
+      formData.append('supplements', JSON.stringify(this.editDish.supplements));
+    }
 
     this.partenaireService.updateMenuItem(this.editDish._id, formData).subscribe({
       next: (res: any) => {
@@ -361,5 +377,32 @@ export class RestaurantMenuComponent implements OnInit {
       },
       error: () => alert('Erreur lors de la suppression du plat.')
     });
+  }
+
+  // Méthodes pour gérer les suppléments
+  addNewSupplement() {
+    if (!this.newDish.supplements) {
+      this.newDish.supplements = [];
+    }
+    this.newDish.supplements.push({ name: '', price: 0 });
+  }
+
+  removeNewSupplement(index: number) {
+    if (this.newDish.supplements) {
+      this.newDish.supplements.splice(index, 1);
+    }
+  }
+
+  addEditSupplement() {
+    if (!this.editDish.supplements) {
+      this.editDish.supplements = [];
+    }
+    this.editDish.supplements.push({ name: '', price: 0 });
+  }
+
+  removeEditSupplement(index: number) {
+    if (this.editDish.supplements) {
+      this.editDish.supplements.splice(index, 1);
+    }
   }
 }

@@ -4,4 +4,6 @@ export interface MenuItem {
   description: string;
   price: number;
   image: string;
+  supplements?: { name: string; price: number }[];
+
 }

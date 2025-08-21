@@ -75,68 +75,89 @@
         </div>
       </div>
 
-      <!-- Panier Icon + Dropdown -->
-      <div class="relative" (click)="toggleCartDropdown()" tabindex="0" (keydown.enter)="toggleCartDropdown()">
-        <fa-icon [icon]="faShoppingCart" size="lg" class="text-[#5371ff] cursor-pointer"></fa-icon>
-        <span
-          *ngIf="cartCount > 0"
-          class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-semibold rounded-full px-1.5 py-0.5 select-none"
-          >{{ cartCount }}</span
+     <!-- ...autres parties du header... -->
+
+<!-- Panier Icon + Dropdown -->
+<div class="relative" (click)="toggleCartDropdown()" tabindex="0" (keydown.enter)="toggleCartDropdown()">
+  <fa-icon [icon]="faShoppingCart" size="lg" class="text-[#5371ff] cursor-pointer"></fa-icon>
+  <span
+    *ngIf="cartCount > 0"
+    class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-semibold rounded-full px-1.5 py-0.5 select-none"
+    >{{ cartCount }}</span
+  >
+
+  <!-- Mini Panier -->
+  <div
+    *ngIf="showCartDropdown"
+    class="absolute right-0 mt-3 w-80 bg-white border border-gray-300 rounded-lg shadow-lg z-50 p-4 animate-fadeIn"
+    (click)="$event.stopPropagation()"
+  >
+    <h3 class="text-lg font-semibold mb-4 border-b border-gray-200 pb-2">
+      Panier ({{ cartCount }})
+    </h3>
+    <div *ngIf="cartItems.length > 0; else emptyCartTemplate">
+      <ul class="max-h-48 overflow-auto mb-4 divide-y divide-gray-200">
+        <li
+          *ngFor="let item of cartItems"
+          class="py-2 flex items-center gap-3"
         >
-
-        <!-- Mini Panier -->
-        <div
-          *ngIf="showCartDropdown"
-          class="absolute right-0 mt-3 w-80 bg-white border border-gray-300 rounded-lg shadow-lg z-50 p-4 animate-fadeIn"
-          (click)="$event.stopPropagation()"
-        >
-          <h3 class="text-lg font-semibold mb-4 border-b border-gray-200 pb-2">
-            Panier ({{ cartCount }})
-          </h3>
-          <div *ngIf="cartItems.length > 0; else emptyCartTemplate">
-            <ul class="max-h-48 overflow-auto mb-4 divide-y divide-gray-200">
-              <li
-                *ngFor="let item of cartItems"
-                class="py-2 flex items-center gap-3"
-              >
-                <img
-                  [src]="item.image"
-                  alt="plat"
-                  class="w-14 h-14 object-cover rounded-lg shadow-sm"
-                />
-                <div class="flex-1">
-                  <p class="text-sm font-semibold truncate">{{ item.name }}</p>
-                  <p class="text-xs text-gray-500 truncate">
-                    {{ item.restaurantName }}
-                  </p>
-                  <p class="text-xs text-gray-600">Quantité: {{ item.quantity }}</p>
-                </div>
-                <p class="text-sm font-bold text-[#5371ff]">
-                  {{ (item.price * item.quantity) | currency : 'XOF' }}
-                </p>
-              </li>
-            </ul>
-
-            <button
-              (click)="emptyCart()"
-              class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md font-semibold transition"
-            >
-              Vider le panier
-            </button>
-
-            <button
-              (click)="openOrderModal()"
-              class="w-full mt-3 bg-green-600 hover:bg-green-700 text-white py-2 rounded-md font-semibold transition"
-            >
-              Commander
-            </button>
+          <img
+            [src]="item.image"
+            alt="plat"
+            class="w-14 h-14 object-cover rounded-lg shadow-sm"
+          />
+          <div class="flex-1">
+            <p class="text-sm font-semibold truncate">{{ item.name }}</p>
+            <p class="text-xs text-gray-500 truncate">
+              {{ item.restaurantName }}
+            </p>
+            <p class="text-xs text-gray-600">Quantité: {{ item.quantity }}</p>
+            <!-- Affichage des suppléments sélectionnés -->
+            <ng-container *ngIf="item.supplements && item.supplements.length > 0">
+              <p class="text-xs text-gray-500 mt-1">
+                Suppléments :
+                <span *ngFor="let sup of item.supplements; let last = last">
+                  {{ sup.name }}<span *ngIf="sup.price"> (+{{ sup.price | currency:'XOF' }})</span><span *ngIf="!last">, </span>
+                </span>
+              </p>
+            </ng-container>
           </div>
+          <p class="text-sm font-bold text-[#5371ff]">
+            <!-- Affiche le total de l'item (avec suppléments si présent) -->
+            {{ item.total ? (item.total | currency : 'XOF') : ((item.price * item.quantity) | currency : 'XOF') }}
+          </p>
+        </li>
+      </ul>
 
-          <ng-template #emptyCartTemplate>
-            <p class="text-center text-gray-500 py-6">Votre panier est vide.</p>
-          </ng-template>
-        </div>
+      <!-- Total du panier -->
+      <div class="flex justify-between items-center mb-4">
+        <span class="font-semibold text-gray-700">Total :</span>
+        <span class="font-bold text-lg text-[#5371ff]">
+          {{ getCartTotal() | currency : 'XOF' }}
+        </span>
       </div>
+
+      <button
+        (click)="emptyCart()"
+        class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md font-semibold transition"
+      >
+        Vider le panier
+      </button>
+
+      <button
+        (click)="openOrderModal()"
+        class="w-full mt-3 bg-green-600 hover:bg-green-700 text-white py-2 rounded-md font-semibold transition"
+      >
+        Commander
+      </button>
+    </div>
+
+    <ng-template #emptyCartTemplate>
+      <p class="text-center text-gray-500 py-6">Votre panier est vide.</p>
+    </ng-template>
+  </div>
+</div>
+<!-- ...autres parties du header... -->
 
       <!-- Connexion -->
       <button
