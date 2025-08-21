@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
@@ -35,20 +36,27 @@ export class HeaderComponent implements OnInit {
   faBars = faBars;
   faTimes = faTimes;
 
+  isBrowser: boolean;
+
   constructor(
     private partenaireService: PartenaireService,
-    private router: Router
-  ) {}
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   ngOnInit(): void {
-    this.partenaireService.getPartenaires().subscribe({
-      next: (data) => {
-        this.allRestaurants = data;
-      },
-      error: (err) => {
-        console.error('Erreur lors du chargement des restaurants:', err);
-      }
-    });
+    if (this.isBrowser) {
+      this.partenaireService.getPartenaires().subscribe({
+        next: (data) => {
+          this.allRestaurants = data;
+        },
+        error: (err) => {
+          console.error('Erreur lors du chargement des restaurants:', err);
+        }
+      });
+    }
   }
 
   toggleMenu(): void {
@@ -68,7 +76,7 @@ export class HeaderComponent implements OnInit {
   }
 
   goToRestaurantMenu(id: string | undefined): void {
-    if (id) {
+    if (id && this.isBrowser) {
       this.router.navigate(['/restaurant', id, 'menu']);
       this.searchTerm = '';
       this.filteredRestaurants = [];
@@ -76,16 +84,20 @@ export class HeaderComponent implements OnInit {
   }
 
   onMouseEnter(event: Event): void {
-    const target = event.target as HTMLElement;
-    if (target) {
-      target.style.backgroundColor = '#f0f0f0';
+    if (this.isBrowser) {
+      const target = event.target as HTMLElement;
+      if (target) {
+        target.style.backgroundColor = '#f0f0f0';
+      }
     }
   }
 
   onMouseLeave(event: Event): void {
-    const target = event.target as HTMLElement;
-    if (target) {
-      target.style.backgroundColor = 'transparent';
+    if (this.isBrowser) {
+      const target = event.target as HTMLElement;
+      if (target) {
+        target.style.backgroundColor = 'transparent';
+      }
     }
   }
 
@@ -94,13 +106,17 @@ export class HeaderComponent implements OnInit {
   }
 
   onLoginClick(): void {
-    this.router.navigate(['/login']);
-    this.closeMenu();
+    if (this.isBrowser) {
+      this.router.navigate(['/login']);
+      this.closeMenu();
+    }
   }
 
   navigateAndClose(href: string): void {
-    this.router.navigate([href]).then(() => {
-      this.closeMenu();
-    });
+    if (this.isBrowser) {
+      this.router.navigate([href]).then(() => {
+        this.closeMenu();
+      });
+    }
   }
 }

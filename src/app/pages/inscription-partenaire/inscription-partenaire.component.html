@@ -1,56 +1,84 @@
 <app-header-p></app-header-p>
 
-<div class="page-container">
-  <h1>Inscription partenaire</h1>
-  <p>
-    Nous prenons en compte tous les facteurs de changement et vous fournissons les composants dont vous avez besoin pour changer et créer un événement qui se produit réellement.
+<div class="mt-8 mb-8 bg-white px-4 flex flex-col items-center justify-center text-center font-['Playfair_Display']">
+  <!-- Titre principal -->
+  <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-4">
+    Inscription partenaire
+  </h1>
+
+  <!-- Paragraphe principal -->
+  <p class="text-gray-600 max-w-lg mb-10 text-base sm:text-lg">
+    Nous prenons en compte tous les facteurs de changement et vous fournissons les composants dont vous avez besoin
+    pour changer et créer un événement qui se produit réellement.
   </p>
 
-  <div class="card">
-    <h2>Indiquez votre adresse email</h2>
+  <!-- Carte -->
+  <div class="bg-white shadow-2xl rounded-2xl p-6 sm:p-10 w-full max-w-md text-left">
+    <h2 class="text-sm sm:text-lg font-bold mb-4 text-center">Indiquez votre adresse email</h2>
 
-    <!-- Input lié au composant -->
+    <!-- Input email -->
     <input
       type="email"
       [(ngModel)]="email"
       placeholder="Entrez votre adresse email"
+      class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-[#5371ff] placeholder-gray-400"
     />
 
-    <!-- Bouton déclencheur -->
-    <button class="btn-primary" (click)="onContinue()">Continuer</button>
+    <!-- Bouton principal -->
+    <button
+      class="w-full bg-[#5371ff] text-white font-semibold py-2 rounded-lg hover:bg-[#415ad8] transition-colors mb-4"
+      (click)="onContinue()"
+    >
+      Continuer
+    </button>
 
     <!-- Messages -->
-    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
-    <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
+    <p *ngIf="errorMessage" class="text-red-600 text-sm mb-2 text-center">{{ errorMessage }}</p>
+    <p *ngIf="successMessage" class="text-green-600 text-sm mb-2 text-center">{{ successMessage }}</p>
 
-    <div class="divider">OU</div>
+    <!-- Séparateur -->
+    <div class="mt-3 mb-6 flex items-center">
+        <div class="flex-grow border-t border-gray-400"></div>
+        <span class="mx-3 text-gray-600 text-sm">ou</span>
+        <div class="flex-grow border-t border-gray-400"></div>
+      </div>
 
-    <!-- Connexion avec Google -->
-    <button class="btn-social">
+    <!-- Connexion Google -->
+    <button
+      class="w-full flex items-center justify-center border border-gray-300 rounded-lg px-4 py-2 mb-3 hover:bg-gray-100 transition-colors"
+    >
       <img
         src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
         alt="Google"
+        class="w-5 h-5 mr-2"
       />
       Continuer avec Google
     </button>
 
-    <!-- Connexion avec iCloud -->
-    <button class="btn-social">
+    <!-- Connexion Apple -->
+    <button
+      class="w-full flex items-center justify-center border border-gray-300 rounded-lg px-4 py-2 mb-3 hover:bg-gray-100 transition-colors"
+    >
       <img
         src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
         alt="Apple"
+        class="w-5 h-5 mr-2"
       />
       Continuer avec iCloud
     </button>
 
     <!-- Mentions légales -->
-    <p class="terms">
-      En continuant, vous acceptez de recevoir des appels, messages WhatsApp ou SMS/RCS au numéro fourni, y compris de façon automatisée, de la part d’Uber et de ses sociétés affiliées.
+    <p class="text-xs text-gray-400 mt-6 text-center leading-relaxed">
+      En continuant, vous acceptez de recevoir des appels, messages WhatsApp ou SMS/RCS au numéro fourni, y compris
+      de façon automatisée, de la part d’Uber et de ses sociétés affiliées.
     </p>
   </div>
 
-  <div class="footer">
-    <div class="row"></div>
+  <!-- Footer -->
+  <div class="footer mt-10 w-full max-w-md text-gray-600 text-sm flex justify-between items-center">
+    <div class="flex flex-row gap-4">
+      <!-- Tu pourras ajouter des liens ici -->
+    </div>
   </div>
 </div>
 
