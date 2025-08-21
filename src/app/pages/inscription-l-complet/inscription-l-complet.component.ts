@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FooterComponent } from "../footer/footer.component";
 import { HeaderLComponent } from "../header-l/header-l.component";
 import { CommonModule } from '@angular/common';
@@ -10,13 +11,14 @@ import { Router } from '@angular/router';
   selector: 'app-inscription-l-complet',
   standalone: true,
   imports: [FooterComponent, HeaderLComponent, CommonModule, FormsModule],
-  templateUrl: './inscription-l-complet.component.html',
-  styleUrls: ['./inscription-l-complet.component.css']
+  templateUrl: './inscription-l-complet.component.html'
 })
 export class InscriptionLCompletComponent {
   sectionOpen: string = '';
   successMessage = '';
   errorMessage = '';
+  isLoading = false;
+  isBrowser: boolean;
 
   formData: any = {
     nom: '',
@@ -29,25 +31,36 @@ export class InscriptionLCompletComponent {
 
   files: { [key: string]: File } = {};
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   toggleDropdown(id: string) {
-    const content = document.getElementById(id);
-    if (content) {
-      content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    if (this.isBrowser) {
+      const content = document.getElementById(id);
+      if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+      }
     }
   }
 
   onFileSelected(event: any, type: string) {
-    const file = event.target.files[0];
-    if (file) {
-      this.files[type] = file;
+    if (this.isBrowser) {
+      const file = event.target.files[0];
+      if (file) {
+        this.files[type] = file;
+      }
     }
   }
 
   saveAll() {
-    const formDataToSend = new FormData();
+    this.isLoading = true;
 
+    const formDataToSend = new FormData();
     formDataToSend.append('name', `${this.formData.nom} ${this.formData.prenom}`);
     formDataToSend.append('email', this.formData.email);
     formDataToSend.append('phone', this.formData.telephone);
@@ -63,12 +76,13 @@ export class InscriptionLCompletComponent {
 
     this.authService.registerLivreur(formDataToSend).subscribe({
       next: () => {
+        this.isLoading = false;
         this.successMessage = 'Inscription réussie. En attente de validation.';
         this.errorMessage = '';
         this.router.navigate(['/connexion-livreur']);
       },
       error: (err) => {
-        console.error(err);
+        this.isLoading = false;
         this.errorMessage = err.error?.message || "Erreur lors de l'inscription.";
         this.successMessage = '';
       }

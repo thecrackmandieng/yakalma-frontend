@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { AuthAdminService } from '../../../services/auth-admin.service'; // ✅ Ton service admin
+import { AuthAdminService } from '../../../services/auth-admin.service';
 import { FooterComponent } from "../../footer/footer.component";
 import { HeaderComponent } from "../../header/header.component";
 
@@ -24,11 +24,16 @@ export class LoginComponent {
   emailOrPhone: string = '';
   password: string = '';
   errorMessage: string = '';
+  isLoading: boolean = false;
+  isBrowser: boolean;
 
   constructor(
     private authAdminService: AuthAdminService,
-    private router: Router
-  ) {}
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   onLogin(): void {
     if (!this.isFormValid()) {
@@ -36,15 +41,23 @@ export class LoginComponent {
       return;
     }
 
+    this.isLoading = true;
+    this.errorMessage = '';
+
     this.authAdminService.login(this.emailOrPhone, this.password).subscribe({
       next: (response) => {
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('role', response.admin?.role || '');
+        if (this.isBrowser) {
+          localStorage.setItem('token', response.token);
+          localStorage.setItem('role', response.admin?.role || '');
+        }
         this.redirectBasedOnRole(response.admin?.role || '');
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Erreur de connexion :', error);
-        this.errorMessage = error.error?.message || 'Identifiants invalides ou serveur indisponible.';
+        this.errorMessage =
+          error.error?.message || 'Identifiants invalides ou serveur indisponible.';
+        this.isLoading = false;
       },
     });
   }
@@ -62,6 +75,8 @@ export class LoginComponent {
   }
 
   private redirectBasedOnRole(role: string): void {
+    if (!this.isBrowser) return;
+
     switch (role) {
       case 'Admin':
         this.router.navigate(['/admin/dashboard']);
