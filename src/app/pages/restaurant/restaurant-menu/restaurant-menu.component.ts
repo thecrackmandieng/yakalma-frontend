@@ -205,38 +205,43 @@ export class RestaurantMenuComponent implements OnInit {
   }
 
   chooseOperator(operator: any) {
-    this.selectedOperator = operator;
-    // Dans tous les cas on passe par PayTech
-    this.showOperatorChoice = false;
-    this.showPaymentForm = true;
-  }
+  this.selectedOperator = operator;
+  // On cache le choix opérateur et on affiche directement le formulaire
+  this.showOperatorChoice = false;
+  this.showPaymentForm = true;
+}
 
-  validatePayment() {
-    if (!this.modalItem) return;
+validatePayment() {
+  if (!this.modalItem) return;
 
-    const totalPrice = this.calculateTotalPrice();
+  const totalPrice = this.calculateTotalPrice();
 
-    const paymentPayload = {
-      amount: totalPrice,
-      currency: "XOF",
-      description: `Commande ${this.modalItem.name}`,
-      customerName: this.payment.name,
-      customerEmail: "moustaphadieng0405@gmail.com" // tu peux remplacer par email réel
-    };
+  const paymentPayload = {
+    amount: totalPrice,
+    currency: "XOF",
+    description: `Commande ${this.modalItem.name}`,
+    customerName: this.payment.name,
+    customerEmail: "moustaphadieng0405@gmail.com"
+  };
 
-    this.paymentService.initPayment(paymentPayload).subscribe({
-      next: (res) => {
-        if (res.checkout_url) {
-          window.location.href = res.checkout_url;
-        } else {
-          this.successMessage = '❌ Erreur lors de la création du paiement.';
-        }
-      },
-      error: () => {
-        this.successMessage = 'Erreur lors de la requête de paiement.';
+  this.paymentService.initPayment(paymentPayload).subscribe({
+    next: (res) => {
+      console.log("Réponse PayTech:", res);
+
+      // 🔑 correction : PayTech renvoie "redirect_url", pas "checkout_url"
+      if (res.redirect_url) {
+        window.location.href = res.redirect_url;
+      } else {
+        this.successMessage = '❌ Erreur : URL de redirection non reçue.';
       }
-    });
-  }
+    },
+    error: (err) => {
+      console.error("Erreur requête paiement:", err);
+      this.successMessage = 'Erreur lors de la requête de paiement.';
+    }
+  });
+}
+
 
   getImageUrl(imagePath: string): string {
     if (!imagePath) return '';
