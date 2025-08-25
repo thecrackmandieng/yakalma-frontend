@@ -1,19 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Partenaire } from '../models/partenaire.model';
 import { PartenaireService } from '../../services/partenaire.service';
-import { Partenaire } from '../../pages/models/partenaire.model';
-import { HeaderComponent } from '../header/header.component';
-import { FooterComponent } from '../footer/footer.component';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-restaurant-liste',
+  selector: 'app-section-restaurant-list',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent],
-  templateUrl: './restaurant-liste.component.html',
-  styleUrl: './restaurant-liste.component.css'
+  imports: [CommonModule],
+  templateUrl: './section-restaurant-list.component.html',
+  styleUrl: './section-restaurant-list.component.css'
 })
-export class RestaurantListeComponent implements OnInit {
+export class SectionRestaurantListComponent implements OnInit {
   restaurants: Partenaire[] = [];
 
   constructor(
@@ -54,4 +52,5 @@ onRestaurantClick(restaurant: Partenaire): void {
     // Sinon, on concatène l'URL de base du backend avec le chemin relatif
     return `https://yakalma.onrender.com/${restaurant.photo}`;
   }
+
 }

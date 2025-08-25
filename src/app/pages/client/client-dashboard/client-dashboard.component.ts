@@ -8,6 +8,7 @@ import { SectionWrapperComponent } from "../../section-wrapper/section-wrapper.c
 import { SectionComponent } from "../../section/section.component";
 import { DivWrapperComponent } from "../../div-wrapper/div-wrapper.component";
 import { FooterComponent } from "../../footer/footer.component";
+import { SectionRestaurantListComponent } from "../../section-restaurant-list/section-restaurant-list.component";
 
 @Component({
   selector: 'app-client-dashboard',
@@ -19,8 +20,9 @@ import { FooterComponent } from "../../footer/footer.component";
     SectionWrapperComponent,
     SectionComponent,
     DivWrapperComponent,
-    FooterComponent
-  ],
+    FooterComponent,
+    SectionRestaurantListComponent
+],
   templateUrl: './client-dashboard.component.html',
   styleUrl: './client-dashboard.component.css'
 })
