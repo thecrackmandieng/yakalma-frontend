@@ -189,33 +189,50 @@ export class RestaurantMenuComponent implements OnInit {
   }
 
   // --- Paiement direct via PayTech ---
-  payNow() {
-    if (!this.modalItem) return;
-
-    const totalPrice = this.calculateTotalPrice();
-
-    const paymentPayload = {
-      amount: totalPrice,
-      currency: "XOF",
-      description: `Commande ${this.modalItem.name}`,
-      customerName: this.payment.name,
-      customerEmail: "moustaphadieng0405@gmail.com"
-    };
-
-    this.paymentService.initPayment(paymentPayload).subscribe({
-      next: (res) => {
-        if (res.redirect_url) {
-          window.location.href = res.redirect_url; // redirection directe
-        } else {
-          this.successMessage = '❌ Erreur : URL de redirection non reçue.';
-        }
-      },
-      error: (err) => {
-        console.error("Erreur requête paiement:", err);
-        this.successMessage = '❌ Erreur lors de la requête de paiement.';
-      }
-    });
+  // --- Paiement direct via PayTech ---
+payNow() {
+  if (!this.modalItem) {
+    this.successMessage = '❌ Aucun plat sélectionné.';
+    return;
   }
+
+  // Vérifie que le nom et le contact sont remplis
+  if (!this.payment.name || !this.payment.contact) {
+    this.successMessage = '❌ Veuillez remplir votre nom et votre email pour le paiement.';
+    return;
+  }
+
+  const totalPrice = this.calculateTotalPrice();
+
+  // Crée un payload minimal compatible PayTech
+  const paymentPayload = {
+    item_name: this.modalItem.name || 'Paiement Yakalma',
+    item_price: Number(totalPrice),   // toujours un nombre
+    currency: 'XOF',
+    ref_command: 'CMD-' + Date.now(), // référence unique commande
+    env: 'test',
+    success_url: 'https://yakalma-frontend.onrender.com/success',
+    cancel_url: 'https://yakalma-frontend.onrender.com/cancel',
+    ipn_url: 'https://yakalma.onrender.com/api/payment/ipn'
+  };
+
+  // Appelle le service
+  this.paymentService.initPayment(paymentPayload).subscribe({
+    next: (res: any) => {
+      if (res.redirect_url) {
+        window.location.href = res.redirect_url; // redirection directe vers PayTech
+      } else {
+        this.successMessage = '❌ Erreur : URL de redirection non reçue.';
+        console.error('Payload envoyé:', paymentPayload, 'Réponse reçue:', res);
+      }
+    },
+    error: (err) => {
+      console.error("Erreur requête paiement:", err, 'Payload envoyé:', paymentPayload);
+      this.successMessage = '❌ Erreur lors de la requête de paiement.';
+    }
+  });
+}
+
 
   getImageUrl(imagePath: string): string {
     if (!imagePath) return '';
