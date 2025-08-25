@@ -32,8 +32,8 @@ export class PaymentService {
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'API-KEY': this.apiKey,
-      'API-SECRET': this.apiSecret
+      'api-key': this.apiKey,
+      'api-secret': this.apiSecret
     });
 
     return this.http.post<any>(this.apiUrl, payload, { headers });
