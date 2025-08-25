@@ -27,9 +27,7 @@ export class RestaurantMenuComponent implements OnInit {
   modalItem: MenuItem | null = null;
   quantity = 1;
 
-  showOperatorChoice = false;
   showPaymentForm = false;
-  selectedOperator: { name: string, image: string } | null = null;
 
   payment = {
     name: '',
@@ -49,12 +47,6 @@ export class RestaurantMenuComponent implements OnInit {
 
   showDeleteConfirmModal = false;
   dishToDelete: MenuItem | null = null;
-
-  operators = [
-    { name: 'Wave', image: 'assets/wave.webp' },
-    { name: 'Orange Money', image: 'assets/Orange.png' },
-    { name: 'Carte bancaire', image: 'assets/carte.jpg' }
-  ];
 
   restaurantName: string = '';
   restaurantId: string = '';
@@ -149,9 +141,7 @@ export class RestaurantMenuComponent implements OnInit {
     this.modalItem = item;
     this.quantity = 1;
     this.showModal = true;
-    this.showOperatorChoice = false;
-    this.showPaymentForm = false;
-    this.selectedOperator = null;
+    this.showPaymentForm = true; // directement afficher le formulaire
     this.payment = { name: '', contact: '', address: '' };
 
     this.modalSupplements = (item.supplements || []).map((s: any) => ({
@@ -163,9 +153,7 @@ export class RestaurantMenuComponent implements OnInit {
   closeModal() {
     this.showModal = false;
     this.modalItem = null;
-    this.showOperatorChoice = false;
     this.showPaymentForm = false;
-    this.selectedOperator = null;
     this.modalSupplements = [];
   }
 
@@ -200,48 +188,34 @@ export class RestaurantMenuComponent implements OnInit {
     this.closeModal();
   }
 
-  placeOrderWithQuantity() {
-    this.showOperatorChoice = true;
-  }
+  // --- Paiement direct via PayTech ---
+  payNow() {
+    if (!this.modalItem) return;
 
-  chooseOperator(operator: any) {
-  this.selectedOperator = operator;
-  // On cache le choix opérateur et on affiche directement le formulaire
-  this.showOperatorChoice = false;
-  this.showPaymentForm = true;
-}
+    const totalPrice = this.calculateTotalPrice();
 
-validatePayment() {
-  if (!this.modalItem) return;
+    const paymentPayload = {
+      amount: totalPrice,
+      currency: "XOF",
+      description: `Commande ${this.modalItem.name}`,
+      customerName: this.payment.name,
+      customerEmail: "moustaphadieng0405@gmail.com"
+    };
 
-  const totalPrice = this.calculateTotalPrice();
-
-  const paymentPayload = {
-    amount: totalPrice,
-    currency: "XOF",
-    description: `Commande ${this.modalItem.name}`,
-    customerName: this.payment.name,
-    customerEmail: "moustaphadieng0405@gmail.com"
-  };
-
-  this.paymentService.initPayment(paymentPayload).subscribe({
-    next: (res) => {
-      console.log("Réponse PayTech:", res);
-
-      // 🔑 correction : PayTech renvoie "redirect_url", pas "checkout_url"
-      if (res.redirect_url) {
-        window.location.href = res.redirect_url;
-      } else {
-        this.successMessage = '❌ Erreur : URL de redirection non reçue.';
+    this.paymentService.initPayment(paymentPayload).subscribe({
+      next: (res) => {
+        if (res.redirect_url) {
+          window.location.href = res.redirect_url; // redirection directe
+        } else {
+          this.successMessage = '❌ Erreur : URL de redirection non reçue.';
+        }
+      },
+      error: (err) => {
+        console.error("Erreur requête paiement:", err);
+        this.successMessage = '❌ Erreur lors de la requête de paiement.';
       }
-    },
-    error: (err) => {
-      console.error("Erreur requête paiement:", err);
-      this.successMessage = 'Erreur lors de la requête de paiement.';
-    }
-  });
-}
-
+    });
+  }
 
   getImageUrl(imagePath: string): string {
     if (!imagePath) return '';
@@ -249,21 +223,14 @@ validatePayment() {
     return `https://yakalma.onrender.com/${imagePath}`;
   }
 
-  // --- Les méthodes addDish, updateDish, delete etc restent inchangées ---
-
-
-
-  openAddDishModal() {
-    this.showAddDishModal = true;
-  }
-
+  // --- Les méthodes addDish, updateDish, delete, supplements etc restent inchangées ---
+  openAddDishModal() { this.showAddDishModal = true; }
   closeAddDishModal() {
     this.showAddDishModal = false;
     this.newDish = { name: '', description: '', price: 0, image: '', supplements: [] };
     this.imagePreview = null;
     this.selectedImage = null;
   }
-
   onImageSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
@@ -273,13 +240,11 @@ validatePayment() {
       reader.readAsDataURL(file);
     }
   }
-
   addDish() {
     if (!this.selectedImage || !this.newDish.name || !this.newDish.description || !this.newDish.price) {
       alert('Tous les champs sont requis.');
       return;
     }
-
     const formData = new FormData();
     formData.append('name', this.newDish.name);
     formData.append('description', this.newDish.description);
@@ -288,7 +253,6 @@ validatePayment() {
     if (this.newDish.supplements && this.newDish.supplements.length > 0) {
       formData.append('supplements', JSON.stringify(this.newDish.supplements));
     }
-
     this.partenaireService.addMenuItem(formData).subscribe({
       next: (res: any) => {
         this.menuItems.push(res.menuItem);
@@ -297,6 +261,8 @@ validatePayment() {
       error: () => alert('Erreur lors de l\'ajout du plat.')
     });
   }
+
+  // Les méthodes updateDish, deleteDish et gestion suppléments restent identiques
 
   openEditDishModal(item: MenuItem) {
     this.editDish = { ...item };
