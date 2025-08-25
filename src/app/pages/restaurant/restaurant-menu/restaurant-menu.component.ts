@@ -8,6 +8,7 @@ import { CartService } from '../../../services/cart.service';
 import { MenuItem } from '../../models/menu-item.model';
 import { Supplement } from '../../models/supplement.model';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PaymentService } from '../../../services/payment.service';
 
 @Component({
   selector: 'app-restaurant-menu',
@@ -32,11 +33,8 @@ export class RestaurantMenuComponent implements OnInit {
 
   payment = {
     name: '',
-    card: '',
-    exp: '',
-    cvc: '',
-    address: '',
-    contact: ''
+    contact: '',
+    address: ''
   };
 
   showAddDishModal = false;
@@ -55,7 +53,7 @@ export class RestaurantMenuComponent implements OnInit {
   operators = [
     { name: 'Wave', image: 'assets/wave.webp' },
     { name: 'Orange Money', image: 'assets/Orange.png' },
-    { name: 'Carte prépayée', image: 'assets/carte.jpg' }
+    { name: 'Carte bancaire', image: 'assets/carte.jpg' }
   ];
 
   restaurantName: string = '';
@@ -65,7 +63,6 @@ export class RestaurantMenuComponent implements OnInit {
   deliveryFee = 500;
   serviceFee = 300;
 
-  // Pour les suppléments dynamiques du plat sélectionné
   modalSupplements: { name: string, price: number, selected: boolean }[] = [];
 
   constructor(
@@ -73,6 +70,7 @@ export class RestaurantMenuComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private cartService: CartService,
+    private paymentService: PaymentService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -154,9 +152,8 @@ export class RestaurantMenuComponent implements OnInit {
     this.showOperatorChoice = false;
     this.showPaymentForm = false;
     this.selectedOperator = null;
-    this.payment = { name: '', card: '', exp: '', cvc: '', address: '', contact: '' };
+    this.payment = { name: '', contact: '', address: '' };
 
-    // Initialiser les suppléments du plat courant (avec case à cocher)
     this.modalSupplements = (item.supplements || []).map((s: any) => ({
       ...s,
       selected: false
@@ -209,48 +206,34 @@ export class RestaurantMenuComponent implements OnInit {
 
   chooseOperator(operator: any) {
     this.selectedOperator = operator;
-    if (operator.name === 'Wave') {
-      window.open('https://www.wave.com/sn/', '_blank');
-      this.closeModal();
-    } else {
-      this.showOperatorChoice = false;
-      this.showPaymentForm = true;
-    }
+    // Dans tous les cas on passe par PayTech
+    this.showOperatorChoice = false;
+    this.showPaymentForm = true;
   }
 
   validatePayment() {
     if (!this.modalItem) return;
 
-    const restaurantId = localStorage.getItem('restaurantId');
-    if (!restaurantId) {
-      this.successMessage = 'Erreur : Identifiant du restaurant non trouvé.';
-      return;
-    }
+    const totalPrice = this.calculateTotalPrice();
 
-    const orderPayload = {
-      items: [{
-        name: this.modalItem.name,
-        quantity: this.quantity,
-        image: this.modalItem.image || '',
-        supplements: this.modalSupplements.filter(s => s.selected)
-      }],
-      customerName: this.payment.name.trim(),
-      address: this.payment.address.trim(),
-      contact: this.payment.contact.trim(),
-      restaurantId
+    const paymentPayload = {
+      amount: totalPrice,
+      currency: "XOF",
+      description: `Commande ${this.modalItem.name}`,
+      customerName: this.payment.name,
+      customerEmail: "moustaphadieng0405@gmail.com" // tu peux remplacer par email réel
     };
 
-    this.partenaireService.createOrder(orderPayload).subscribe({
-      next: () => {
-        this.successMessage = '✅ Commande envoyée avec succès !';
-        setTimeout(() => {
-          this.successMessage = '';
-          this.closeModal();
-        }, 2000);
+    this.paymentService.initPayment(paymentPayload).subscribe({
+      next: (res) => {
+        if (res.checkout_url) {
+          window.location.href = res.checkout_url;
+        } else {
+          this.successMessage = '❌ Erreur lors de la création du paiement.';
+        }
       },
       error: () => {
-        this.successMessage = 'Erreur lors de l\'envoi de la commande.';
-        setTimeout(() => this.successMessage = '', 3000);
+        this.successMessage = 'Erreur lors de la requête de paiement.';
       }
     });
   }
@@ -260,6 +243,10 @@ export class RestaurantMenuComponent implements OnInit {
     if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
     return `https://yakalma.onrender.com/${imagePath}`;
   }
+
+  // --- Les méthodes addDish, updateDish, delete etc restent inchangées ---
+
+
 
   openAddDishModal() {
     this.showAddDishModal = true;
