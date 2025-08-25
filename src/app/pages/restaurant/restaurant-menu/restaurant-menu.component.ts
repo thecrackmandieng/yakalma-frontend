@@ -190,37 +190,41 @@ export class RestaurantMenuComponent implements OnInit {
   }
 
   // --- Paiement direct via PayTech ---
-  // --- Paiement direct via PayTech ---
 payNow() {
-  if (!this.modalItem) return;
+  if (!this.modalItem) {
+    console.error('Aucun plat sélectionné.');
+    return;
+  }
 
   const totalPrice = this.calculateTotalPrice();
 
-  const payload = {
+  const paymentPayload = {
     item_name: this.modalItem.name,
     item_price: totalPrice,
     currency: "XOF",
     ref_command: `CMD${Date.now()}`,
-    env: "test",
-    success_url: environment.returnUrl,
-    cancel_url: environment.returnUrl,
-    ipn_url: environment.notifyUrl
+    customerName: this.payment.name,
+    customerEmail: "moustaphadieng0405@gmail.com"
   };
 
-  this.paymentService.initPayment(payload).subscribe({
-    next: (res: any) => {
+  console.log('Payload paiement:', paymentPayload); // <-- Vérifie qu'il s'affiche
+
+  this.paymentService.initPayment(paymentPayload).subscribe({
+    next: (res) => {
+      console.log('Réponse PayTech:', res);
       if (res.redirect_url) {
-        window.location.assign(res.redirect_url); // redirection vers PayTech
+        window.location.href = res.redirect_url; // redirection
       } else {
-        this.successMessage = '❌ Erreur : URL de redirection non reçue.';
+        alert('Erreur : URL de redirection non reçue.');
       }
     },
     error: (err) => {
-      console.error("Erreur requête paiement:", err);
-      this.successMessage = '❌ Erreur lors de la requête de paiement.';
+      console.error('Erreur requête paiement:', err);
+      alert('Erreur lors de la requête de paiement.');
     }
   });
 }
+
 
 
 
