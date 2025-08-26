@@ -189,41 +189,75 @@ export class RestaurantMenuComponent implements OnInit {
     this.closeModal();
   }
 
-  // --- Paiement direct via PayTech ---
-payNow() {
-  if (!this.modalItem) {
-    console.error('Aucun plat sélectionné.');
-    return;
+  // --- Paiement direct via PayTech ---//
+  payNow() {
+    if (!this.modalItem) {
+      console.error('Aucun plat sélectionné.');
+      alert('Veuillez sélectionner un plat avant de procéder au paiement.');
+      return;
+    }
+
+    // Validation des informations client
+    if (!this.payment.name || !this.payment.contact || !this.payment.address) {
+      alert('Veuillez remplir tous les champs du formulaire (nom, contact, adresse).');
+      return;
+    }
+
+    const totalPrice = this.calculateTotalPrice();
+
+    const paymentPayload = {
+      item_name: this.modalItem.name,
+      item_price: totalPrice,
+      currency: "XOF",
+      ref_command: `CMD${Date.now()}`,
+      customerName: this.payment.name,
+      customerEmail: "moustaphadieng0405@gmail.com" // À remplacer par un email dynamique si disponible
+    };
+
+    console.log('Payload paiement:', paymentPayload);
+
+    // Afficher un indicateur de chargement
+    const payButton = document.querySelector('button[onclick*="payNow"]');
+    if (payButton) {
+      payButton.textContent = 'Traitement en cours...';
+      payButton.setAttribute('disabled', 'true');
+    }
+
+    this.paymentService.initPayment(paymentPayload).subscribe({
+      next: (res) => {
+        console.log('Réponse PayTech:', res);
+        if (res.redirect_url) {
+          window.location.href = res.redirect_url; // redirection
+        } else {
+          alert('Erreur : URL de redirection non reçue de PayTech.');
+          this.resetPayButton();
+        }
+      },
+      error: (err) => {
+        console.error('Erreur détaillée paiement:', err);
+
+        // Message d'erreur spécifique selon le type d'erreur
+        let errorMessage = err.message || 'Erreur lors de la requête de paiement.';
+
+        if (err.message.includes('authentification')) {
+          errorMessage += '\n\nVeuillez contacter le support technique pour vérifier la configuration PayTech.';
+        } else if (err.message.includes('connexion')) {
+          errorMessage += '\n\nVérifiez votre connexion internet et réessayez.';
+        }
+
+        alert(errorMessage);
+        this.resetPayButton();
+      }
+    });
   }
 
-  const totalPrice = this.calculateTotalPrice();
-
-  const paymentPayload = {
-    item_name: this.modalItem.name,
-    item_price: totalPrice,
-    currency: "XOF",
-    ref_command: `CMD${Date.now()}`,
-    customerName: this.payment.name,
-    customerEmail: "moustaphadieng0405@gmail.com"
-  };
-
-  console.log('Payload paiement:', paymentPayload); // <-- Vérifie qu'il s'affiche
-
-  this.paymentService.initPayment(paymentPayload).subscribe({
-    next: (res) => {
-      console.log('Réponse PayTech:', res);
-      if (res.redirect_url) {
-        window.location.href = res.redirect_url; // redirection
-      } else {
-        alert('Erreur : URL de redirection non reçue.');
-      }
-    },
-    error: (err) => {
-      console.error('Erreur requête paiement:', err);
-      alert('Erreur lors de la requête de paiement.');
+  private resetPayButton() {
+    const payButton = document.querySelector('button[onclick*="payNow"]');
+    if (payButton) {
+      payButton.textContent = 'Payer maintenant';
+      payButton.removeAttribute('disabled');
     }
-  });
-}
+  }
 
 
 
