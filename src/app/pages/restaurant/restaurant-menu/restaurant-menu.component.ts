@@ -259,9 +259,6 @@ export class RestaurantMenuComponent implements OnInit {
     }
   }
 
-
-
-
   getImageUrl(imagePath: string): string {
     if (!imagePath) return '';
     if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
