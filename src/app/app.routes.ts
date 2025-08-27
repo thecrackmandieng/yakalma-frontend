@@ -44,6 +44,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { LivreurPubComponent } from './pages/livreur-pub/livreur-pub.component';
 import { LivreursComponent } from './pages/admin/livreurs/livreurs.component';
 import { PartenairesComponent } from './pages/admin/partenaires/partenaires.component';
+import { PaymentSuccessComponent } from './pages/payment-success/payment-success.component';
 
 
 export const routes: Routes = [
@@ -94,6 +95,9 @@ export const routes: Routes = [
   { path: 'client/menu', component: ClientMenuComponent },
   { path: 'client/orders-tracking', component: ClientOrdersTrackingComponent },
   { path: 'client/orders-history', component: ClientOrdersHistoryComponent },
+
+  // Paiement
+  { path: 'payment/success', component: PaymentSuccessComponent },
 
   // Autres
   { path: 'contacts', component: ContactsComponent },
