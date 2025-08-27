@@ -1,170 +1,104 @@
 <app-header></app-header>
-
-<div class="flex min-h-screen bg-gray-100">
-  <!-- Sidebar fixe -->
-  <app-sidebar class="hidden md:block fixed w-24 h-full p-4 bg-white shadow"></app-sidebar>
-
-  <!-- Contenu principal -->
-  <div class="flex-1 p-6 md:ml-84">
-    <!-- Header + bouton -->
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-700">Gestion des Livreurs</h1>
-      <button
-        (click)="openAddLivreurModal()"
-        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded shadow">
-        Ajouter un livreur
-      </button>
-    </div>
-
-    <!-- Messages -->
-    <div *ngIf="successMessage" class="mb-4 p-3 bg-green-100 text-green-700 rounded">{{ successMessage }}</div>
-    <div *ngIf="errorMessage" class="mb-4 p-3 bg-red-100 text-red-700 rounded">{{ errorMessage }}</div>
-
-    <!-- Modal d'ajout -->
-    <div *ngIf="isAddModalVisible" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div class="bg-white w-full max-w-lg rounded-lg shadow-lg p-6 relative">
-        <span (click)="closeAddModal()" class="absolute top-3 right-4 text-gray-500 hover:text-gray-800 cursor-pointer text-xl">&times;</span>
-        <h2 class="text-xl font-semibold mb-4">Ajouter un Livreur</h2>
-
-        <!-- Étape 1 -->
-        <form *ngIf="formStep === 1" (submit)="goToStep2($event)" #addFormStep1="ngForm" class="space-y-4">
-          <div>
-            <label class="block text-gray-700">Nom :</label>
-            <input type="text" [(ngModel)]="newLivreur.name" name="name" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <div>
-            <label class="block text-gray-700">Email :</label>
-            <input type="email" [(ngModel)]="newLivreur.email" name="email" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <div>
-            <label class="block text-gray-700">Téléphone :</label>
-            <input type="text" [(ngModel)]="newLivreur.phone" name="phone" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <div>
-            <label class="block text-gray-700">Type de véhicule :</label>
-            <input type="text" [(ngModel)]="newLivreur.vehicleType" name="vehicleType" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <div>
-            <label class="block text-gray-700">Numéro du véhicule :</label>
-            <input type="text" [(ngModel)]="newLivreur.vehicleNumber" name="vehicleNumber" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded w-full">Suivant</button>
-        </form>
-
-        <!-- Étape 2 -->
-        <form *ngIf="formStep === 2" (submit)="onAddSubmit()" #addFormStep2="ngForm" enctype="multipart/form-data" class="space-y-4">
-          <div>
-            <label class="block text-gray-700">Copie CNI :</label>
-            <input type="file" accept="image/*,.pdf" (change)="onFileChange($event, 'idCardCopy')" required class="w-full" />
-          </div>
-          <div>
-            <label class="block text-gray-700">Copie Assurance :</label>
-            <input type="file" accept="image/*,.pdf" (change)="onFileChange($event, 'insuranceCopy')" required class="w-full" />
-          </div>
-          <div class="flex justify-between">
-            <button type="button" (click)="formStep=1" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded">Retour</button>
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Ajouter</button>
+<div class="container">
+  <app-sidebar></app-sidebar>
+  <div class="main-content">
+    <button class="btn-add" (click)="openAddLivreurModal()">Ajouter un livreur</button> <!-- Modal d'ajout -->
+    <div *ngIf="isAddModalVisible" class="modal">
+      <div class="modal-content"> <span class="close" (click)="closeAddModal()">&times;</span>
+        <h2>Ajouter un Livreur</h2> <!-- Étape 1 : infos personnelles -->
+        <form *ngIf="formStep === 1" (submit)="goToStep2($event)" #addFormStep1="ngForm">
+          <div class="form-group"> <label for="name">Nom :</label> <input type="text" id="name" name="name"
+              [(ngModel)]="newLivreur.name" required /> </div>
+          <div class="form-group"> <label for="email">Email :</label> <input type="email" id="email" name="email"
+              [(ngModel)]="newLivreur.email" required /> </div>
+          <div class="form-group"> <label for="phone">Téléphone :</label> <input type="text" id="phone" name="phone"
+              [(ngModel)]="newLivreur.phone" required /> </div>
+          <div class="form-group"> <label for="vehicleType">Type de véhicule :</label> <input type="text"
+              id="vehicleType" name="vehicleType" [(ngModel)]="newLivreur.vehicleType" required /> </div>
+          <div class="form-group"> <label for="vehicleNumber">Numéro du véhicule :</label> <input type="text"
+              id="vehicleNumber" name="vehicleNumber" [(ngModel)]="newLivreur.vehicleNumber" required /> </div> <button
+            type="submit" class="btn-submit">Suivant</button>
+        </form> <!-- Étape 2 : fichiers + final -->
+        <form *ngIf="formStep === 2" (submit)="onAddSubmit()" #addFormStep2="ngForm" enctype="multipart/form-data">
+          <div class="form-group"> <label for="idCardCopy">Copie CNI :</label> <input type="file" id="idCardCopy"
+              (change)="onFileChange($event, 'idCardCopy')" required /> </div>
+          <div class="form-group"> <label for="insuranceCopy">Copie Assurance :</label> <input type="file"
+              id="insuranceCopy" (change)="onFileChange($event, 'insuranceCopy')" required /> </div>
+          <div class="form-navigation"> <button type="button" class="btn-back" (click)="formStep = 1">Retour</button>
+            <button type="submit" class="btn-submit">Ajouter</button>
           </div>
         </form>
       </div>
-    </div>
-
-    <!-- Modal d'édition -->
-    <div *ngIf="isEditModalVisible" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div class="bg-white w-full max-w-lg rounded-lg shadow-lg p-6 relative">
-        <span (click)="closeEditModal()" class="absolute top-3 right-4 text-gray-500 hover:text-gray-800 cursor-pointer text-xl">&times;</span>
-        <h2 class="text-xl font-semibold mb-4">Modifier le Livreur</h2>
-
-        <form *ngIf="selectedLivreur" (submit)="onEditSubmit()" #editForm="ngForm" class="space-y-4">
-          <div>
-            <label class="block text-gray-700">Nom :</label>
-            <input type="text" [(ngModel)]="selectedLivreur.name" name="edit-name" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+    </div> <!-- Modal d'édition -->
+    <div *ngIf="isEditModalVisible" class="modal">
+      <div class="modal-content"> <span class="close" (click)="closeEditModal()">&times;</span>
+        <h2>Modifier le Livreur</h2>
+        <form *ngIf="selectedLivreur" (submit)="onEditSubmit()" #editForm="ngForm">
+          <div class="form-group"> <label for="edit-name">Nom :</label> <input type="text" id="edit-name"
+              name="edit-name" [(ngModel)]="selectedLivreur.name" required /> </div>
+          <div class="form-group"> <label for="edit-email">Email :</label> <input type="email" id="edit-email"
+              name="edit-email" [(ngModel)]="selectedLivreur.email" required readonly /> </div>
+          <div class="form-group"> <label for="edit-phone">Téléphone :</label> <input type="text" id="edit-phone"
+              name="edit-phone" [(ngModel)]="selectedLivreur.phone" required /> </div>
+          <div class="form-group"> <label for="edit-vehicle-type">Type de véhicule :</label> <input type="text"
+              id="edit-vehicle-type" name="edit-vehicle-type" [(ngModel)]="selectedLivreur.vehicleType" required />
           </div>
-          <div>
-            <label class="block text-gray-700">Email :</label>
-            <input type="email" [(ngModel)]="selectedLivreur.email" name="edit-email" readonly class="w-full border rounded px-3 py-2 bg-gray-100 cursor-not-allowed" />
-          </div>
-          <div>
-            <label class="block text-gray-700">Téléphone :</label>
-            <input type="text" [(ngModel)]="selectedLivreur.phone" name="edit-phone" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <div>
-            <label class="block text-gray-700">Type de véhicule :</label>
-            <input type="text" [(ngModel)]="selectedLivreur.vehicleType" name="edit-vehicle-type" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <div>
-            <label class="block text-gray-700">Numéro de véhicule :</label>
-            <input type="text" [(ngModel)]="selectedLivreur.vehicleNumber" name="edit-vehicle-number" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <div>
-            <label class="block text-gray-700">Remplacer la carte d'identité :</label>
-            <input type="file" accept="image/*,.pdf" (change)="onEditFileChange($event,'idCardCopy')" class="w-full" />
-          </div>
-          <div>
-            <label class="block text-gray-700">Remplacer l'assurance :</label>
-            <input type="file" accept="image/*,.pdf" (change)="onEditFileChange($event,'insuranceCopy')" class="w-full" />
-          </div>
-          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-full">Enregistrer</button>
+          <div class="form-group"> <label for="edit-vehicle-number">Numéro de véhicule :</label> <input type="text"
+              id="edit-vehicle-number" name="edit-vehicle-number" [(ngModel)]="selectedLivreur.vehicleNumber"
+              required /> </div>
+          <div class="form-group"> <label for="edit-idCardCopy">Remplacer la carte d'identité :</label> <input
+              type="file" id="edit-idCardCopy" name="edit-idCardCopy" (change)="onEditFileChange($event, 'idCardCopy')"
+              accept="image/*,.pdf" /> </div>
+          <div class="form-group"> <label for="edit-insuranceCopy">Remplacer l'assurance :</label> <input type="file"
+              id="edit-insuranceCopy" name="edit-insuranceCopy" (change)="onEditFileChange($event, 'insuranceCopy')"
+              accept="image/*,.pdf" /> </div> <button type="submit" class="btn-submit">Enregistrer</button>
         </form>
       </div>
-    </div>
-
-    <!-- Modal de suppression -->
-    <div *ngIf="isDeleteModalVisible" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div class="bg-white rounded-lg p-6 shadow-lg w-full max-w-sm text-center">
-        <h2 class="text-lg font-semibold mb-4">Confirmation</h2>
-        <p class="mb-6">Voulez-vous vraiment supprimer ce livreur ?</p>
-        <div class="flex justify-around">
-          <button (click)="confirmDelete()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Supprimer</button>
-          <button (click)="cancelDelete()" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded">Annuler</button>
-        </div>
+    </div> <!-- Modal de confirmation de suppression -->
+    <div *ngIf="isDeleteModalVisible" class="modal">
+      <div class="modal-content">
+        <h2>Confirmation</h2>
+        <p>Voulez-vous vraiment supprimer ce livreur ?</p> <button (click)="confirmDelete()"
+          class="btn-delete">Supprimer</button> <button (click)="cancelDelete()" class="btn-cancel">Annuler</button>
       </div>
-    </div>
-
-    <!-- Tableau des livreurs -->
-    <div class="overflow-x-auto bg-white rounded shadow p-4">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+    </div> <!-- Messages globaux -->
+    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div> <!-- Liste des livreurs -->
+    <div class="livreurs-list">
+      <h2>Liste des Livreurs</h2>
+      <table>
+        <thead>
           <tr>
-            <th class="px-4 py-2 text-left text-gray-700 font-medium">Nom</th>
-            <th class="px-4 py-2 text-left text-gray-700 font-medium">Email</th>
-            <th class="px-4 py-2 text-left text-gray-700 font-medium">Téléphone</th>
-            <th class="px-4 py-2 text-left text-gray-700 font-medium">Véhicule</th>
-            <th class="px-4 py-2 text-left text-gray-700 font-medium">Immatriculation</th>
-            <th class="px-4 py-2 text-left text-gray-700 font-medium">Carte ID</th>
-            <th class="px-4 py-2 text-left text-gray-700 font-medium">Assurance</th>
-            <th class="px-4 py-2 text-left text-gray-700 font-medium">Status</th>
-            <th class="px-4 py-2 text-left text-gray-700 font-medium">Actions</th>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Téléphone</th>
+            <th>Véhicule</th>
+            <th>Immatriculation</th>
+            <th>Carte ID</th>
+            <th>Assurance</th>
+            <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200">
-          <tr *ngFor="let livreur of livreurs" class="hover:bg-gray-50">
-            <td class="px-4 py-2">{{ livreur.name }}</td>
-            <td class="px-4 py-2">{{ livreur.email }}</td>
-            <td class="px-4 py-2">{{ livreur.phone }}</td>
-            <td class="px-4 py-2">{{ livreur.vehicleType || '-' }}</td>
-            <td class="px-4 py-2">{{ livreur.vehicleNumber || '-' }}</td>
-            <td class="px-4 py-2">
-              <a *ngIf="livreur.idCardCopy" [href]="getFileUrl(livreur.idCardCopy)" target="_blank" class="text-blue-600 hover:underline">Voir</a>
+        <tbody>
+          <tr *ngFor="let livreur of livreurs">
+            <td>{{ livreur.name }}</td>
+            <td>{{ livreur.email }}</td>
+            <td>{{ livreur.phone }}</td>
+            <td>{{ livreur.vehicleType || '-' }}</td>
+            <td>{{ livreur.vehicleNumber || '-' }}</td>
+            <td> <a *ngIf="livreur.idCardCopy" [href]="getFileUrl(livreur.idCardCopy)" target="_blank">Voir</a> </td>
+            <td> <a *ngIf="livreur.insuranceCopy" [href]="getFileUrl(livreur.insuranceCopy)" target="_blank">Voir</a>
             </td>
-            <td class="px-4 py-2">
-              <a *ngIf="livreur.insuranceCopy" [href]="getFileUrl(livreur.insuranceCopy)" target="_blank" class="text-blue-600 hover:underline">Voir</a>
-            </td>
-            <td class="px-4 py-2">
-              <span [ngClass]="{
-                'bg-green-100 text-green-800 px-2 py-1 rounded-full': livreur.status==='approved',
-                'bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full': livreur.status==='incomplete',
-                'bg-red-100 text-red-800 px-2 py-1 rounded-full': livreur.status==='rejected',
-                'bg-blue-100 text-blue-800 px-2 py-1 rounded-full': livreur.status==='pending',
-                'bg-gray-100 text-gray-800 px-2 py-1 rounded-full': livreur.status==='blocked'
-              }">{{ livreur.status }}</span>
-            </td>
-            <td class="px-9 py-6 space-x-2">
-              <button (click)="editLivreur(livreur)" class="text-blue-600 hover:text-blue-800"><i class="fas fa-edit"></i></button>
-              <button (click)="openDeleteModal(livreur.id)" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
-              <button (click)="approveLivreur(livreur.id)" [disabled]="livreur.status==='approved'" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-sm">Approuver</button>
-              <button (click)="rejectLivreur(livreur.id)" [disabled]="livreur.status==='rejected'" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-sm">Rejeter</button>
-            </td>
+            <td> <span
+                [ngClass]="{ 'badge-approved': livreur.status === 'approved', 'badge-incomplete': livreur.status === 'incomplete', 'badge-rejected': livreur.status === 'rejected', 'badge-pending': livreur.status === 'pending', 'badge-blocked': livreur.status === 'blocked' }">{{
+                livreur.status }}</span> </td>
+            <td> <button class="icon-button edit" (click)="editLivreur(livreur)" title="Modifier"> <i
+                  class="fas fa-edit"></i> </button> <button class="icon-button delete"
+                (click)="openDeleteModal(livreur.id)" title="Supprimer"> <i class="fas fa-trash"></i> </button> <button
+                class="btn-approve" (click)="approveLivreur(livreur.id)"
+                [disabled]="livreur.status === 'approved'">Approuver</button> <button class="btn-reject"
+                (click)="rejectLivreur(livreur.id)" [disabled]="livreur.status === 'rejected'">Rejeter</button> </td>
           </tr>
         </tbody>
       </table>
