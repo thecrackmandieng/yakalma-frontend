@@ -1,10 +1,10 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBars, faTimes, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { PaymentService } from '../../services/payment.service';
 
 import { PartenaireService } from '../../services/partenaire.service';
 import { Partenaire } from '../../pages/models/partenaire.model';
@@ -17,7 +17,8 @@ import { CartService } from '../../services/cart.service';
     CommonModule,
     RouterModule,
     FormsModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
@@ -46,8 +47,6 @@ export class HeaderComponent implements OnInit {
   // FontAwesome
   faBars = faBars;
   faTimes = faTimes;
-
-  isBrowser: boolean;
   faShoppingCart = faShoppingCart;
 
   // Modal commande multi-étapes
@@ -75,27 +74,37 @@ export class HeaderComponent implements OnInit {
   successMessage = '';
   errorMessage = '';
   infoMessage = '';
-  cartService: any;
+
+  // Propriétés manquantes
+  modalItem: any = null;
+  paymentService!: PaymentService;
 
   constructor(
     private partenaireService: PartenaireService,
+    private cartService: CartService,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object
+    paymentService: PaymentService
   ) {
-    this.isBrowser = isPlatformBrowser(this.platformId);
+    this.paymentService = paymentService;
   }
 
   ngOnInit(): void {
-    if (this.isBrowser) {
-      this.partenaireService.getPartenaires().subscribe({
-        next: (data) => {
-          this.allRestaurants = data;
-        },
-        error: (err) => {
-          console.error('Erreur lors du chargement des restaurants:', err);
-        }
-      });
-    }
+    this.partenaireService.getPartenaires().subscribe({
+      next: (data) => {
+        this.allRestaurants = data;
+      },
+      error: () => {
+        this.showError('Erreur lors du chargement des restaurants.');
+      }
+    });
+
+    this.cartService.cartCount$.subscribe(count => {
+      this.cartCount = count;
+    });
+
+    this.cartService.cartItems$.subscribe(items => {
+      this.cartItems = items;
+    });
   }
 
   // 🔹 Méthodes messages
@@ -139,9 +148,8 @@ export class HeaderComponent implements OnInit {
     );
   }
 
- 
- goToRestaurantMenu(id: string | undefined): void {
-    if (id && this.isBrowser) {
+  goToRestaurantMenu(id: string | undefined) {
+    if (id) {
       this.router.navigate(['/restaurant', id, 'menu']);
       this.searchTerm = '';
       this.filteredRestaurants = [];
@@ -270,5 +278,172 @@ getCartTotal(): number {
   getTotalPrice(): number {
     return this.cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   }
-}
 
+  // Méthodes manquantes
+  calculateTotalPrice(): number {
+    if (!this.modalItem) return 0;
+
+    let total = this.modalItem.price || 0;
+
+    // Ajouter le prix des suppléments si disponibles
+    if (this.modalItem.supplements && Array.isArray(this.modalItem.supplements)) {
+      total += this.modalItem.supplements.reduce((sum: number, supplement: any) =>
+        sum + (supplement.price || 0), 0);
+    }
+
+    return total;
+  }
+
+  resetPayButton() {
+    // Réinitialiser le bouton de paiement du panier
+    const payButton = document.querySelector('button[type="submit"]');
+    if (payButton) {
+      payButton.textContent = 'Payer maintenant';
+      payButton.removeAttribute('disabled');
+    }
+
+    // Réinitialiser le bouton de paiement individuel
+    const payNowButton = document.querySelector('button[onclick*="payNow"]');
+    if (payNowButton) {
+      payNowButton.textContent = 'Payer maintenant';
+      payNowButton.removeAttribute('disabled');
+    }
+  }
+
+   payNow() {
+    if (!this.modalItem) {
+      console.error('Aucun plat sélectionné.');
+      alert('Veuillez sélectionner un plat avant de procéder au paiement.');
+      return;
+    }
+
+    // Validation des informations client
+    if (!this.payment.name || !this.payment.contact || !this.payment.address) {
+      alert('Veuillez remplir tous les champs du formulaire (nom, contact, adresse).');
+      return;
+    }
+
+    const totalPrice = this.calculateTotalPrice();
+
+    const paymentPayload = {
+      item_name: this.modalItem.name,
+      item_price: totalPrice,
+      currency: "XOF",
+      ref_command: `CMD${Date.now()}`,
+      customerName: this.payment.name,
+      customerEmail: "moustaphadieng0405@gmail.com" // À remplacer par un email dynamique si disponible
+    };
+
+    console.log('Payload paiement:', paymentPayload);
+
+    // Afficher un indicateur de chargement
+    const payButton = document.querySelector('button[onclick*="payNow"]');
+    if (payButton) {
+      payButton.textContent = 'Traitement en cours...';
+      payButton.setAttribute('disabled', 'true');
+    }
+
+    this.paymentService.initPayment(paymentPayload).subscribe({
+      next: (res: any) => {
+        console.log('Réponse PayTech:', res);
+        if (res.redirect_url) {
+          window.location.href = res.redirect_url; // redirection
+        } else {
+          alert('Erreur : URL de redirection non reçue de PayTech.');
+          this.resetPayButton();
+        }
+      },
+      error: (err: any) => {
+        console.error('Erreur détaillée paiement:', err);
+
+        // Message d'erreur spécifique selon le type d'erreur
+        let errorMessage = err.message || 'Erreur lors de la requête de paiement.';
+
+        if (err.message && err.message.includes('authentification')) {
+          errorMessage += '\n\nVeuillez contacter le support technique pour vérifier la configuration PayTech.';
+        } else if (err.message && err.message.includes('connexion')) {
+          errorMessage += '\n\nVérifiez votre connexion internet et réessayez.';
+        }
+
+        alert(errorMessage);
+        this.resetPayButton();
+      }
+    });
+  }
+
+  // Méthode de paiement pour le panier
+  payCart() {
+    if (this.cartCount === 0) {
+      this.showInfo('Votre panier est vide.');
+      return;
+    }
+
+    // Ouvrir le modal de paiement directement avec le formulaire
+    this.showOrderModal = true;
+    this.showOperatorChoice = false; // Passer directement au formulaire
+    this.showPaymentForm = true;
+    this.selectedOperator = { name: 'Carte prépayée', image: '/assets/carte.jpg' }; // Définir un opérateur par défaut
+    this.successMessage = '';
+    this.showCartDropdown = false;
+  }
+
+  // Méthode pour traiter le paiement du panier après validation du formulaire
+  processCartPayment() {
+    // Validation des informations client
+    if (!this.payment.name || !this.payment.contact || !this.payment.address) {
+      this.showError('Veuillez remplir tous les champs du formulaire (nom, contact, adresse).');
+      return;
+    }
+
+    const totalPrice = this.getCartTotal();
+
+    const paymentPayload = {
+      item_name: `Commande panier - ${this.cartItems.length} articles`,
+      item_price: totalPrice,
+      currency: "XOF",
+      ref_command: `CMD${Date.now()}`,
+      customerName: this.payment.name,
+      customerEmail: "moustaphadieng0405@gmail.com" // À remplacer par un email dynamique si disponible
+    };
+
+    console.log('Payload paiement panier:', paymentPayload);
+
+    // Afficher un indicateur de chargement
+    const payButton = document.querySelector('button[type="submit"]');
+    if (payButton) {
+      payButton.textContent = 'Traitement en cours...';
+      payButton.setAttribute('disabled', 'true');
+    }
+
+    this.paymentService.initPayment(paymentPayload).subscribe({
+      next: (res: any) => {
+        console.log('Réponse PayTech panier:', res);
+        if (res.redirect_url) {
+          window.location.href = res.redirect_url; // redirection
+          // Vider le panier après redirection réussie
+          this.cartService.clearCart();
+        } else {
+          this.showError('Erreur : URL de redirection non reçue de PayTech.');
+          this.resetPayButton();
+        }
+      },
+      error: (err: any) => {
+        console.error('Erreur détaillée paiement panier:', err);
+
+        // Message d'erreur spécifique selon le type d'erreur
+        let errorMessage = err.message || 'Erreur lors de la requête de paiement.';
+
+        if (err.message && err.message.includes('authentification')) {
+          errorMessage += '\n\nVeuillez contacter le support technique pour vérifier la configuration PayTech.';
+        } else if (err.message && err.message.includes('connexion')) {
+          errorMessage += '\n\nVérifiez votre connexion internet et réessayez.';
+        }
+
+        this.showError(errorMessage);
+        this.resetPayButton();
+      }
+    });
+  }
+
+
+}
