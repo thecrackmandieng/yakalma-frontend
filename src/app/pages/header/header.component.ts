@@ -75,6 +75,7 @@ export class HeaderComponent implements OnInit {
   successMessage = '';
   errorMessage = '';
   infoMessage = '';
+  cartService: any;
 
   constructor(
     private partenaireService: PartenaireService,
@@ -138,10 +139,9 @@ export class HeaderComponent implements OnInit {
     );
   }
 
-  goToRestaurantMenu(id: string | undefined): void {
+ 
+ goToRestaurantMenu(id: string | undefined): void {
     if (id && this.isBrowser) {
-  goToRestaurantMenu(id: string | undefined) {
-    if (id) {
       this.router.navigate(['/restaurant', id, 'menu']);
       this.searchTerm = '';
       this.filteredRestaurants = [];
@@ -271,3 +271,4 @@ getCartTotal(): number {
     return this.cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   }
 }
+
