@@ -261,7 +261,9 @@ export class RestaurantMenuComponent implements OnInit {
 
   getImageUrl(imagePath: string): string {
     if (!imagePath) return '';
+    // Si l'imagePath est déjà une URL complète (http, https, data:), la retourner directement
     if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
+    // Pour les chemins relatifs, construire l'URL complète avec le serveur backend
     return `https://yakalma.onrender.com/${imagePath}`;
   }
 

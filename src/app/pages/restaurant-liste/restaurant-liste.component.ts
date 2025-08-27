@@ -47,7 +47,7 @@ onRestaurantClick(restaurant: Partenaire): void {
     }
 
     // Si l'image est déjà une URL complète
-    if (restaurant.photo.startsWith('http')) {
+    if (restaurant.photo.startsWith('https')) {
       return restaurant.photo;
     }
 

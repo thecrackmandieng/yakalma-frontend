@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PartenaireService } from '../../../services/partenaire.service';
@@ -13,14 +13,11 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
   templateUrl: './partenaires.component.html',
   styleUrls: ['./partenaires.component.css']
 })
-export class PartenairesComponent implements OnInit {
+export class PartenairesComponent implements OnInit, OnDestroy {
   partenaires: Partenaire[] = [];
   newPartenaire: Partial<Partenaire> = { name: '', email: '', phone: '', status: 'pending' };
   selectedPartenaire: Partial<Partenaire> = {};
   selectedPartenaireId: string | null = null;
-
-
-
 
   isAddModalVisible = false;
   isEditModalVisible = false;
@@ -39,6 +36,16 @@ export class PartenairesComponent implements OnInit {
     this.loadPartenaires();
   }
 
+  ngOnDestroy(): void {
+    // Libérer les URLs temporaires créées pour l’aperçu
+    for (const key in this.editFiles) {
+      const previewUrl = this.getPreviewUrl(key);
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    }
+  }
+
   loadPartenaires(): void {
     this.partenaireService.getPartenaires().subscribe({
       next: (data) => this.partenaires = data,
@@ -53,26 +60,28 @@ export class PartenairesComponent implements OnInit {
     this.isSubmitted = false;
   }
 
-onFileChange(event: Event, field: string) {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files.length > 0) {
-    this.editFiles[field] = input.files[0];
-  }
-}
-getPreviewUrl(field: string): string | null {
-  if (this.editFiles[field]) {
-    return URL.createObjectURL(this.editFiles[field]);
-  }
-  return null;
-}
-ngOnDestroy() {
-  for (const key in this.editFiles) {
-    if (this.editFiles[key]) {
-      URL.revokeObjectURL(this.getPreviewUrl(key)!);
+  onFileChange(event: Event, field: string) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.editFiles[field] = input.files[0];
     }
   }
-}
 
+  getPreviewUrl(field: string): string | null {
+    if (this.editFiles[field]) {
+      return URL.createObjectURL(this.editFiles[field]);
+    }
+    return null;
+  }
+
+  /** ✅ Fonction pour corriger les URLs */
+  getFileUrl(path: string | undefined): string | null {
+    if (!path) return null;
+    if (path.startsWith('http')) {
+      return path; // Déjà une URL Cloudinary complète
+    }
+    return `https://yakalma.onrender.com/${path}`;
+  }
 
   onAddSubmit(): void {
     this.isSubmitted = true;
@@ -105,58 +114,51 @@ ngOnDestroy() {
     this.isEditSubmitted = false;
   }
 
+  onEditSubmit(): void {
+    this.isEditSubmitted = true;
 
-onEditSubmit(): void {
-  this.isEditSubmitted = true;
-
-  if (!this.selectedPartenaire.name || !this.selectedPartenaire.email || !this.selectedPartenaire.phone) {
-    this.errorMessage = "Veuillez remplir les champs obligatoires.";
-    return;
-  }
-
-  const formData = new FormData();
-
-  // Champs texte
-  formData.append('name', this.selectedPartenaire.name);
-  formData.append('email', this.selectedPartenaire.email);
-  formData.append('phone', this.selectedPartenaire.phone);
-  formData.append('address', this.selectedPartenaire.address || '');
-  formData.append('managerName', this.selectedPartenaire.managerName || '');
-  formData.append('ninea', this.selectedPartenaire.ninea || '');
-
-  // Champs fichiers
-  for (const key in this.editFiles) {
-    if (this.editFiles[key]) {
-      formData.append(key, this.editFiles[key]);
+    if (!this.selectedPartenaire.name || !this.selectedPartenaire.email || !this.selectedPartenaire.phone) {
+      this.errorMessage = "Veuillez remplir les champs obligatoires.";
+      return;
     }
-  }
 
-  this.partenaireService.updatePartenaire(this.selectedPartenaire._id!, formData).subscribe({
-    next: (updatedPartenaire) => {
-      const index = this.partenaires.findIndex(p => p._id === this.selectedPartenaire._id);
-      if (index !== -1) {
-        this.partenaires[index] = updatedPartenaire;
+    const formData = new FormData();
+    formData.append('name', this.selectedPartenaire.name);
+    formData.append('email', this.selectedPartenaire.email);
+    formData.append('phone', this.selectedPartenaire.phone);
+    formData.append('address', this.selectedPartenaire.address || '');
+    formData.append('managerName', this.selectedPartenaire.managerName || '');
+    formData.append('ninea', this.selectedPartenaire.ninea || '');
+
+    for (const key in this.editFiles) {
+      if (this.editFiles[key]) {
+        formData.append(key, this.editFiles[key]);
       }
-
-      this.successMessage = 'Partenaire modifié avec succès.';
-      this.errorMessage = '';
-
-      setTimeout(() => {
-        this.isEditModalVisible = false;
-        this.successMessage = '';
-        this.editFiles = {};
-        this.loadPartenaires(); // ⬅️ Recharge la liste
-
-      }, 1000);
-    },
-    error: () => {
-      this.errorMessage = 'Erreur lors de la modification.';
-      this.successMessage = '';
     }
-  });
-}
 
+    this.partenaireService.updatePartenaire(this.selectedPartenaire._id!, formData).subscribe({
+      next: (updatedPartenaire) => {
+        const index = this.partenaires.findIndex(p => p._id === this.selectedPartenaire._id);
+        if (index !== -1) {
+          this.partenaires[index] = updatedPartenaire;
+        }
 
+        this.successMessage = 'Partenaire modifié avec succès.';
+        this.errorMessage = '';
+
+        setTimeout(() => {
+          this.isEditModalVisible = false;
+          this.successMessage = '';
+          this.editFiles = {};
+          this.loadPartenaires();
+        }, 1000);
+      },
+      error: () => {
+        this.errorMessage = 'Erreur lors de la modification.';
+        this.successMessage = '';
+      }
+    });
+  }
 
   openDeleteModal(id: string): void {
     this.selectedPartenaireId = id;
@@ -164,61 +166,58 @@ onEditSubmit(): void {
     this.resetMessages();
   }
 
-confirmDelete(): void {
-  if (!this.selectedPartenaireId) return;
+  confirmDelete(): void {
+    if (!this.selectedPartenaireId) return;
 
-  this.partenaireService.deletePartenaire(this.selectedPartenaireId).subscribe({
-    next: () => {
-      this.partenaires = this.partenaires.filter(p => p._id !== this.selectedPartenaireId);
-      this.successMessage = 'Supprimé avec succès';
-      this.isDeleteModalVisible = false;
-      this.selectedPartenaireId = null;
-      setTimeout(() => this.successMessage = '', 3000);
-    },
-    error: (err) => {
-      console.error('Erreur suppression partenaire :', err);
-      this.errorMessage = 'Erreur de suppression';
-      setTimeout(() => this.errorMessage = '', 3000);
-    }
-  });
-}
-
-approvePartenaire(id: string): void {
-  this.partenaireService.updatePartenaireStatus(id, 'approved').subscribe({
-    next: () => {
-      const index = this.partenaires.findIndex(p => p._id === id);
-      if (index !== -1) {
-        this.partenaires[index].status = 'approved';
+    this.partenaireService.deletePartenaire(this.selectedPartenaireId).subscribe({
+      next: () => {
+        this.partenaires = this.partenaires.filter(p => p._id !== this.selectedPartenaireId);
+        this.successMessage = 'Supprimé avec succès';
+        this.isDeleteModalVisible = false;
+        this.selectedPartenaireId = null;
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: (err) => {
+        console.error('Erreur suppression partenaire :', err);
+        this.errorMessage = 'Erreur de suppression';
+        setTimeout(() => this.errorMessage = '', 3000);
       }
-      this.successMessage = 'Partenaire approuvé avec succès !';
-      setTimeout(() => this.successMessage = '', 3000);
-    },
-    error: (err) => {
-      console.error('Erreur approbation partenaire :', err);
-      this.errorMessage = 'Impossible d\'approuver le partenaire.';
-      setTimeout(() => this.errorMessage = '', 3000);
-    }
-  });
-}
+    });
+  }
 
+  approvePartenaire(id: string): void {
+    this.partenaireService.updatePartenaireStatus(id, 'approved').subscribe({
+      next: () => {
+        const index = this.partenaires.findIndex(p => p._id === id);
+        if (index !== -1) {
+          this.partenaires[index].status = 'approved';
+        }
+        this.successMessage = 'Partenaire approuvé avec succès !';
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: (err) => {
+        console.error('Erreur approbation partenaire :', err);
+        this.errorMessage = 'Impossible d\'approuver le partenaire.';
+        setTimeout(() => this.errorMessage = '', 3000);
+      }
+    });
+  }
 
-rejectPartenaire(id: string): void {
-  this.partenaireService.updatePartenaireStatus(id, 'rejected').subscribe({
-    next: () => {
-      const index = this.partenaires.findIndex(p => p._id === id);
-      if (index !== -1) this.partenaires[index].status = 'rejected';
-      this.successMessage = 'Partenaire rejeté avec succès !';
-      setTimeout(() => this.successMessage = '', 3000);
-    },
-    error: (err) => {
-      console.error('Erreur rejet partenaire :', err);
-      this.errorMessage = 'Impossible de rejeter le partenaire.';
-      setTimeout(() => this.errorMessage = '', 3000);
-    }
-  });
-}
-
-
+  rejectPartenaire(id: string): void {
+    this.partenaireService.updatePartenaireStatus(id, 'rejected').subscribe({
+      next: () => {
+        const index = this.partenaires.findIndex(p => p._id === id);
+        if (index !== -1) this.partenaires[index].status = 'rejected';
+        this.successMessage = 'Partenaire rejeté avec succès !';
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: (err) => {
+        console.error('Erreur rejet partenaire :', err);
+        this.errorMessage = 'Impossible de rejeter le partenaire.';
+        setTimeout(() => this.errorMessage = '', 3000);
+      }
+    });
+  }
 
   closeAddModal(): void { this.isAddModalVisible = false; }
   closeEditModal(): void { this.isEditModalVisible = false; }

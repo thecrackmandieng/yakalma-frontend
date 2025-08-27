@@ -27,12 +27,12 @@ interface Livreur {
 })
 export class LivreursComponent implements OnInit {
   livreurs: Livreur[] = [];
-
   isAddModalVisible = false;
   isEditModalVisible = false;
   isDeleteModalVisible = false;
   isDocumentModalVisible = false;
   formStep = 1;
+
   fileInputs: { [key: string]: File | null } = {
     idCardCopy: null,
     insuranceCopy: null,
@@ -50,6 +50,10 @@ export class LivreursComponent implements OnInit {
   selectedLivreur: Livreur | null = null;
   selectedLivreurId: string | null = null;
   selectedDocuments: { name: string; url: string }[] = [];
+  selectedEditFiles: { [key: string]: File | null } = {
+    idCardCopy: null,
+    insuranceCopy: null,
+  };
 
   errorMessage = '';
   successMessage = '';
@@ -77,12 +81,18 @@ export class LivreursComponent implements OnInit {
     });
   }
 
-
+  // -------------------- MODAL ADD --------------------
   openAddLivreurModal(): void {
     this.isAddModalVisible = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.isSubmitted = false;
+    this.resetForm();
+  }
+
+  closeAddModal(): void {
+    this.isAddModalVisible = false;
+    this.resetForm();
+  }
+
+  private resetForm() {
     this.formStep = 1;
     this.fileInputs = { idCardCopy: null, insuranceCopy: null };
     this.newLivreur = {
@@ -93,12 +103,9 @@ export class LivreursComponent implements OnInit {
       vehicleNumber: '',
       status: 'incomplete'
     };
-  }
-
-  closeAddModal(): void {
-    this.isAddModalVisible = false;
-    this.formStep = 1;
-    this.fileInputs = { idCardCopy: null, insuranceCopy: null };
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.isSubmitted = false;
   }
 
   goToStep2(event: Event): void {
@@ -108,11 +115,10 @@ export class LivreursComponent implements OnInit {
       return;
     }
 
-    // Étape 1 : pré-inscription (email uniquement)
     this.livreursService.preRegisterLivreur(this.newLivreur.email).subscribe({
       next: () => {
         this.errorMessage = '';
-        this.formStep = 2; // passe à l'étape suivante seulement si succès
+        this.formStep = 2;
       },
       error: err => {
         this.errorMessage = err.error?.message || 'Erreur lors de la pré-inscription.';
@@ -133,7 +139,6 @@ export class LivreursComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // Validation simple
     if (!this.newLivreur.name || !this.newLivreur.phone || !this.newLivreur.vehicleType || !this.newLivreur.vehicleNumber) {
       this.errorMessage = 'Veuillez remplir tous les champs requis à l\'étape 2.';
       return;
@@ -144,19 +149,17 @@ export class LivreursComponent implements OnInit {
       return;
     }
 
-    // Préparation du FormData pour l'inscription complète
     const formData = new FormData();
-
     formData.append('name', this.newLivreur.name);
-    formData.append('email', this.newLivreur.email!);  // email doit être défini ici
+    formData.append('email', this.newLivreur.email!);
     formData.append('phone', this.newLivreur.phone);
     formData.append('vehicleType', this.newLivreur.vehicleType);
     formData.append('vehicleNumber', this.newLivreur.vehicleNumber);
 
-    formData.append('idCardCopy', this.fileInputs['idCardCopy']!);
-    formData.append('insuranceCopy', this.fileInputs['insuranceCopy']!);
+    // Supprime espaces et encode
+    formData.append('idCardCopy', this.sanitizeFile(this.fileInputs['idCardCopy']!));
+    formData.append('insuranceCopy', this.sanitizeFile(this.fileInputs['insuranceCopy']!));
 
-    // Appel au service d'inscription complète
     this.livreursService.registerLivreur(formData).subscribe({
       next: () => {
         this.successMessage = 'Livreur ajouté avec succès !';
@@ -173,59 +176,65 @@ export class LivreursComponent implements OnInit {
     });
   }
 
-  // --- Les autres méthodes restent inchangées ---
-
+  // -------------------- MODAL EDIT --------------------
   openEditLivreurModal(livreur: Livreur): void {
     this.selectedLivreur = { ...livreur };
     this.isEditModalVisible = true;
     this.errorMessage = '';
     this.successMessage = '';
     this.isEditSubmitted = false;
+    this.selectedEditFiles = { idCardCopy: null, insuranceCopy: null };
   }
 
   closeEditModal(): void {
     this.isEditModalVisible = false;
     this.selectedLivreur = null;
+    this.selectedEditFiles = { idCardCopy: null, insuranceCopy: null };
   }
 
-onEditSubmit(): void {
-  if (!this.selectedLivreur || !this.selectedLivreur.id) {
-    this.errorMessage = 'ID du livreur invalide.';
-    return;
-  }
-
-  const formData = new FormData();
-
-  formData.append('name', this.selectedLivreur.name);
-  formData.append('phone', this.selectedLivreur.phone);
-  formData.append('vehicleType', this.selectedLivreur.vehicleType);
-  formData.append('vehicleNumber', this.selectedLivreur.vehicleNumber);
-
-  if (this.fileInputs['idCardCopy']) {
-    formData.append('idCardCopy', this.fileInputs['idCardCopy']);
-  }
-
-  if (this.fileInputs['insuranceCopy']) {
-    formData.append('insuranceCopy', this.fileInputs['insuranceCopy']);
-  }
-
-  this.livreursService.updateLivreur(this.selectedLivreur.id, formData).subscribe({
-    next: () => {
-      this.successMessage = 'Livreur mis à jour avec succès !';
-      this.loadLivreurs();
-      setTimeout(() => {
-        this.successMessage = '';
-        this.closeEditModal();
-      }, 1500);
-    },
-    error: (error) => {
-      this.errorMessage = 'Erreur lors de la mise à jour.';
-      console.error(error);
+  onEditFileChange(event: any, type: 'idCardCopy' | 'insuranceCopy') {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedEditFiles[type] = file;
     }
-  });
-}
+  }
 
+  onEditSubmit(): void {
+    if (!this.selectedLivreur || !this.selectedLivreur.id) {
+      this.errorMessage = 'ID du livreur invalide.';
+      return;
+    }
 
+    const formData = new FormData();
+    formData.append('name', this.selectedLivreur.name);
+    formData.append('phone', this.selectedLivreur.phone);
+    formData.append('vehicleType', this.selectedLivreur.vehicleType);
+    formData.append('vehicleNumber', this.selectedLivreur.vehicleNumber);
+
+    if (this.selectedEditFiles['idCardCopy']) {
+      formData.append('idCardCopy', this.sanitizeFile(this.selectedEditFiles['idCardCopy']));
+    }
+    if (this.selectedEditFiles['insuranceCopy']) {
+      formData.append('insuranceCopy', this.sanitizeFile(this.selectedEditFiles['insuranceCopy']));
+    }
+
+    this.livreursService.updateLivreur(this.selectedLivreur.id, formData).subscribe({
+      next: () => {
+        this.successMessage = 'Livreur mis à jour avec succès !';
+        this.loadLivreurs();
+        setTimeout(() => {
+          this.successMessage = '';
+          this.closeEditModal();
+        }, 1500);
+      },
+      error: (error) => {
+        this.errorMessage = 'Erreur lors de la mise à jour.';
+        console.error(error);
+      }
+    });
+  }
+
+  // -------------------- DELETE --------------------
   openDeleteModal(id: string): void {
     this.selectedLivreurId = id;
     this.isDeleteModalVisible = true;
@@ -255,10 +264,12 @@ onEditSubmit(): void {
     });
   }
 
-  private getPublicUrl(path: string): string {
+  // -------------------- DOCUMENTS --------------------
+  public getFileUrl(path: string): string {
     if (!path) return '';
-    const normalized = path.startsWith('/') ? path : '/' + path;
-    return `http://localhost:3000${normalized}`;
+    if (path.startsWith('http')) return path;
+    const encodedPath = encodeURI(path.replace(/ /g, '_')); // remplace espace par _
+    return `https://yakalma.onrender.com/${encodedPath}`;
   }
 
   viewDocuments(id: string): void {
@@ -270,38 +281,25 @@ onEditSubmit(): void {
     if (livreur.idCardCopy) {
       this.selectedDocuments.push({
         name: "Carte d'identité",
-        url: this.getPublicUrl(livreur.idCardCopy)
+        url: this.getFileUrl(livreur.idCardCopy)
       });
     }
-
     if (livreur.insuranceCopy) {
       this.selectedDocuments.push({
         name: "Assurance",
-        url: this.getPublicUrl(livreur.insuranceCopy)
+        url: this.getFileUrl(livreur.insuranceCopy)
       });
     }
 
     this.isDocumentModalVisible = true;
   }
 
-selectedEditFiles: { [key: string]: File | null } = {
-  idCardCopy: null,
-  insuranceCopy: null,
-};
-
-onEditFileChange(event: any, type: 'idCardCopy' | 'insuranceCopy') {
-  const file = event.target.files[0];
-  if (file) {
-    this.selectedEditFiles[type] = file;
-  }
-}
-
-
   closeDocumentModal(): void {
     this.isDocumentModalVisible = false;
     this.selectedDocuments = [];
   }
 
+  // -------------------- STATUS --------------------
   approveLivreur(id: string): void {
     this.livreursService.updateLivreurStatus(id, 'approved').subscribe({
       next: () => {
@@ -336,5 +334,12 @@ onEditFileChange(event: any, type: 'idCardCopy' | 'insuranceCopy') {
 
   editLivreur(livreur: Livreur): void {
     this.openEditLivreurModal(livreur);
+  }
+
+  // -------------------- UTILS --------------------
+  private sanitizeFile(file: File): File {
+    // Remplace les espaces dans le nom par "_"
+    const newName = file.name.replace(/\s/g, '_');
+    return new File([file], newName, { type: file.type });
   }
 }
