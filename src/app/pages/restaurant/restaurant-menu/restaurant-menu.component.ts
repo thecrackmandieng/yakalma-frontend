@@ -14,7 +14,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-restaurant-menu',
   standalone: true,
-  imports: [HeaderRestaurantComponent, FooterComponent, CommonModule, FormsModule],
+imports: [HeaderRestaurantComponent, FooterComponent, CommonModule, FormsModule],
   templateUrl: './restaurant-menu.component.html',
   styleUrls: ['./restaurant-menu.component.css'],
 })
