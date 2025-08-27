@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -22,8 +23,16 @@ export class ConnexionLivreurComponent {
   errorMessage: string = '';
   isEmailValid: boolean = false;
   isPasswordValid: boolean = false;
+  isLoading: boolean = false;
+  isBrowser: boolean;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   validateEmailOrPhone() {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -51,49 +60,55 @@ export class ConnexionLivreurComponent {
     return this.isEmailValid && this.isPasswordValid;
   }
 
-onLogin() {
-  this.authService.login(this.email, this.password).subscribe({
-    next: (res) => {
-      console.log("✅ Login réussi:", res);
+  onLogin() {
+    if (!this.isBrowser) return; // 🚀 bloque l’exécution côté serveur
 
-      if (res.token && res.user) {
-        const role = res.user.role?.toLowerCase();
-        const status = res.user.status?.toLowerCase();
+    this.isLoading = true;
+    this.errorMessage = '';
 
-        if (role === 'livreur') {
-          localStorage.setItem('token', res.token);
-          localStorage.setItem('user', JSON.stringify(res.user));
+    this.authService.login(this.email, this.password).subscribe({
+      next: (res) => {
+        console.log("✅ Login réussi:", res);
 
-          if (status === 'approved') {
-            this.router.navigate(['/livreur/dashboard']);
-          } else if (status === 'pending' || status === 'incomplete') {
-            this.router.navigate(['/inscription-l-complet']);
-          } else if (status === 'rejected') {
-            this.errorMessage = "❌ Votre inscription a été refusée.";
-          } else if (status === 'blocked') {
-            this.errorMessage = "🚫 Votre compte a été bloqué.";
+        if (res.token && res.user) {
+          const role = res.user.role?.toLowerCase();
+          const status = res.user.status?.toLowerCase();
+
+          if (role === 'livreur') {
+            if (this.isBrowser) {
+              localStorage.setItem('token', res.token);
+              localStorage.setItem('user', JSON.stringify(res.user));
+            }
+
+            if (status === 'approved') {
+              this.router.navigate(['/livreur/dashboard']);
+            } else if (status === 'pending' || status === 'incomplete') {
+              this.router.navigate(['/inscription-l-complet']);
+            } else if (status === 'rejected') {
+              this.errorMessage = "❌ Votre inscription a été refusée.";
+            } else if (status === 'blocked') {
+              this.errorMessage = "🚫 Votre compte a été bloqué.";
+            } else {
+              this.errorMessage = "⚠️ Statut de compte inconnu.";
+            }
           } else {
-            this.errorMessage = "⚠️ Statut de compte inconnu.";
+            this.errorMessage = "❌ Vous n'êtes pas autorisé à accéder à cette section.";
           }
         } else {
-          this.errorMessage = "❌ Vous n'êtes pas autorisé à accéder à cette section.";
+          this.errorMessage = "❌ Réponse invalide du serveur.";
         }
-      } else {
-        this.errorMessage = "❌ Réponse invalide du serveur.";
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error("❌ Erreur:", err);
+        this.errorMessage = err.error?.message || 'Erreur de connexion.';
+        this.isLoading = false;
       }
-    },
-    error: (err) => {
-      console.error("❌ Erreur:", err);
-      this.errorMessage = err.error?.message || 'Erreur de connexion.';
-    }
-  });
-}
+    });
+  }
 
-setTemporaryError(msg: string) {
-  this.errorMessage = msg;
-  setTimeout(() => this.errorMessage = '', 5000);
-}
-
-
-
+  setTemporaryError(msg: string) {
+    this.errorMessage = msg;
+    setTimeout(() => this.errorMessage = '', 5000);
+  }
 }

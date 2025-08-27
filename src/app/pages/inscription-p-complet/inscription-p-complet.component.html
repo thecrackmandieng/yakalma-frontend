@@ -1,65 +1,134 @@
 <app-header-p></app-header-p>
 
-<div class="page-container">
-  <h1>Inscription Partenaire</h1>
-  <p>
+<div class="mt-8 mb-8 bg-white px-4 flex flex-col items-center justify-center text-center font-serif">
+  <!-- Titre -->
+  <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold mb-4">Inscription Partenaire</h1>
+  <p class="text-gray-600 max-w-lg mb-10">
     Merci de compléter les informations ci-dessous pour finaliser votre inscription.
   </p>
 
-  <div class="dropdown-container">
-    <!-- Informations Personnelles -->
-    <button class="dropdown-btn" (click)="toggleDropdown('personalInfo')">Informations Personnelles</button>
-    <div id="personalInfo" class="dropdown-content">
-      <form #personalForm="ngForm">
-        <input type="text" name="nom" placeholder="Nom" [(ngModel)]="formData.nom" required />
-        <input type="text" name="prenom" placeholder="Prénom" [(ngModel)]="formData.prenom" required />
-        <input type="email" name="email" placeholder="Email" [(ngModel)]="formData.email" required />
-        <input type="tel" name="telephone" placeholder="Téléphone" [(ngModel)]="formData.telephone" required />
+  <!-- Dropdowns -->
+  <div class="w-full max-w-4xl mb-2 bg-gray-50 rounded-lg p-6 shadow-2xl space-y-4 text-left">
+
+    <!-- Informations personnelles -->
+    <button
+      class="w-full bg-gray-100 text-gray-800 mb-2 px-4 py-3 rounded-md shadow-xl text-left hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5371ff] transition"
+      (click)="toggleDropdown('personalInfo')">
+      Informations Personnelles
+    </button>
+    <div id="personalInfo" class="hidden bg-gray-50 w-full p-4 rounded-md shadow-inner">
+      <form #personalForm="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label>Nom <span class="text-red-500">*</span></label>
+          <input type="text" name="nom" [(ngModel)]="formData.nom" required class="w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5371ff] px-3 py-2" />
+        </div>
+
+        <div>
+          <label>Prénom <span class="text-red-500">*</span></label>
+          <input type="text" name="prenom" [(ngModel)]="formData.prenom" required class="w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5371ff] px-3 py-2" />
+        </div>
+
+        <div>
+          <label>Email <span class="text-red-500">*</span></label>
+          <input type="email" name="email" [(ngModel)]="formData.email" required class="w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5371ff] px-3 py-2" />
+        </div>
+
+        <div>
+          <label>Téléphone <span class="text-red-500">*</span></label>
+          <input type="tel" name="telephone" [(ngModel)]="formData.telephone" required class="w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5371ff] px-3 py-2" />
+        </div>
       </form>
     </div>
 
-    <!-- Informations Restaurant -->
-    <button class="dropdown-btn" (click)="toggleDropdown('restaurantInfo')">Informations du Restaurant</button>
-    <div id="restaurantInfo" class="dropdown-content">
-      <form #restaurantForm="ngForm">
-        <input type="text" name="nomResto" placeholder="Nom du Restaurant" [(ngModel)]="formData.nomResto" required />
-        <input type="text" name="adresse" placeholder="Adresse" [(ngModel)]="formData.adresse" required />
-        <input type="text" name="ville" placeholder="Ville" [(ngModel)]="formData.ville" required />
-        <input type="text" name="codePostal" placeholder="Code Postal" [(ngModel)]="formData.codePostal" required />
-        <input type="text" name="ninea" placeholder="NINEA" [(ngModel)]="formData.ninea" required />
+    <!-- Informations restaurant -->
+    <button
+      class="w-full bg-gray-100 text-gray-800 mb-2 px-4 py-3 rounded-md shadow-xl text-left hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5371ff] transition"
+      (click)="toggleDropdown('restaurantInfo')">
+      Informations du Restaurant
+    </button>
+    <div id="restaurantInfo" class="hidden bg-gray-50 w-full p-4 rounded-md shadow-inner">
+      <form #restaurantForm="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label>Nom du Restaurant <span class="text-red-500">*</span></label>
+          <input type="text" name="nomResto" [(ngModel)]="formData.nomResto" required class="w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5371ff] px-3 py-2" />
+        </div>
+
+        <div>
+          <label>Adresse <span class="text-red-500">*</span></label>
+          <input type="text" name="adresse" [(ngModel)]="formData.adresse" required class="w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5371ff] px-3 py-2" />
+        </div>
+
+        <div>
+          <label>Ville <span class="text-red-500">*</span></label>
+          <input type="text" name="ville" [(ngModel)]="formData.ville" required class="w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5371ff] px-3 py-2" />
+        </div>
+
+        <div>
+          <label>Code Postal <span class="text-red-500">*</span></label>
+          <input type="text" name="codePostal" [(ngModel)]="formData.codePostal" required class="w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5371ff] px-3 py-2" />
+        </div>
+
+        <div class="md:col-span-2">
+          <label>NINEA <span class="text-red-500">*</span></label>
+          <input type="text" name="ninea" [(ngModel)]="formData.ninea" required class="w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5371ff] px-3 py-2" />
+        </div>
       </form>
     </div>
 
     <!-- Papiers nécessaires -->
-    <button class="dropdown-btn" (click)="toggleDropdown('requiredPapers')">Papiers Nécessaires</button>
-    <div id="requiredPapers" class="dropdown-content">
-      <form #papersForm="ngForm">
-        <label>Registre de commerce</label>
-        <input type="file" (change)="onFileSelected($event, 'permis')" required />
+    <button
+      class="w-full bg-gray-100 text-gray-800 px-4 py-3 rounded-md shadow-xl text-left hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5371ff] transition"
+      (click)="toggleDropdown('requiredPapers')">
+      Papiers Nécessaires
+    </button>
+    <div id="requiredPapers" class="hidden bg-gray-50 w-full p-4 rounded-md shadow-inner">
+      <form #papersForm="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label>Registre de commerce <span class="text-red-500">*</span></label>
+          <input type="file" (change)="onFileSelected($event, 'permis')" class="w-full border rounded-md px-3 py-2 cursor-pointer" required />
+        </div>
 
-        <label>Certificat d'hygiène</label>
-        <input type="file" (change)="onFileSelected($event, 'certificat')" required />
+        <div>
+          <label>Certificat d'hygiène <span class="text-red-500">*</span></label>
+          <input type="file" (change)="onFileSelected($event, 'certificat')" class="w-full border rounded-md px-3 py-2 cursor-pointer" required />
+        </div>
 
-        <label>Copie d'identité</label>
-        <input type="file" (change)="onFileSelected($event, 'idCardCopy')" required />
+        <div>
+          <label>Copie d'identité <span class="text-red-500">*</span></label>
+          <input type="file" (change)="onFileSelected($event, 'idCardCopy')" class="w-full border rounded-md px-3 py-2 cursor-pointer" required />
+        </div>
 
-        <label>Photo</label>
-        <input type="file" (change)="onFileSelected($event, 'photo')" required />
+        <div>
+          <label>Photo <span class="text-red-500">*</span></label>
+          <input type="file" (change)="onFileSelected($event, 'photo')" class="w-full border rounded-md px-3 py-2 cursor-pointer" required />
+        </div>
 
-         <label>Autres documents légaux</label>
-        <input type="file" (change)="onFileSelected($event, 'autresDocs')" required />
-
-
+        <div class="md:col-span-2">
+          <label>Autres documents légaux <span class="text-red-500">*</span></label>
+          <input type="file" (change)="onFileSelected($event, 'autresDocs')" class="w-full border rounded-md px-3 py-2 cursor-pointer" required />
+        </div>
       </form>
     </div>
   </div>
 
-  <button class="btn-save-all" (click)="saveAll(personalForm, restaurantForm, papersForm)">
-    Enregistrer
+  <!-- Bouton enregistrer avec loader -->
+  <button
+    class="w-full max-w-4xl bg-[#5371ff] text-white font-semibold px-6 py-3 rounded-md mt-6 hover:bg-[#415ad8] transition flex items-center justify-center"
+    [disabled]="isLoading"
+    (click)="saveAll(personalForm, restaurantForm, papersForm)">
+    <span *ngIf="!isLoading">Enregistrer</span>
+    <span *ngIf="isLoading" class="flex items-center">
+      <svg class="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+      Enregistrement...
+    </span>
   </button>
 
-  <div class="success-message" *ngIf="successMessage">{{ successMessage }}</div>
-  <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <!-- Messages -->
+  <div class="text-green-600 mt-4" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="text-red-600 mt-4" *ngIf="errorMessage">{{ errorMessage }}</div>
 </div>
 
 <app-footer></app-footer>

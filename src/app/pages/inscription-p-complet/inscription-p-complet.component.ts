@@ -17,6 +17,7 @@ export class InscriptionPCompletComponent {
   sectionOpen: string = '';
   successMessage = '';
   errorMessage = '';
+  isLoading = false;
 
   // Données texte
   formData = {
@@ -56,23 +57,22 @@ export class InscriptionPCompletComponent {
     }
   }
 
-  saveAll(
-    personalForm: NgForm,
-    restaurantForm: NgForm,
-    papersForm: NgForm
-  ) {
+  saveAll(personalForm: NgForm, restaurantForm: NgForm, papersForm: NgForm) {
     this.successMessage = '';
     this.errorMessage = '';
+    this.isLoading = true; // ✅ loader start
 
     // Validation des champs
     if (personalForm.invalid || restaurantForm.invalid || papersForm.invalid) {
       this.errorMessage = "Veuillez remplir tous les champs correctement.";
+      this.isLoading = false;
       return;
     }
 
-    // Validation des fichiers
+    // Validation fichiers
     if (!this.files['permis'] || !this.files['certificat'] || !this.files['autresDocs'] || !this.files['idCardCopy'] || !this.files['photo']) {
       this.errorMessage = "Tous les fichiers sont requis.";
+      this.isLoading = false;
       return;
     }
 
@@ -98,11 +98,13 @@ export class InscriptionPCompletComponent {
       next: () => {
         this.successMessage = "Inscription réussie. En attente de validation.";
         this.errorMessage = '';
+        this.isLoading = false; // ✅ loader stop
         this.router.navigate(['/connexion-partenaire']);
       },
       error: (err) => {
         console.error(err);
         this.errorMessage = err?.error?.message || "Une erreur est survenue lors de l'inscription.";
+        this.isLoading = false; // ✅ loader stop
       }
     });
   }

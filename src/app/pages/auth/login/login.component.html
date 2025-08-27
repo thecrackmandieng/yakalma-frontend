@@ -2,10 +2,10 @@
 
 <div class="mt-8 mb-8 bg-white px-4 flex flex-col items-center justify-center text-center font-serif">
   <!-- Titre -->
-  <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold mb-4">Connexion</h1>
+  <h1 class="text-4xl md:text-6xl font-extrabold mb-4">Connexion</h1>
 
   <!-- Description -->
-  <p class="text-gray-600 max-w-xl mb-8 text-base sm:text-lg">
+  <p class="text-gray-600 max-w-xl mb-8 text-sm md:text-base">
     Nous prenons en compte tous les facteurs de changement et vous fournissons les composants dont vous avez besoin
     pour créer une expérience unique et sécurisée.
   </p>
@@ -17,7 +17,7 @@
     <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="space-y-5">
       <!-- Champ Email ou Téléphone -->
       <div class="text-left">
-        <label for="emailOrPhone" class="block font-semibold text-gray-700 mb-1">Adresse email ou numéro de téléphone</label>
+        <label for="emailOrPhone" class="block font-semibold text-gray-700 mb-2">Adresse email ou numéro de téléphone</label>
         <input
           type="text"
           id="emailOrPhone"
@@ -26,13 +26,13 @@
           required
           (input)="validateEmailOrPhone()"
           placeholder="Entrez votre adresse email ou numéro"
-          class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[#5371ff] placeholder-gray-400"
+          class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#5371ff] placeholder-gray-400"
         />
       </div>
 
       <!-- Champ Mot de passe -->
       <div class="text-left">
-        <label for="password" class="block font-semibold text-gray-700 mb-1">Mot de passe</label>
+        <label for="password" class="block font-semibold text-gray-700 mb-2">Mot de passe</label>
         <input
           type="password"
           id="password"
@@ -41,18 +41,43 @@
           required
           (input)="validatePassword()"
           placeholder="Entrez votre mot de passe"
-          class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[#5371ff] placeholder-gray-400"
+          class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#5371ff] placeholder-gray-400"
         />
       </div>
 
       <!-- Bouton -->
       <button
         type="submit"
-        [disabled]="!isFormValid()"
-        class="w-full mb-6 py-3 bg-[#5371ff] text-white font-semibold rounded-md hover:bg-[#415ad8] disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+        [disabled]="!isFormValid() || isLoading"
+        class="w-full mb-2 py-3 bg-[#5371ff] text-white font-semibold rounded-lg hover:bg-[#415ad8] disabled:bg-gray-400 disabled:cursor-not-allowed transition flex items-center justify-center"
       >
-        Se connecter
+        <ng-container *ngIf="!isLoading; else loadingTpl">
+          Se connecter
+        </ng-container>
+        <ng-template #loadingTpl>
+          <svg
+            class="animate-spin h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v8z"
+            ></path>
+          </svg>
+        </ng-template>
       </button>
+
 
       <!-- Message d'erreur -->
       <div *ngIf="errorMessage" class="bg-red-100 text-red-600 border border-red-300 p-3 rounded-md text-sm text-center">

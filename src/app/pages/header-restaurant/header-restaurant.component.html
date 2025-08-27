@@ -1,304 +1,149 @@
 <!-- header.component.html -->
-<header class="header" role="banner">
-  <div class="logo">
+<header class="fixed top-0 left-0 w-full z-50 bg-[#4169E1] text-white px-6 py-2 flex justify-between items-center shadow-md">
+  <!-- Logo -->
+  <div class="flex items-center">
     <a routerLink="/restaurants" aria-label="Retour à la page des restaurants">
-      <h1>Yakalma</h1>
+      <h1 class="text-2xl font-serif !no-underline text-white font-bold">Yakalma</h1>
     </a>
   </div>
 
-  <nav class="nav" role="navigation" aria-label="Menu principal">
+  <!-- Bouton Burger (mobile) -->
+  <button
+    class="lg:hidden text-white !text-2xl focus:outline-none"
+    (click)="mobileMenuOpen = !mobileMenuOpen"
+    aria-label="Menu mobile"
+  >
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Navigation (desktop) -->
+  <nav class="hidden lg:flex space-x-6" role="navigation" aria-label="Menu principal">
     <a
       routerLink="/restaurant/dashboard"
+      routerLinkActive="text-blue-400 font-bold border-b-2 !border-blue-400 pb-1"
+      [routerLinkActiveOptions]="{ exact: true }"
       *ngIf="isRestaurant"
-      [ngClass]="{ active: activeLink === 'accueil' }"
-      (click)="setActive('accueil')"
-    >Accueil</a>
+      class="hover:!text-blue-300 !text-white !no-underline transition"
+    >
+      Accueil
+    </a>
 
     <a
       routerLink="/restaurant/menu-management"
+      routerLinkActive="text-blue-400 font-bold border-b-2 border-blue-400 pb-1"
+      [routerLinkActiveOptions]="{ exact: true }"
       *ngIf="isRestaurant"
-      [ngClass]="{ active: activeLink === 'commande' }"
-      (click)="setActive('commande')"
-    >Commande</a>
+      class="hover:!text-blue-300 !text-white !no-underline transition"
+    >
+      Commande
+    </a>
 
     <a
       routerLink="/restaurant/menu"
+      routerLinkActive="text-blue-400 font-bold border-b-2 border-blue-400 pb-1"
+      [routerLinkActiveOptions]="{ exact: true }"
       *ngIf="isRestaurant"
-      [ngClass]="{ active: activeLink === 'menu' }"
-      (click)="setActive('menu')"
-    >Menu</a>
+      class="hover:!text-blue-300 !text-white !no-underline transition"
+    >
+      Menu
+    </a>
 
     <a
       routerLink="/pages"
+      routerLinkActive="text-blue-400 font-bold border-b-2 border-blue-400 pb-1"
+      [routerLinkActiveOptions]="{ exact: true }"
       *ngIf="isRestaurant"
-      [ngClass]="{ active: activeLink === 'pages' }"
-      (click)="setActive('pages')"
-    >Pages</a>
+      class="hover:!text-blue-300 !text-white !no-underline transition"
+    >
+      Pages
+    </a>
   </nav>
 
 
+  <!-- Profil -->
   <div
-        *ngIf="isRestaurant"
-    class="profile-menu"
+    *ngIf="isRestaurant"
+    class="relative"
     (click)="toggleDropdown()"
     tabindex="0"
     role="button"
     aria-haspopup="true"
     [attr.aria-expanded]="dropdownOpen"
-    aria-label="Menu utilisateur"
   >
-    <div class="profile-icon">
-      <img src="assets/chefn.webp" alt="Avatar utilisateur" />
-      <span>Mon Compte</span>
-      <span class="chevron">&#9662;</span>
+    <div class="flex items-center gap-2 cursor-pointer">
+      <img src="assets/chefn.webp" alt="Avatar utilisateur" class="w-8 h-8 rounded-full object-cover" />
+      <span class="hidden sm:inline">Mon Compte</span>
+      <span class="text-xs">&#9662;</span>
     </div>
 
-    <div *ngIf="dropdownOpen" class="dropdown-content" role="menu">
-      <a role="menuitem" tabindex="0" (click)="goToProfile()">👤 Profil</a>
-      <a role="menuitem" tabindex="0" (click)="changePassword()">🔑 Changer mot de passe</a>
-      <a role="menuitem" tabindex="0" (click)="logout()">🚪 Déconnexion</a>
+    <!-- Dropdown -->
+    <div
+      *ngIf="dropdownOpen"
+      class="absolute right-0 mt-2 w-52 bg-white text-gray-800 rounded-lg shadow-lg z-50"
+      role="menu"
+    >
+      <a
+        role="menuitem"
+        (click)="goToProfile()"
+        class="block px-6 py-2 hover:bg-[#4169E1] !text-gray-800 hover:!text-white !no-underline transition"
+      ><i class="fas fa-user-circle text-[#bbb] hover:!bg-white text-xl"></i> Profil</a>
+      <a
+        role="menuitem"
+        (click)="changePassword()"
+        class="block px-2 py-2 hover:bg-[#4169E1] text-left !text-gray-800 hover:!text-white !no-underline transition"
+      ><i class="fas fa-key text-[#bbb] text-xl"></i> Changer mot de passe</a>
+      <a
+        role="menuitem"
+        (click)="logout()"
+        class="block px-4 py-2 hover:bg-red-500 !text-gray-800 hover:!text-white !no-underline transition"
+      ><i class="fas fa-sign-out-alt text-red-300 text-xl"></i> Déconnexion</a>
     </div>
+  </div>
+
+  <!-- Menu Mobile -->
+  <div *ngIf="mobileMenuOpen" class="absolute top-full left-0 w-full bg-[#4169E1] flex flex-col items-start px-6 py-4 space-y-3 lg:hidden z-40">
+    <a
+      routerLink="/restaurant/dashboard"
+      routerLinkActive="text-blue-400 font-bold border-l-4 border-blue-400 pl-2"
+      [routerLinkActiveOptions]="{ exact: true }"
+      *ngIf="isRestaurant"
+      class="hover:!text-blue-300 !text-white !no-underline transition"
+      (click)="mobileMenuOpen=false"
+    >
+      Accueil
+    </a>
+
+    <a
+      routerLink="/restaurant/menu-management"
+      routerLinkActive="text-blue-400 font-bold border-l-4 border-blue-400 pl-2"
+      [routerLinkActiveOptions]="{ exact: true }"
+      *ngIf="isRestaurant"
+      class="hover:!text-blue-300 !text-white !no-underline transition"
+      (click)="mobileMenuOpen=false"
+    >
+      Commande
+    </a>
+
+    <a
+      routerLink="/restaurant/menu"
+      routerLinkActive="text-blue-400 font-bold border-l-4 border-blue-400 pl-2"
+      [routerLinkActiveOptions]="{ exact: true }"
+      *ngIf="isRestaurant"
+      class="hover:!text-blue-300 !text-white !no-underline transition"
+      (click)="mobileMenuOpen=false"
+    >
+      Menu
+    </a>
+
+    <a
+      routerLink="/pages"
+      routerLinkActive="text-blue-400 font-bold border-l-4 border-blue-400 pl-2"
+      [routerLinkActiveOptions]="{ exact: true }"
+      *ngIf="isRestaurant"
+      class="hover:!text-blue-300 !text-white !no-underline transition"
+      (click)="mobileMenuOpen=false"
+    >
+      Pages
+    </a>
   </div>
 </header>
-
-
-<!-- Modal Profil -->
-<!-- Modal Profil -->
-<div
-  class="modal-backdrop"
-  *ngIf="showProfileModal"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="profileModalTitle"
-  (click)="closeProfileModal()"
->
-  <div class="modal-profile" (click)="$event.stopPropagation()">
-    <h2 id="profileModalTitle">Mon Profil</h2>
-
-    <form (submit)="saveProfile(); $event.preventDefault()" enctype="multipart/form-data" novalidate>
-
-      <!-- Champs texte alignés 2 par 2 -->
-      <div class="form-row">
-        <div class="form-group">
-          <label for="firstName">Prénom</label>
-          <input
-            id="firstName"
-            type="text"
-            [(ngModel)]="firstName"
-            name="firstName"
-            required
-            autocomplete="given-name"
-          />
-        </div>
-        <div class="form-group">
-          <label for="lastName">Nom</label>
-          <input
-            id="lastName"
-            type="text"
-            [(ngModel)]="lastName"
-            name="lastName"
-            required
-            autocomplete="family-name"
-          />
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            [(ngModel)]="email"
-            name="email"
-            required
-            autocomplete="email"
-          />
-        </div>
-        <div class="form-group">
-          <label for="phone">Téléphone</label>
-          <input
-            id="phone"
-            type="tel"
-            [(ngModel)]="phone"
-            name="phone"
-            required
-            autocomplete="tel"
-            pattern="^[+0-9\s\-]+$"
-          />
-        </div>
-      </div>
-
-      <hr />
-
-      <!-- Upload documents -->
-      <label for="permis">Permis</label>
-      <input
-        id="permis"
-        type="file"
-        (change)="onFileChange($event, 'permis')"
-        accept=".pdf,.jpg,.jpeg,.png"
-      />
-      <div *ngIf="uploadedFilesUrl['permisUrl']">
-        <a
-          href="{{ uploadedFilesUrl['permisUrl'] }}"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Voir le document actuel
-        </a>
-      </div>
-
-      <label for="certificat">Certificat</label>
-      <input
-        id="certificat"
-        type="file"
-        (change)="onFileChange($event, 'certificat')"
-        accept=".pdf,.jpg,.jpeg,.png"
-      />
-      <div *ngIf="uploadedFilesUrl['certificatUrl']">
-        <a
-          href="{{ uploadedFilesUrl['certificatUrl'] }}"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Voir le document actuel
-        </a>
-      </div>
-
-      <label for="autresDocs">Autres Documents</label>
-      <input
-        id="autresDocs"
-        type="file"
-        (change)="onFileChange($event, 'autresDocs')"
-        accept=".pdf,.jpg,.jpeg,.png"
-      />
-      <div *ngIf="uploadedFilesUrl['autresDocsUrl']">
-        <a
-          href="{{ uploadedFilesUrl['autresDocsUrl'] }}"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Voir le document actuel
-        </a>
-      </div>
-
-      <label for="idCardCopy">Copie Carte d’Identité</label>
-      <input
-        id="idCardCopy"
-        type="file"
-        (change)="onFileChange($event, 'idCardCopy')"
-        accept=".pdf,.jpg,.jpeg,.png"
-      />
-      <div *ngIf="uploadedFilesUrl['idCardCopyUrl']">
-        <a
-          href="{{ uploadedFilesUrl['idCardCopyUrl'] }}"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Voir le document actuel
-        </a>
-      </div>
-
-      <hr />
-
-      <!-- Upload photo -->
-      <label for="photo">Photo</label>
-      <input
-        id="photo"
-        type="file"
-        (change)="onFileChange($event, 'photo')"
-        accept=".jpg,.jpeg,.png"
-      />
-      <div *ngIf="uploadedFilesUrl['photoUrl']">
-        <img
-          [src]="uploadedFilesUrl['photoUrl']"
-          alt="Photo actuelle"
-          class="preview-photo"
-        />
-      </div>
-
-      <div class="modal-actions">
-        <button type="submit" class="btn save">Enregistrer</button>
-        <button type="button" class="btn cancel" (click)="closeProfileModal()">
-          Annuler
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Modal succès -->
-<div *ngIf="showSuccessModal" class="modal-backdrop success-modal" (click)="closeSuccessModal()">
-  <div class="modal-container" (click)="$event.stopPropagation()">
-    <h2>Succès</h2>
-    <p>{{ modalMessage }}</p>
-    <button class="modal-close-btn" (click)="closeSuccessModal()">Fermer</button>
-  </div>
-</div>
-
-<!-- Modal erreur -->
-<div *ngIf="showErrorModal" class="modal-backdrop error-modal" (click)="closeErrorModal()">
-  <div class="modal-container" (click)="$event.stopPropagation()">
-    <h2>Erreur</h2>
-    <p>{{ modalMessage }}</p>
-    <button class="modal-close-btn" (click)="closeErrorModal()">Fermer</button>
-  </div>
-</div>
-
-
-
-<!-- Modal Changer Mot de Passe -->
-<div
-  class="modal-backdrop"
-  *ngIf="showPasswordModal"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="passwordModalTitle"
-  (click)="closePasswordModal()"
->
-  <div class="modal-profile" (click)="$event.stopPropagation()">
-    <h2 id="passwordModalTitle">Changer le mot de passe</h2>
-    <form (submit)="submitPasswordChange(); $event.preventDefault()" novalidate>
-      <label for="currentPassword">Mot de passe actuel</label>
-      <input
-        id="currentPassword"
-        type="password"
-        [(ngModel)]="currentPassword"
-        name="currentPassword"
-        required
-        autocomplete="current-password"
-      />
-
-      <label for="newPassword">Nouveau mot de passe</label>
-      <input
-        id="newPassword"
-        type="password"
-        [(ngModel)]="newPassword"
-        name="newPassword"
-        required
-        autocomplete="new-password"
-      />
-
-      <label for="confirmPassword">Confirmer le mot de passe</label>
-      <input
-        id="confirmPassword"
-        type="password"
-        [(ngModel)]="confirmPassword"
-        name="confirmPassword"
-        required
-        autocomplete="new-password"
-      />
-
-      <div class="error" *ngIf="passwordError" role="alert">{{ passwordError }}</div>
-      <div class="success" *ngIf="passwordSuccess" role="alert">{{ passwordSuccess }}</div>
-
-      <div class="modal-actions">
-        <button type="submit" class="btn save">Modifier</button>
-        <button type="button" class="btn cancel" (click)="closePasswordModal()">
-          Annuler
-        </button>
-      </div>
-    </form>
-  </div>
-</div>

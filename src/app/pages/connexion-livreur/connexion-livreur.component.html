@@ -52,10 +52,18 @@
       <!-- Bouton de soumission -->
       <button
         type="submit"
-        [disabled]="!isFormValid()"
-        class="w-full py-3 bg-[#5371ff] text-white rounded-lg font-medium hover:bg-[#415ad8] transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+        [disabled]="!isFormValid() || isLoading"
+        class="w-full mb-2 py-3 bg-[#5371ff] text-white rounded-lg font-semibold hover:bg-[#415ad8] transition disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
       >
-        Se connecter
+        <ng-container *ngIf="!isLoading; else loadingTpl">
+          Se connecter
+        </ng-container>
+        <ng-template #loadingTpl>
+          <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+          </svg>
+        </ng-template>
       </button>
 
       <!-- Message d'erreur -->

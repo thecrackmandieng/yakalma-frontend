@@ -14,6 +14,7 @@ import { AuthService } from '../../services/auth.service';
 export class HeaderRestaurantComponent implements OnInit {
   activeLink = 'accueil';
   dropdownOpen = false;
+  mobileMenuOpen = false;
 
   showProfileModal = false;
   firstName = '';

@@ -1,49 +1,87 @@
 <app-header-l></app-header-l>
 
-<div class="page-container">
-  <h1>Inscription Livreur</h1>
-  <p>
+<div class="mt-8 mb-8 bg-white px-4 flex flex-col items-center justify-center text-center font-serif">
+  <!-- Titre -->
+  <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold mb-4">Inscription Livreur</h1>
+  <p class="text-gray-600 max-w-lg mb-10">
     Merci de compléter les informations ci-dessous pour finaliser votre inscription.
   </p>
 
-  <div class="dropdown-container">
+  <!-- Conteneur principal -->
+  <div class="w-full max-w-xl bg-gray-50 rounded-lg p-6 shadow-2xl space-y-4 text-left">
     <!-- Informations personnelles -->
-    <button class="dropdown-btn" (click)="toggleDropdown('personalInfo')">Informations Personnelles</button>
-    <div id="personalInfo" class="dropdown-content">
-      <form #personalForm="ngForm">
-        <input type="text" name="nom" placeholder="Nom" [(ngModel)]="formData.nom" required />
-        <input type="text" name="prenom" placeholder="Prénom" [(ngModel)]="formData.prenom" required />
-        <input type="email" name="email" placeholder="Email" [(ngModel)]="formData.email" required />
-        <input type="tel" name="telephone" placeholder="Téléphone" [(ngModel)]="formData.telephone" required />
+    <button
+      class="w-full bg-gray-100 text-gray-800 mb-2 px-4 py-3 rounded-md shadow-xl text-left hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5371ff] transition"
+      (click)="toggleDropdown('personalInfo')">
+      Informations Personnelles
+    </button>
+    <div id="personalInfo" class="hidden bg-white w-full p-4 rounded-md shadow-inner">
+      <form #personalForm="ngForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+        <input type="text" name="nom" placeholder="Nom" [(ngModel)]="formData.nom"
+          class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#5371ff]" required />
+        <input type="text" name="prenom" placeholder="Prénom" [(ngModel)]="formData.prenom"
+          class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#5371ff]" required />
+        <input type="email" name="email" placeholder="Email" [(ngModel)]="formData.email"
+          class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#5371ff]" required />
+        <input type="tel" name="telephone" placeholder="Téléphone" [(ngModel)]="formData.telephone"
+          class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#5371ff]" required />
       </form>
     </div>
 
     <!-- Informations du véhicule -->
-    <button class="dropdown-btn" (click)="toggleDropdown('vehicleInfo')">Informations du Véhicule</button>
-    <div id="vehicleInfo" class="dropdown-content">
-      <form #vehicleForm="ngForm">
-        <input type="text" name="typeVehicule" placeholder="Type de véhicule" [(ngModel)]="formData.typeVehicule" required />
-        <input type="text" name="immatriculation" placeholder="Immatriculation" [(ngModel)]="formData.immatriculation" required />
+    <button
+      class="w-full bg-gray-100 text-gray-800 mb-2 px-4 py-3 rounded-md shadow-xl text-left hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5371ff] transition"
+      (click)="toggleDropdown('vehicleInfo')">
+      Informations du Véhicule
+    </button>
+    <div id="vehicleInfo" class="hidden bg-white w-full p-4 rounded-md shadow-inner">
+      <form #vehicleForm="ngForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+        <input type="text" name="typeVehicule" placeholder="Type de véhicule" [(ngModel)]="formData.typeVehicule"
+          class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#5371ff]" required />
+        <input type="text" name="immatriculation" placeholder="Immatriculation" [(ngModel)]="formData.immatriculation"
+          class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#5371ff]" required />
       </form>
     </div>
 
     <!-- Papiers du véhicule -->
-    <button class="dropdown-btn" (click)="toggleDropdown('vehiclePapers')">Papiers du Véhicule</button>
-    <div id="vehiclePapers" class="dropdown-content">
-      <form #papersForm="ngForm">
+    <button
+      class="w-full bg-gray-100 text-gray-800 px-4 py-3 rounded-md shadow-xl text-left hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5371ff] transition"
+      (click)="toggleDropdown('vehiclePapers')">
+      Papiers du Véhicule
+    </button>
+    <div id="vehiclePapers" class="hidden bg-white w-full p-4 rounded-md shadow-inner">
+      <form #papersForm="ngForm" class="flex flex-col gap-4 text-left">
         <label>Carte d'identité</label>
-        <input type="file" (change)="onFileSelected($event, 'carteGrise')" />
+        <input type="file" (change)="onFileSelected($event, 'carteGrise')"
+          class="w-full border rounded-md px-3 py-2 cursor-pointer" />
 
         <label>Assurance</label>
-        <input type="file" (change)="onFileSelected($event, 'assurance')" />
+        <input type="file" (change)="onFileSelected($event, 'assurance')"
+          class="w-full border rounded-md px-3 py-2 cursor-pointer" />
       </form>
     </div>
   </div>
 
-  <button class="btn-save-all" (click)="saveAll()">Enregistrer</button>
+  <!-- Bouton enregistrer avec loader -->
+  <button
+    class="w-full max-w-xl bg-[#5371ff] text-white font-semibold px-6 py-3 rounded-md mt-6 hover:bg-[#415ad8] transition flex items-center justify-center"
+    [disabled]="isLoading" (click)="saveAll()">
+    <span *ngIf="!isLoading">Enregistrer</span>
+    <span *ngIf="isLoading" class="flex items-center">
+      <svg class="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+        viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+          stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+      Enregistrement...
+    </span>
+  </button>
 
-  <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
-  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  <!-- Messages -->
+  <div class="text-green-600 mt-4" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="text-red-600 mt-4" *ngIf="errorMessage">{{ errorMessage }}</div>
 </div>
 
 <app-footer></app-footer>

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
@@ -45,6 +46,8 @@ export class HeaderComponent implements OnInit {
   // FontAwesome
   faBars = faBars;
   faTimes = faTimes;
+
+  isBrowser: boolean;
   faShoppingCart = faShoppingCart;
 
   // Modal commande multi-étapes
@@ -75,27 +78,23 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     private partenaireService: PartenaireService,
-    private cartService: CartService,
-    private router: Router
-  ) {}
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   ngOnInit(): void {
-    this.partenaireService.getPartenaires().subscribe({
-      next: (data) => {
-        this.allRestaurants = data;
-      },
-      error: () => {
-        this.showError('Erreur lors du chargement des restaurants.');
-      }
-    });
-
-    this.cartService.cartCount$.subscribe(count => {
-      this.cartCount = count;
-    });
-
-    this.cartService.cartItems$.subscribe(items => {
-      this.cartItems = items;
-    });
+    if (this.isBrowser) {
+      this.partenaireService.getPartenaires().subscribe({
+        next: (data) => {
+          this.allRestaurants = data;
+        },
+        error: (err) => {
+          console.error('Erreur lors du chargement des restaurants:', err);
+        }
+      });
+    }
   }
 
   // 🔹 Méthodes messages
@@ -139,6 +138,8 @@ export class HeaderComponent implements OnInit {
     );
   }
 
+  goToRestaurantMenu(id: string | undefined): void {
+    if (id && this.isBrowser) {
   goToRestaurantMenu(id: string | undefined) {
     if (id) {
       this.router.navigate(['/restaurant', id, 'menu']);
