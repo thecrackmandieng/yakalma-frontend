@@ -48,8 +48,8 @@ export class OrdersService {
     }
 
     if (!token) {
-      console.error('❌ [OrdersService] Aucun token trouvé dans localStorage');
-      console.log('📦 localStorage keys:', Object.keys(localStorage));
+      console.warn('⚠️ [OrdersService] Aucun token trouvé dans localStorage');
+      // Don't log localStorage keys during SSR to avoid errors
     }
 
     const headersConfig = {

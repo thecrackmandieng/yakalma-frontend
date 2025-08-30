@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { Observable, Subscription } from 'rxjs';
 import { Position } from '../../services/geolocation.service';
@@ -10,7 +10,7 @@ import { TrackingData } from '../../services/tracking.service';
   standalone: true,
   imports: [CommonModule, GoogleMapsModule],
   template: `
-    <div class="tracking-container">
+    <div *ngIf="isBrowser" class="tracking-container">
       <google-map
         [center]="mapCenter"
         [zoom]="zoom"
@@ -104,6 +104,8 @@ export class TrackingMapComponent implements OnInit, OnDestroy {
   @Input() showInfo = true;
   @Input() zoom = 15;
 
+  isBrowser: boolean = false;
+
   mapCenter: google.maps.LatLngLiteral = { lat: 14.6928, lng: -17.4467 };
   mapOptions: google.maps.MapOptions = {
     zoomControl: true,
@@ -139,7 +141,10 @@ export class TrackingMapComponent implements OnInit, OnDestroy {
   distance?: number;
   eta?: number;
 
+  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+
   ngOnInit(): void {
+    this.isBrowser = isPlatformBrowser(this.platformId);
     this.updateMapCenter();
   }
 

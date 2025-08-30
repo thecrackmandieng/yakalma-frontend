@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -83,12 +83,15 @@ export class HeaderComponent implements OnInit {
     private partenaireService: PartenaireService,
     private cartService: CartService,
     private router: Router,
-    paymentService: PaymentService
+    paymentService: PaymentService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.paymentService = paymentService;
   }
 
   ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
     this.partenaireService.getPartenaires().subscribe({
       next: (data) => {
         this.allRestaurants = data;
