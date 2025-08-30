@@ -24,7 +24,7 @@ export interface ETAData {
   providedIn: 'root'
 })
 export class TrackingService {
-  private socket: Socket;
+  private socket!: Socket; // Utilisation de l'opérateur de non-null assertion
   private trackingData = new BehaviorSubject<TrackingData | null>(null);
   private etaData = new BehaviorSubject<ETAData | null>(null);
 
@@ -32,48 +32,101 @@ export class TrackingService {
   public etaData$ = this.etaData.asObservable();
 
   constructor() {
-    // Connexion au serveur WebSocket
-    this.socket = io('https://yakalma.onrender.com', {
-      transports: ['websocket', 'polling'],
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000
-    }) as unknown as Socket;
+    // Connexion au serveur WebSocket avec meilleure gestion d'erreur
+    try {
+      this.socket = io('https://yakalma.onrender.com', {
+        transports: ['websocket', 'polling'],
+        reconnection: true,
+        reconnectionAttempts: 10,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        timeout: 20000,
+        forceNew: true,
+        autoConnect: true
+      }) as unknown as Socket;
 
-    this.setupSocketListeners();
+      this.setupSocketListeners();
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'initialisation de la connexion WebSocket:', error);
+      // Tentative de reconnexion après un délai
+      setTimeout(() => {
+        this.reconnect();
+      }, 5000);
+    }
   }
 
   /** 🚀 Commencer le suivi d'une commande */
   startTracking(orderId: string, clientId: string): void {
-    this.socket.emit('start_tracking', { orderId, clientId });
+    try {
+      if (this.socket && this.socket.connected) {
+        this.socket.emit('start_tracking', { orderId, clientId });
+      } else {
+        console.warn('⚠️ WebSocket non connecté, tentative de reconnexion...');
+        this.reconnect();
+        // Réessayer après un court délai
+        setTimeout(() => {
+          if (this.socket && this.socket.connected) {
+            this.socket.emit('start_tracking', { orderId, clientId });
+          }
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors du démarrage du suivi:', error);
+    }
   }
 
   /** 🛑 Arrêter le suivi */
   stopTracking(orderId: string): void {
-    this.socket.emit('stop_tracking', { orderId });
+    try {
+      if (this.socket && this.socket.connected) {
+        this.socket.emit('stop_tracking', { orderId });
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'arrêt du suivi:', error);
+    }
   }
 
   /** 📍 Mettre à jour la position du livreur */
   updateLivreurPosition(orderId: string, livreurId: string, position: Position): void {
-    const trackingData: TrackingData = {
-      livreurId,
-      orderId,
-      position,
-      timestamp: Date.now(),
-      status: 'en_route'
-    };
+    try {
+      if (this.socket && this.socket.connected) {
+        const trackingData: TrackingData = {
+          livreurId,
+          orderId,
+          position,
+          timestamp: Date.now(),
+          status: 'en_route'
+        };
 
-    this.socket.emit('livreur_position_update', trackingData);
+        this.socket.emit('livreur_position_update', trackingData);
+      } else {
+        console.warn('⚠️ WebSocket non connecté, impossible de mettre à jour la position');
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la mise à jour de la position:', error);
+    }
   }
 
   /** 🎯 Marquer comme arrivé */
   markAsArrived(orderId: string, livreurId: string): void {
-    this.socket.emit('livreur_arrived', { orderId, livreurId });
+    try {
+      if (this.socket && this.socket.connected) {
+        this.socket.emit('livreur_arrived', { orderId, livreurId });
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors du marquage comme arrivé:', error);
+    }
   }
 
   /** ✅ Marquer comme livré */
   markAsDelivered(orderId: string, livreurId: string): void {
-    this.socket.emit('order_delivered', { orderId, livreurId });
+    try {
+      if (this.socket && this.socket.connected) {
+        this.socket.emit('order_delivered', { orderId, livreurId });
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors du marquage comme livré:', error);
+    }
   }
 
   /** 📊 Obtenir les données de suivi en temps réel */
@@ -121,15 +174,54 @@ export class TrackingService {
 
   /** 🔌 Déconnexion propre */
   disconnect(): void {
-    if (this.socket) {
-      this.socket.disconnect();
+    try {
+      if (this.socket) {
+        this.socket.disconnect();
+        console.log('🔌 Déconnexion WebSocket effectuée');
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la déconnexion:', error);
     }
   }
 
   /** 🔗 Reconnexion */
   reconnect(): void {
-    if (this.socket && !this.socket.connected) {
-      this.socket.connect();
+    try {
+      if (this.socket) {
+        if (!this.socket.connected) {
+          this.socket.connect();
+          console.log('🔄 Tentative de reconnexion WebSocket');
+        }
+      } else {
+        // Réinitialiser complètement la connexion si le socket n'existe pas
+        console.log('🔄 Réinitialisation de la connexion WebSocket');
+        this.initializeSocket();
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la reconnexion:', error);
+      // Réessayer après un délai en cas d'échec
+      setTimeout(() => this.reconnect(), 3000);
+    }
+  }
+
+  /** 🔄 Réinitialiser complètement la connexion socket */
+  private initializeSocket(): void {
+    try {
+      this.socket = io('https://yakalma.onrender.com', {
+        transports: ['websocket', 'polling'],
+        reconnection: true,
+        reconnectionAttempts: 10,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        timeout: 20000,
+        forceNew: true,
+        autoConnect: true
+      }) as unknown as Socket;
+
+      this.setupSocketListeners();
+      console.log('✅ Connexion WebSocket réinitialisée');
+    } catch (error) {
+      console.error('❌ Erreur lors de la réinitialisation de la connexion:', error);
     }
   }
 
