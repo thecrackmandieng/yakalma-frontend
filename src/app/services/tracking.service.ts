@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { io, Socket } from 'socket.io-client';
+import io from 'socket.io-client';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Position } from './geolocation.service';
+
+type Socket = ReturnType<typeof io>;
 
 export interface TrackingData {
   livreurId: string;
@@ -36,7 +38,7 @@ export class TrackingService {
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000
-    });
+    }) as unknown as Socket;
 
     this.setupSocketListeners();
   }
@@ -60,7 +62,7 @@ export class TrackingService {
       timestamp: Date.now(),
       status: 'en_route'
     };
-    
+
     this.socket.emit('livreur_position_update', trackingData);
   }
 
@@ -106,7 +108,7 @@ export class TrackingService {
   getTrackingHistory(orderId: string): Promise<TrackingData[]> {
     return new Promise((resolve, reject) => {
       this.socket.emit('get_tracking_history', { orderId });
-      
+
       this.socket.once(`tracking_history_${orderId}`, (data: { history: TrackingData[] }) => {
         resolve(data.history);
       });
