@@ -41,6 +41,7 @@ loadOrders(): void {
     if (order.status === 'en_attente' && order._id) {
       this.partenaireService.acceptOrder(order._id).subscribe({
         next: () => {
+          order.status = 'en_cours';
           this.loadOrders(); // Recharge la liste après acceptation
         },
         error: (err: any) => {
@@ -55,6 +56,7 @@ loadOrders(): void {
     if (order.status === 'en_cours' && order._id) {
       this.partenaireService.deliverOrder(order._id).subscribe({
         next: (updatedOrder: Order) => {
+          order.status = 'livre';
           this.currentOrderId = updatedOrder._id || null;
           this.showSuccessModal = true;
           this.loadOrders(); // Recharge la liste après livraison
@@ -91,5 +93,17 @@ loadOrders(): void {
       return this.getImageUrl(order.items[0].image);
     }
     return 'assets/riz.png'; // fallback
+  }
+
+  selectedOrder: Order | null = null;
+
+  // Ouvrir la popup détails
+  openOrderDetails(order: Order): void {
+    this.selectedOrder = order;
+  }
+
+  // Fermer la popup
+  closeOrderDetails(): void {
+    this.selectedOrder = null;
   }
 }
