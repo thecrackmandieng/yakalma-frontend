@@ -1,114 +1,108 @@
 <app-header-livreur></app-header-livreur>
 
-<div class="order-list">
-  <h1>Liste des Commandes Livrées</h1>
+<div class="container mx-auto p-4">
+  <h1 class="text-2xl font-bold mb-6">Liste des Commandes Livrées</h1>
 
-  <div class="order-grid">
-    <div class="order-card" *ngFor="let order of orders">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="bg-white rounded-xl shadow p-4 flex flex-col" *ngFor="let order of orders">
 
-      <!-- ─── Image + actions ─────────────────────────────── -->
-      <div class="order-image" [class.disabled]="order.status === 'en_cours'">
-        <img [src]="order.image" alt="Image commande" />
+      <!-- Image + Actions -->
+      <div class="relative mb-4">
+        <img [src]="order.image" alt="Image commande" class="w-full h-48 object-cover rounded-lg" [class.opacity-50]="order.status === 'en_cours'">
 
-        <div class="order-actions">
-          <!-- Bouton Accepter (visible tant que status = 'livre') -->
-          <button
-            class="accept-button"
-            *ngIf="order.status === 'livre'"
-            (click)="acceptOrder(order)"
-          >
+        <div class="absolute top-2 right-2 flex space-x-2">
+          <button *ngIf="order.status === 'livre'" (click)="acceptOrder(order)"
+                  class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
             Accepter
           </button>
-
-          <!-- Bouton Localisation (désactivé si status = 'en_cours') -->
-          <button
-            class="map-icon-button"
-            title="Voir la localisation"
-            (click)="showMap(order)"
-            [disabled]="order.status === 'en_cours'"
-          >
+          <button (click)="showMap(order)" [disabled]="order.status === 'en_cours'"
+                  class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed">
             <i class="fas fa-location-dot"></i>
           </button>
         </div>
       </div>
 
-      <!-- ─── Détails ─────────────────────────────────────── -->
-<div class="order-details">
-  <h2>Commande #{{ order._id?.slice(0, 6) }}...</h2>
-  <p><strong>Client :</strong> {{ order.customerName }}</p>
-  <p><strong>Adresse :</strong> {{ order.address }}</p>
-  <p><strong>Contact :</strong> {{ order.contact }}</p>
+      <!-- Détails -->
+      <div class="text-gray-700 flex-1">
+        <h2 class="font-semibold mb-1">Commande #{{ order._id?.slice(0, 6) }}...</h2>
+        <p><strong>Client:</strong> {{ order.customerName }}</p>
+        <p><strong>Adresse:</strong> {{ order.address }}</p>
+        <p><strong>Contact:</strong> {{ order.contact }}</p>
 
-  <!-- NOUVEAU : Infos restaurant -->
-  <p><strong>Restaurant :</strong> {{ order.restaurantName || 'N/A' }}</p>
-  <p><strong>Téléphone restaurant :</strong> {{ order.restaurantPhone || 'N/A' }}</p>
-  <p><strong>Adresse restaurant :</strong> {{ order.restaurantAddress || 'N/A' }}</p>
+        <p><strong>Restaurant:</strong> {{ order.restaurantName || 'N/A' }}</p>
+        <p><strong>Téléphone restaurant:</strong> {{ order.restaurantPhone || 'N/A' }}</p>
+        <p><strong>Adresse restaurant:</strong> {{ order.restaurantAddress || 'N/A' }}</p>
 
-  <p><strong>Statut :</strong> {{ order.status }}</p>
+        <p><strong>Statut:</strong> {{ order.status }}</p>
 
-  <p><strong>Articles :</strong></p>
-  <ul>
-    <li *ngFor="let item of order.items">
-      {{ item.name }} – {{ item.quantity }}
-    </li>
-  </ul>
-</div>
+        <p class="mt-2 font-semibold">Articles:</p>
+        <ul class="list-disc list-inside">
+          <li *ngFor="let item of order.items">
+            {{ item.name }} – {{ item.quantity }}
+          </li>
+        </ul>
+      </div>
 
     </div>
   </div>
 </div>
 
-<!-- ─── Modal Google Map avec Navigation ─────────────────────────────────── -->
-<div *ngIf="selectedOrder" class="modal-overlay" (click)="closeModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="navigation-header">
-      <h3>Navigation vers le client</h3>
-      <button class="close-btn" (click)="closeModal()">×</button>
+<!-- Modal Navigation -->
+<div *ngIf="selectedOrder" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" (click)="closeModal()">
+  <div class="bg-white rounded-xl w-11/12 md:w-3/4 lg:w-2/3 max-w-5xl p-4 relative"
+       (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-bold">Navigation vers le client</h3>
+      <button (click)="closeModal()" class="text-gray-600 hover:text-gray-800 text-2xl">&times;</button>
     </div>
 
-    <!-- Informations de route -->
-    <div class="route-info" *ngIf="selectedOrder.routeInfo">
-      <div class="info-item">
+    <!-- Infos route -->
+    <div *ngIf="selectedOrder.routeInfo" class="flex flex-wrap space-x-6 mb-4 text-gray-700">
+      <div class="flex items-center space-x-2">
         <i class="fas fa-route"></i>
         <span>Distance: {{ selectedOrder.routeInfo.distance }}</span>
       </div>
-      <div class="info-item">
+      <div class="flex items-center space-x-2">
         <i class="fas fa-clock"></i>
         <span>Temps estimé: {{ selectedOrder.routeInfo.duration }}</span>
       </div>
     </div>
 
-    <!-- Carte OpenStreetMap -->
-    <div id="map-container" style="height: 400px; width: 100%; border: 1px solid #ccc; border-radius: 8px;">
-      <div *ngIf="!selectedOrder" style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666;">
-        <i class="fas fa-map-marked-alt" style="font-size: 2rem; margin-right: 10px;"></i>
+    <!-- Carte -->
+    <div id="map-container" class="h-[600px] md:h-[700px] w-full border border-gray-300 rounded-lg mb-4">
+      <div *ngIf="!map" class="flex items-center justify-center h-full text-gray-500">
+        <i class="fas fa-map-marked-alt text-2xl mr-2"></i>
         <span>Carte de navigation</span>
       </div>
     </div>
 
-    <!-- Boutons d'action -->
-    <div class="navigation-actions">
-      <button class="btn-start-navigation" (click)="startNavigation(selectedOrder)">
+    <!-- Actions -->
+    <div class="flex justify-end space-x-2">
+      <button (click)="startNavigation()"
+              class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center space-x-2">
         <i class="fas fa-play"></i>
-        Démarrer la navigation
+        <span>Démarrer la navigation</span>
       </button>
-      <button class="btn-close" (click)="closeModal()">
+      <button (click)="closeModal()"
+              class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center space-x-2">
         <i class="fas fa-times"></i>
-        Fermer
+        <span>Fermer</span>
       </button>
     </div>
 
-    <!-- Indicateur de chargement -->
-    <div class="loading-indicator" *ngIf="isLoadingLocation">
+    <!-- Loading / Erreur -->
+    <div *ngIf="isLoadingLocation" class="flex items-center space-x-2 mt-3 text-gray-700">
       <i class="fas fa-spinner fa-spin"></i>
       <span>Chargement de votre position...</span>
     </div>
 
-    <!-- Erreur de géolocalisation -->
-    <div class="error-message" *ngIf="locationError">
+    <div *ngIf="locationError" class="flex items-center space-x-2 mt-3 text-red-600">
       <i class="fas fa-exclamation-triangle"></i>
       <span>{{ locationError }}</span>
     </div>
+
   </div>
 </div>
 

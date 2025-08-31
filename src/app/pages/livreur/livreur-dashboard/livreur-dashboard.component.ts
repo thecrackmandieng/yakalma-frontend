@@ -1,25 +1,15 @@
-import { Component, Inject, OnInit, PLATFORM_ID, AfterViewInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HeaderLivreurComponent } from "../../header-livreur/header-livreur.component";
 import { FooterComponent } from "../../footer/footer.component";
 import { CommonModule } from '@angular/common';
 import { PartenaireService, Order as BaseOrder } from '../../../services/partenaire.service';
-import { GeolocationService, Position } from '../../../services/geolocation.service';
-import { LivreurGeolocationService, DeliveryLocation } from './livreur-geolocation.service';
-import { TrackingService } from '../../../services/tracking.service';
-import { LivreurNavigationService, DeliveryLocation as NavDeliveryLocation } from './livreur-navigation.service';
+
+declare var google: any;
 
 type Order = BaseOrder & {
   image?: string;
-  center?: { lat: number; lng: number };
-  clientLocation?: DeliveryLocation;
-  livreurPosition?: Position;
-  distance?: number;
-  eta?: number;
-  routeInfo?: {
-    distance: string;
-    duration: string;
-  };
+  routeInfo?: { distance: string; duration: string };
 };
 
 @Component({
@@ -34,16 +24,19 @@ export class LivreurDashboardComponent implements OnInit {
   isBrowser: boolean;
   selectedOrder: Order | null = null;
   orders: Order[] = [];
-  userLocation: Position | null = null;
+  userLocation: { latitude: number; longitude: number } | null = null;
   isLoadingLocation = false;
   locationError: string | null = null;
-  map: any = null; // Leaflet map instance
+
+  map: any = null;
+  clientMarker: any = null;
+  courierMarker: any = null;
+  directionsRenderer: any = null;
+  routeSteps: Array<google.maps.DirectionsStep & { spoken?: boolean }> = [];
+  watchId: number | null = null;
 
   constructor(
     private partenaireService: PartenaireService,
-    private geolocationService: LivreurGeolocationService,
-    private trackingService: TrackingService,
-    private navigationService: LivreurNavigationService,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -53,178 +46,219 @@ export class LivreurDashboardComponent implements OnInit {
     this.loadDeliveredOrders();
   }
 
-  /** 🔄 Charger toutes les commandes livrées */
   loadDeliveredOrders(): void {
     this.partenaireService.getDeliveredOrders().subscribe({
-      next: (orders) => {
+      next: orders => {
         this.orders = orders.map(order => ({
           ...order,
-          image: this.getImageUrl(order),
-          center: this.getDefaultMapCenter()
+          image: this.getImageUrl(order)
         }));
       },
-      error: (err) => {
-        console.error('❌ Erreur lors du chargement des commandes livrées :', err);
-      }
+      error: err => console.error('Erreur chargement commandes livrées :', err)
     });
   }
 
-  /** ✅ Le livreur accepte la commande (devient en_cours) */
- // ➜ remplacer l’appel à acceptOrder par assignOrderToCourier
-acceptOrder(order: Order): void {
-  if (order.status === 'livre') {
-    this.partenaireService.assignOrderToCourier(order._id!).subscribe({
-      next: updated => {
-        order.status = updated.status;        // passe à 'en_cours'
-        order.courierId = updated.courierId;  // pour info
-        // grisé + désactivation via le template / CSS
-        this.selectedOrder = {
-          ...updated,
-          image: this.getImageUrl(updated),
-          center: this.getDefaultMapCenter()
-        };
-      },
-      error: err => console.error('Erreur assignation :', err)
-    });
+  acceptOrder(order: Order): void {
+    if (order.status === 'livre') {
+      this.partenaireService.assignOrderToCourier(order._id!).subscribe({
+        next: updated => {
+          order.status = updated.status;
+          order.courierId = updated.courierId;
+        },
+        error: err => console.error('Erreur assignation :', err)
+      });
+    }
   }
+
+  async showMap(order: Order): Promise<void> {
+    if (!this.isBrowser) return;
+    this.selectedOrder = { ...order };
+    await this.getCurrentLocation();
+    await this.loadGoogleMapsScript();
+
+    setTimeout(() => {
+      this.initGoogleMap();
+      this.calculateRoute();
+      this.startTrackingPosition();
+    }, 0);
+  }
+
+private async loadGoogleMapsScript(): Promise<void> {
+  if ((window as any).google) return;
+  return new Promise<void>((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAGs3CBy6cHrNqb3d0ZS89NlY-8jmwwXzU`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => resolve();
+    script.onerror = err => reject(err);
+    document.head.appendChild(script);
+  });
 }
 
-
-  /** ❌ Fermer la modal */
-  closeModal(): void {
-    this.selectedOrder = null;
-    this.navigationService.stopNavigation();
-
-    // Nettoyer la carte
-    if (this.map) {
-      this.map.remove();
-      this.map = null;
-    }
-  }
-
-  /** Afficher la carte avec navigation GPS */
-  showMap(order: Order): void {
-    this.selectedOrder = {
-      ...order,
-      center: this.getDefaultMapCenter()
-    };
-
-    // Calculer la route et les informations de navigation
-    this.calculateRoute(order);
-  }
-
-  /** 🗺️ Calculer la route vers le client */
-  calculateRoute(order: Order): void {
-    if (!this.userLocation) {
-      this.getCurrentLocation().then(() => {
-        this.calculateRouteToClient(order);
-      });
-    } else {
-      this.calculateRouteToClient(order);
-    }
-  }
-
-  private calculateRouteToClient(order: Order): void {
-    if (!this.userLocation || !order.address) return;
-
-    // Utiliser des coordonnées par défaut pour Dakar
-    const clientLocation: NavDeliveryLocation = {
-      latitude: 14.6928,
-      longitude: -17.4467,
-      address: order.address
-    };
-
-    this.navigationService.getDistanceAndDuration(this.userLocation, clientLocation).subscribe({
-      next: (routeInfo) => {
-        if (this.selectedOrder) {
-          this.selectedOrder.routeInfo = routeInfo;
-        }
-      },
-      error: (error) => {
-        console.error('Erreur lors du calcul de la route:', error);
-      }
-    });
-  }
-
-  /** 📍 Obtenir la position actuelle du livreur */
   async getCurrentLocation(): Promise<void> {
     if (!this.isBrowser) return;
-
     this.isLoadingLocation = true;
     this.locationError = null;
 
     try {
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 300000
-        });
-      });
-
+      const position = await new Promise<GeolocationPosition>((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 30000 })
+      );
       this.userLocation = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude
       };
     } catch (error) {
-      this.locationError = 'Impossible d\'obtenir votre position GPS';
+      this.locationError = "Impossible d'obtenir votre position GPS";
       console.error('Erreur géolocalisation:', error);
     } finally {
       this.isLoadingLocation = false;
     }
   }
 
-  /** 🚀 Démarrer la navigation GPS */
-  startNavigation(order: Order): void {
-    if (!this.userLocation || !order.address) {
-      console.error('Position ou adresse manquante');
-      return;
-    }
+  initGoogleMap(): void {
+    if (!this.selectedOrder || !this.userLocation) return;
+    const mapContainer = document.getElementById('map-container');
+    if (!mapContainer) return;
 
-    const clientLocation: NavDeliveryLocation = {
-      latitude: 14.6928,
-      longitude: -17.4467,
-      address: order.address
-    };
+    const clientLat = 14.6928;
+    const clientLng = -17.4467;
 
-    this.navigationService.setDestination(clientLocation);
-    this.navigationService.startNavigation();
+    this.map = new google.maps.Map(mapContainer, {
+      center: { lat: clientLat, lng: clientLng },
+      zoom: 14
+    });
 
-    // Mettre à jour le statut de la commande
-    this.updateOrderStatus(order, 'en_cours');
+    this.clientMarker = new google.maps.Marker({
+      position: { lat: clientLat, lng: clientLng },
+      map: this.map,
+      title: 'Adresse du client'
+    });
+
+    this.courierMarker = new google.maps.Marker({
+      position: { lat: this.userLocation.latitude, lng: this.userLocation.longitude },
+      map: this.map,
+      title: 'Votre position',
+      icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+    });
+
+    this.directionsRenderer = new google.maps.DirectionsRenderer({ map: this.map });
   }
 
-  /** 🔄 Mettre à jour le statut de la commande */
-  updateOrderStatus(order: Order, newStatus: 'en_attente' | 'en_cours' | 'livre'): void {
-    // Utiliser le service assignOrderToCourier pour changer le statut
-    if (newStatus === 'en_cours') {
-      this.partenaireService.assignOrderToCourier(order._id!).subscribe({
-        next: (updatedOrder) => {
-          order.status = updatedOrder.status;
-          console.log(`Commande ${order._id} mise à jour: ${newStatus}`);
-        },
-        error: (error) => {
-          console.error('Erreur mise à jour statut:', error);
+  calculateRoute(): void {
+    if (!this.userLocation || !this.selectedOrder || !this.map) return;
+
+    const directionsService = new google.maps.DirectionsService();
+    const clientLat = 14.6928;
+    const clientLng = -17.4467;
+
+    directionsService.route({
+      origin: { lat: this.userLocation.latitude, lng: this.userLocation.longitude },
+      destination: { lat: clientLat, lng: clientLng },
+      travelMode: google.maps.TravelMode.DRIVING
+    }, (result: google.maps.DirectionsResult, status: google.maps.DirectionsStatus) => {
+      if (status === 'OK') {
+        this.directionsRenderer.setDirections(result);
+        const route = result.routes[0]?.legs[0];
+        if (route) {
+          this.selectedOrder!.routeInfo = {
+            distance: route.distance?.text ?? '0 km',
+            duration: route.duration?.text ?? '0 min'
+          };
+          this.routeSteps = route.steps.map(step => ({ ...step, spoken: false }));
+        } else {
+          console.error('Aucune route trouvée');
         }
-      });
+      } else {
+        console.error('Erreur calcul itinéraire:', status);
+      }
+    });
+  }
+
+  startNavigation(): void {
+    if (!this.userLocation || !this.selectedOrder || !this.map) return;
+    this.calculateRoute();
+    this.startTrackingPosition();
+  }
+
+  startTrackingPosition(): void {
+    if (!this.isBrowser || !navigator.geolocation) return;
+
+    this.watchId = navigator.geolocation.watchPosition(
+      position => {
+        if (!this.courierMarker) return;
+
+        this.userLocation = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+
+        this.courierMarker.setPosition({ lat: this.userLocation.latitude, lng: this.userLocation.longitude });
+        this.map.setCenter({ lat: this.userLocation.latitude, lng: this.userLocation.longitude });
+
+        this.routeSteps.forEach(step => {
+          if (step.spoken || !step.end_location) return;
+
+          const stepLat = step.end_location.lat();
+          const stepLng = step.end_location.lng();
+          const distance = this.getDistance(this.userLocation!.latitude, this.userLocation!.longitude, stepLat, stepLng);
+
+          if (distance < 30) {
+            const instruction = step.instructions.replace(/<[^>]+>/g, '');
+            this.speakFrench(instruction);
+            step.spoken = true;
+          }
+        });
+      },
+      err => console.error('Erreur suivi GPS:', err),
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 }
+    );
+  }
+
+  stopTrackingPosition(): void {
+    if (this.watchId !== null) {
+      navigator.geolocation.clearWatch(this.watchId);
+      this.watchId = null;
     }
   }
 
-  /** 📸 Image du premier article */
+  speakFrench(text: string): void {
+    if (!this.isBrowser || !('speechSynthesis' in window)) return;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'fr-FR';
+    speechSynthesis.speak(utterance);
+  }
+
+  closeModal(): void {
+    this.selectedOrder = null;
+    this.stopTrackingPosition();
+    this.map = null;
+    this.clientMarker = null;
+    this.courierMarker = null;
+    this.directionsRenderer = null;
+    this.routeSteps = [];
+  }
+
   getImageUrl(order: Order): string {
     const firstItem = order.items?.[0];
     if (firstItem?.image) {
-      const imagePath = firstItem.image;
-      if (imagePath.startsWith('http') || imagePath.startsWith('data:')) {
-        return imagePath;
-      }
-      return `https://yakalma.onrender.com/${imagePath}`;
+      if (firstItem.image.startsWith('http') || firstItem.image.startsWith('data:')) return firstItem.image;
+      return `https://yakalma.onrender.com/${firstItem.image}`;
     }
     return 'assets/riz.png';
   }
 
-  /** 🗺️ Position par défaut (Dakar) */
-  getDefaultMapCenter(): { lat: number; lng: number } {
-    return { lat: 14.6928, lng: -17.4467 };
+  private getDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+    const R = 6371e3;
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(Δφ / 2) ** 2 +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
   }
 }
