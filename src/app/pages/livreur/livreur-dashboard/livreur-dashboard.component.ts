@@ -34,6 +34,7 @@ export class LivreurDashboardComponent implements OnInit {
   directionsRenderer: any = null;
   routeSteps: Array<google.maps.DirectionsStep & { spoken?: boolean }> = [];
   watchId: number | null = null;
+  private spokenInstructions = new Set<string>();
 
   constructor(
     private partenaireService: PartenaireService,
@@ -83,18 +84,18 @@ export class LivreurDashboardComponent implements OnInit {
     }, 0);
   }
 
-private async loadGoogleMapsScript(): Promise<void> {
-  if ((window as any).google) return;
-  return new Promise<void>((resolve, reject) => {
-    const script = document.createElement('script');
+  private async loadGoogleMapsScript(): Promise<void> {
+    if ((window as any).google) return;
+    return new Promise<void>((resolve, reject) => {
+      const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAGs3CBy6cHrNqb3d0ZS89NlY-8jmwwXzU`;
-    script.async = true;
-    script.defer = true;
-    script.onload = () => resolve();
-    script.onerror = err => reject(err);
-    document.head.appendChild(script);
-  });
-}
+      script.async = true;
+      script.defer = true;
+      script.onload = () => resolve();
+      script.onerror = err => reject(err);
+      document.head.appendChild(script);
+    });
+  }
 
   async getCurrentLocation(): Promise<void> {
     if (!this.isBrowser) return;
@@ -156,7 +157,8 @@ private async loadGoogleMapsScript(): Promise<void> {
     directionsService.route({
       origin: { lat: this.userLocation.latitude, lng: this.userLocation.longitude },
       destination: { lat: clientLat, lng: clientLng },
-      travelMode: google.maps.TravelMode.DRIVING
+      travelMode: google.maps.TravelMode.DRIVING,
+      language: 'fr'
     }, (result: google.maps.DirectionsResult, status: google.maps.DirectionsStatus) => {
       if (status === 'OK') {
         this.directionsRenderer.setDirections(result);
@@ -167,8 +169,6 @@ private async loadGoogleMapsScript(): Promise<void> {
             duration: route.duration?.text ?? '0 min'
           };
           this.routeSteps = route.steps.map(step => ({ ...step, spoken: false }));
-        } else {
-          console.error('Aucune route trouvée');
         }
       } else {
         console.error('Erreur calcul itinéraire:', status);
@@ -178,6 +178,8 @@ private async loadGoogleMapsScript(): Promise<void> {
 
   startNavigation(): void {
     if (!this.userLocation || !this.selectedOrder || !this.map) return;
+    // Réinitialiser les instructions parlées pour une nouvelle navigation
+    this.spokenInstructions.clear();
     this.calculateRoute();
     this.startTrackingPosition();
   }
@@ -186,34 +188,48 @@ private async loadGoogleMapsScript(): Promise<void> {
     if (!this.isBrowser || !navigator.geolocation) return;
 
     this.watchId = navigator.geolocation.watchPosition(
-      position => {
-        if (!this.courierMarker) return;
+  position => {
+    if (!this.courierMarker) return;
 
-        this.userLocation = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude
-        };
+    this.userLocation = {
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude
+    };
 
-        this.courierMarker.setPosition({ lat: this.userLocation.latitude, lng: this.userLocation.longitude });
-        this.map.setCenter({ lat: this.userLocation.latitude, lng: this.userLocation.longitude });
+    this.courierMarker.setPosition({ lat: this.userLocation.latitude, lng: this.userLocation.longitude });
+    this.map.setCenter({ lat: this.userLocation.latitude, lng: this.userLocation.longitude });
 
-        this.routeSteps.forEach(step => {
-          if (step.spoken || !step.end_location) return;
+    // 🔄 Recalculer l'itinéraire
+    this.calculateRoute();
 
-          const stepLat = step.end_location.lat();
-          const stepLng = step.end_location.lng();
-          const distance = this.getDistance(this.userLocation!.latitude, this.userLocation!.longitude, stepLat, stepLng);
+    // 🎤 Guidage vocal : parler des instructions d'itinéraire lorsqu'on approche d'un pas (moins de 30m)
+    this.routeSteps.forEach(step => {
+      if (!step.end_location) return;
 
-          if (distance < 30) {
-            const instruction = step.instructions.replace(/<[^>]+>/g, '');
-            this.speakFrench(instruction);
-            step.spoken = true;
-          }
-        });
-      },
-      err => console.error('Erreur suivi GPS:', err),
-      { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 }
-    );
+      const stepLat = step.end_location.lat();
+      const stepLng = step.end_location.lng();
+      const distance = this.getDistance(this.userLocation!.latitude, this.userLocation!.longitude, stepLat, stepLng);
+
+      if (distance < 30 && !step.spoken) {
+        const instruction = step.instructions.replace(/<[^>]+>/g, '');
+        this.speakFrench(instruction);
+        step.spoken = true;
+      }
+    });
+  },
+  err => {
+    if (err.code === 1) {
+      this.locationError = "⚠️ Permission refusée. Activez la localisation.";
+    } else if (err.code === 2) {
+      this.locationError = "⚠️ Position indisponible. Vérifiez votre GPS ou réseau.";
+    } else if (err.code === 3) {
+      this.locationError = "⚠️ Temps d’attente dépassé. Essayez à nouveau.";
+    }
+    console.error('Erreur suivi GPS:', err);
+  },
+  { enableHighAccuracy: true, maximumAge: 10000 } // ✅ sans timeout
+);
+
   }
 
   stopTrackingPosition(): void {
@@ -225,8 +241,28 @@ private async loadGoogleMapsScript(): Promise<void> {
 
   speakFrench(text: string): void {
     if (!this.isBrowser || !('speechSynthesis' in window)) return;
+
+    if (this.spokenInstructions.has(text)) return; // évite répétition
+    this.spokenInstructions.add(text);
+
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'fr-FR';
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    // Sélectionner une voix française si disponible
+    const voices = speechSynthesis.getVoices();
+    const frenchVoice = voices.find(voice => voice.lang.startsWith('fr'));
+    if (frenchVoice) {
+      utterance.voice = frenchVoice;
+    }
+
+    // Gestion des erreurs
+    utterance.onerror = (event) => {
+      console.error('Erreur synthèse vocale:', event.error);
+    };
+
     speechSynthesis.speak(utterance);
   }
 
@@ -238,6 +274,7 @@ private async loadGoogleMapsScript(): Promise<void> {
     this.courierMarker = null;
     this.directionsRenderer = null;
     this.routeSteps = [];
+    this.spokenInstructions.clear();
   }
 
   getImageUrl(order: Order): string {
