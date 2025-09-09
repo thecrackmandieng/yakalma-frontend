@@ -1,14 +1,14 @@
-<header class="header">
-  <div class="logo">
+<!-- <header class="fixed top-0 left-0 w-full z-50 bg-[#4169E1] text-white px-6 py-2 flex justify-between items-center shadow-md">
+  <div class="text-2xl font-serif !no-underline text-white font-bold">
     <h1>Yakalma</h1>
   </div>
 
-  <div class="button-container">
+  <div class="button-container"> -->
     <!-- Bouton Code -->
-    <button *ngIf="!showInput" class="contact-button" (click)="toggleInput()">Code</button>
+    <!-- <button *ngIf="!showInput" class="contact-button" (click)="toggleInput()">Code</button> -->
 
     <!-- Champ d'entrée et bouton Valider -->
-    <div *ngIf="showInput" class="input-group">
+    <!-- <div *ngIf="showInput" class="input-group">
       <input
         type="text"
         placeholder="Enter validation code"
@@ -17,10 +17,10 @@
       />
       <button class="validate-button" (click)="validateCode()">Valider</button>
     </div>
-  </div>
+  </div> -->
 
   <!-- Menu Profil Dropdown -->
-  <div class="profile-menu">
+  <!-- <div class="profile-menu">
     <div class="profile-icon" (click)="toggleDropdown()">
       <img src="assets/li.webp" alt="Avatar" />
       <span>Mon Compte</span>
@@ -32,21 +32,21 @@
       <a (click)="changePassword()">🔑 Changer mot de passe</a>
       <a (click)="logout()">🚪 Déconnexion</a>
     </div>
-  </div>
+  </div> -->
 
   <!-- Message de succès -->
-  <div *ngIf="showSuccessModal" class="message success-message">
+  <!-- <div *ngIf="showSuccessModal" class="message success-message">
     Code validé avec succès !
-  </div>
+  </div> -->
 
   <!-- Message d'erreur -->
-  <div *ngIf="showErrorModal" class="message error-message">
+  <!-- <div *ngIf="showErrorModal" class="message error-message">
     {{ errorMessage }}
   </div>
-</header>
+</header> -->
 
 <!-- MODALE DU PROFIL -->
-<div class="modal-backdrop" *ngIf="showProfileModal">
+<!-- <div class="modal-backdrop" *ngIf="showProfileModal">
   <div class="modal-profile">
     <h2>Mon Profil</h2>
     <form (submit)="saveProfile(); $event.preventDefault()">
@@ -68,10 +68,10 @@
       </div>
     </form>
   </div>
-</div>
+</div> -->
 
 <!-- MODALE CHANGEMENT MOT DE PASSE -->
-<div class="modal-backdrop" *ngIf="showPasswordModal">
+<!-- <div class="modal-backdrop" *ngIf="showPasswordModal">
   <div class="modal-profile">
     <h2>Changer le mot de passe</h2>
     <form (submit)="submitPasswordChange(); $event.preventDefault()">
@@ -89,6 +89,141 @@
       <div class="modal-actions">
         <button type="submit" class="btn save">Modifier</button>
         <button type="button" class="btn cancel" (click)="closePasswordModal()">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div> -->
+
+<!-- ======================================================== -->
+<header class="fixed top-0 left-0 w-full z-50 bg-[#4169E1] text-white px-4 md:px-6 py-3 flex flex-wrap md:flex-nowrap justify-between items-center shadow-md gap-4">
+
+  <!-- Logo -->
+  <div class="text-2xl font-serif font-bold">
+    <h1>Yakalma</h1>
+  </div>
+
+  <!-- Bouton Code ou Input -->
+  <div class="flex items-center gap-2">
+    <!-- Bouton Code -->
+    <button *ngIf="!showInput"
+            (click)="toggleInput()"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 !rounded-full font-bold border shadow-xl text-sm md:text-base">
+      Code
+    </button>
+
+    <!-- Input + Valider -->
+    <div *ngIf="showInput" class="flex gap-2">
+      <input [(ngModel)]="validationCode"
+             type="number"
+             placeholder="Entrez votre code..."
+             class="border rounded px-3 py-2 font-bold text-white w-32 sm:w-48 focus:ring focus:ring-blue-300" />
+      <button (click)="validateCode()"
+              class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded font-bold text-sm md:text-base">
+        Valider
+      </button>
+    </div>
+  </div>
+
+  <!-- Profil Dropdown -->
+  <div class="relative" (click)="toggleDropdown()">
+    <div class="flex items-center gap-2 cursor-pointer">
+      <img src="assets/li.webp" alt="Avatar" class="w-8 h-8 rounded-full object-cover" />
+      <span class="hidden sm:inline">Mon Compte</span>
+      <span class="text-xs">&#9662;</span>
+    </div>
+
+    <!-- Dropdown -->
+    <div *ngIf="dropdownOpen"
+         class="absolute right-0 mt-2 w-52 bg-white text-gray-800 rounded-lg shadow-lg overflow-hidden z-50">
+      <a
+        role="menuitem"
+        (click)="goToProfile()"
+        class="block px-6 py-2 hover:bg-[#4169E1] !text-gray-800 hover:!text-white !no-underline transition"
+      ><i class="fas fa-user-circle text-[#bbb] hover:!bg-white text-xl"></i> Profil</a>
+      <a
+        role="menuitem"
+        (click)="changePassword()"
+        class="block px-2 py-2 hover:bg-[#4169E1] text-left !text-gray-800 hover:!text-white !no-underline transition"
+      ><i class="fas fa-key text-[#bbb] text-xl"></i> Changer mot de passe</a>
+      <a
+        role="menuitem"
+        (click)="logout()"
+        class="block px-4 py-2 hover:bg-red-500 !text-gray-800 hover:!text-white !no-underline transition"
+      ><i class="fas fa-sign-out-alt text-red-300 text-xl"></i> Déconnexion</a>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="showSuccessModal"
+       class="absolute top-16 left-1/2 transform -translate-x-1/2 bg-green-100 text-green-700 px-4 py-2 rounded shadow">
+    Code validé avec succès !
+  </div>
+
+  <div *ngIf="showErrorModal"
+       class="absolute top-16 left-1/2 transform -translate-x-1/2 bg-red-100 text-red-700 px-4 py-2 rounded shadow">
+    {{ errorMessage }}
+  </div>
+</header>
+
+<!-- ✅ MODALE PROFIL -->
+<div *ngIf="showProfileModal"
+     class="fixed inset-0 bg-black/60 flex justify-center items-center z-[9999] p-4">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+    <h2 class="text-xl font-bold mb-4 text-center">Mon Profil</h2>
+    <form (submit)="saveProfile(); $event.preventDefault()" class="space-y-4">
+      <div>
+        <label class="block font-medium">Prénom</label>
+        <input type="text" [(ngModel)]="firstName" name="firstName" required
+               class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300" />
+      </div>
+      <div>
+        <label class="block font-medium">Nom</label>
+        <input type="text" [(ngModel)]="lastName" name="lastName" required
+               class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300" />
+      </div>
+      <div>
+        <label class="block font-medium">Email</label>
+        <input type="email" [(ngModel)]="email" name="email" required
+               class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300" />
+      </div>
+      <div>
+        <label class="block font-medium">Téléphone</label>
+        <input type="text" [(ngModel)]="phone" name="phone" required
+               class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300" />
+      </div>
+      <div class="flex justify-between mt-6">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Enregistrer</button>
+        <button type="button" (click)="closeProfileModal()" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ✅ MODALE CHANGEMENT MDP -->
+<div *ngIf="showPasswordModal"
+     class="fixed inset-0 bg-black/60 flex justify-center items-center z-[9999] p-4">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+    <h2 class="text-xl font-bold mb-4 text-center">Changer le mot de passe</h2>
+    <form (submit)="submitPasswordChange(); $event.preventDefault()" class="space-y-4">
+      <div>
+        <label class="block font-medium">Mot de passe actuel</label>
+        <input type="password" [(ngModel)]="currentPassword" name="currentPassword" required
+               class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300" />
+      </div>
+      <div>
+        <label class="block font-medium">Nouveau mot de passe</label>
+        <input type="password" [(ngModel)]="newPassword" name="newPassword" required
+               class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300" />
+      </div>
+      <div>
+        <label class="block font-medium">Confirmer le mot de passe</label>
+        <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" required
+               class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300" />
+      </div>
+      <div *ngIf="passwordError" class="text-red-600 text-sm">{{ passwordError }}</div>
+      <div class="flex justify-between mt-6">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Modifier</button>
+        <button type="button" (click)="closePasswordModal()" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">Annuler</button>
       </div>
     </form>
   </div>
