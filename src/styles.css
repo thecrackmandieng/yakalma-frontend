@@ -70,6 +70,17 @@
   }
 }
 
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* Classes utilitaires personnalisées */
 .animate-fade-in-down {
   animation: fade-in-down 0.8s ease-out forwards;
@@ -93,6 +104,10 @@
 
 .animate-smoke-puff {
   animation: smoke-puff 2.5s ease-in infinite;
+}
+
+.animate-zoom-in {
+  animation: zoomIn 0.3s ease-out;
 }
 
 .smoke-svg {
