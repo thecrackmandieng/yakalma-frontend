@@ -3,18 +3,16 @@ import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { HeaderRestaurantComponent } from "../../header-restaurant/header-restaurant.component";
 import { FooterComponent } from "../../footer/footer.component";
 import { FormsModule } from '@angular/forms';
-import { PartenaireService } from '../../../services/partenaire.service';
+import { PartenaireService, Order } from '../../../services/partenaire.service';
 import { CartService } from '../../../services/cart.service';
 import { MenuItem } from '../../models/menu-item.model';
-import { Supplement } from '../../models/supplement.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaymentService } from '../../../services/payment.service';
-import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-restaurant-menu',
   standalone: true,
-imports: [HeaderRestaurantComponent, FooterComponent, CommonModule, FormsModule],
+  imports: [HeaderRestaurantComponent, FooterComponent, CommonModule, FormsModule],
   templateUrl: './restaurant-menu.component.html',
   styleUrls: ['./restaurant-menu.component.css'],
 })
@@ -22,27 +20,19 @@ export class RestaurantMenuComponent implements OnInit {
   menuItems: MenuItem[] = [];
   imagePreview: string | ArrayBuffer | null = null;
   selectedImage: File | null = null;
-  successMessage: string = '';
 
   showModal = false;
   modalItem: MenuItem | null = null;
   quantity = 1;
 
   showPaymentForm = false;
-
-  payment = {
-    name: '',
-    contact: '',
-    address: ''
-  };
+  payment = { name: '', contact: '', address: '' };
 
   showAddDishModal = false;
   newDish: any = { name: '', description: '', price: 0, image: '', supplements: [] };
-  newSupplements: Supplement[] = [];
 
   showEditDishModal = false;
   editDish: any = {};
-  editSupplements: Supplement[] = [];
   editImagePreview: string | ArrayBuffer | null = null;
   selectedEditImage: File | null = null;
 
@@ -137,12 +127,13 @@ export class RestaurantMenuComponent implements OnInit {
     });
   }
 
+  // --- Modal commande ---
   openModal(item: MenuItem, event: Event) {
     event.stopPropagation();
     this.modalItem = item;
     this.quantity = 1;
     this.showModal = true;
-    this.showPaymentForm = true; // directement afficher le formulaire
+    this.showPaymentForm = true;
     this.payment = { name: '', contact: '', address: '' };
 
     this.modalSupplements = (item.supplements || []).map((s: any) => ({
@@ -158,13 +149,8 @@ export class RestaurantMenuComponent implements OnInit {
     this.modalSupplements = [];
   }
 
-  incrementQuantity() {
-    this.quantity++;
-  }
-
-  decrementQuantity() {
-    if (this.quantity > 1) this.quantity--;
-  }
+  incrementQuantity() { this.quantity++; }
+  decrementQuantity() { if (this.quantity > 1) this.quantity--; }
 
   calculateTotalPrice(): number {
     if (!this.modalItem) return 0;
@@ -177,8 +163,9 @@ export class RestaurantMenuComponent implements OnInit {
 
   addToCart() {
     if (!this.modalItem) return;
-
-    const selectedSupplements = this.modalSupplements.filter(s => s.selected);
+    const selectedSupplements = this.modalSupplements
+      .filter(s => s.selected)
+      .map(s => ({ name: s.name, price: s.price }));
     const itemToAdd = {
       ...this.modalItem,
       quantity: this.quantity,
@@ -189,85 +176,78 @@ export class RestaurantMenuComponent implements OnInit {
     this.closeModal();
   }
 
-  // --- Paiement direct via PayTech ---//
   payNow() {
-    if (!this.modalItem) {
-      console.error('Aucun plat sélectionné.');
-      alert('Veuillez sélectionner un plat avant de procéder au paiement.');
-      return;
-    }
-
-    // Validation des informations client
-    if (!this.payment.name || !this.payment.contact || !this.payment.address) {
-      alert('Veuillez remplir tous les champs du formulaire (nom, contact, adresse).');
+    if (!this.modalItem || !this.payment.name || !this.payment.contact || !this.payment.address) {
+      alert('Veuillez remplir tous les champs et sélectionner un plat.');
       return;
     }
 
     const totalPrice = this.calculateTotalPrice();
-
     const paymentPayload = {
       item_name: this.modalItem.name,
       item_price: totalPrice,
       currency: "XOF",
       ref_command: `CMD${Date.now()}`,
       customerName: this.payment.name,
-      customerEmail: "moustaphadieng0405@gmail.com" // À remplacer par un email dynamique si disponible
+      customerEmail: "moustaphadieng0405@gmail.com"
     };
-
-    console.log('Payload paiement:', paymentPayload);
-
-    // Afficher un indicateur de chargement
-    const payButton = document.querySelector('button[onclick*="payNow"]');
-    if (payButton) {
-      payButton.textContent = 'Traitement en cours...';
-      payButton.setAttribute('disabled', 'true');
-    }
 
     this.paymentService.initPayment(paymentPayload).subscribe({
       next: (res) => {
-        console.log('Réponse PayTech:', res);
         if (res.redirect_url) {
-          window.location.href = res.redirect_url; // redirection
+          this.saveOrder(totalPrice);
+          window.location.href = res.redirect_url;
         } else {
-          alert('Erreur : URL de redirection non reçue de PayTech.');
-          this.resetPayButton();
+          alert('Erreur : URL de redirection non reçue.');
         }
       },
+      error: (err) => alert(err.message || 'Erreur paiement.')
+    });
+  }
+
+  private saveOrder(totalPrice: number) {
+    if (!this.modalItem) return;
+
+    const selectedSupplements = this.modalSupplements
+      .filter(s => s.selected)
+      .map(s => ({ name: s.name, price: s.price }));
+
+    const orderPayload: Order = {
+      restaurantId: this.restaurantId,
+      items: [{
+        dishId: this.modalItem._id!,
+        name: this.modalItem.name,
+        quantity: this.quantity,
+        image: this.modalItem.image,
+        price: this.modalItem.price,
+        supplements: selectedSupplements
+      }],
+      customerName: this.payment.name,
+      address: this.payment.address,
+      contact: this.payment.contact,
+      total: totalPrice,
+      status: 'en_attente'
+    };
+
+    this.partenaireService.createOrder(orderPayload).subscribe({
+      next: (response) => {
+        console.log('Commande enregistrée:', response);
+        alert('Commande enregistrée avec succès !');
+      },
       error: (err) => {
-        console.error('Erreur détaillée paiement:', err);
-
-        // Message d'erreur spécifique selon le type d'erreur
-        let errorMessage = err.message || 'Erreur lors de la requête de paiement.';
-
-        if (err.message.includes('authentification')) {
-          errorMessage += '\n\nVeuillez contacter le support technique pour vérifier la configuration PayTech.';
-        } else if (err.message.includes('connexion')) {
-          errorMessage += '\n\nVérifiez votre connexion internet et réessayez.';
-        }
-
-        alert(errorMessage);
-        this.resetPayButton();
+        console.error('Erreur enregistrement commande:', err);
+        alert("Impossible d'enregistrer la commande.");
       }
     });
   }
 
-  private resetPayButton() {
-    const payButton = document.querySelector('button[onclick*="payNow"]');
-    if (payButton) {
-      payButton.textContent = 'Payer maintenant';
-      payButton.removeAttribute('disabled');
-    }
-  }
-
-  getImageUrl(imagePath: string): string {
-    if (!imagePath) return '';
-    // Si l'imagePath est déjà une URL complète (http, https, data:), la retourner directement
+  getImageUrl(imagePath?: string): string {
+    if (!imagePath) return 'assets/default-dish.png';
     if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
-    // Pour les chemins relatifs, construire l'URL complète avec le serveur backend
     return `https://yakalma.onrender.com/${imagePath}`;
   }
 
-  // --- Les méthodes addDish, updateDish, delete, supplements etc restent inchangées ---
+  // --- Gestion Ajout / Edition / Suppression plats ---
   openAddDishModal() { this.showAddDishModal = true; }
   closeAddDishModal() {
     this.showAddDishModal = false;
@@ -275,6 +255,7 @@ export class RestaurantMenuComponent implements OnInit {
     this.imagePreview = null;
     this.selectedImage = null;
   }
+
   onImageSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
@@ -284,43 +265,30 @@ export class RestaurantMenuComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
+
   addDish() {
-    if (!this.selectedImage || !this.newDish.name || !this.newDish.description || !this.newDish.price) {
-      alert('Tous les champs sont requis.');
-      return;
-    }
+    if (!this.newDish.name || this.newDish.price <= 0) { alert('Remplir nom et prix'); return; }
     const formData = new FormData();
     formData.append('name', this.newDish.name);
     formData.append('description', this.newDish.description);
     formData.append('price', this.newDish.price.toString());
-    formData.append('image', this.selectedImage);
-    if (this.newDish.supplements && this.newDish.supplements.length > 0) {
-      formData.append('supplements', JSON.stringify(this.newDish.supplements));
-    }
+    if (this.selectedImage) formData.append('image', this.selectedImage);
+    if (this.newDish.supplements?.length) formData.append('supplements', JSON.stringify(this.newDish.supplements));
+
     this.partenaireService.addMenuItem(formData).subscribe({
-      next: (res: any) => {
-        this.menuItems.push(res.menuItem);
-        this.closeAddDishModal();
-      },
-      error: () => alert('Erreur lors de l\'ajout du plat.')
+      next: res => { this.menuItems.push(res.menuItem); this.closeAddDishModal(); alert('Plat ajouté !'); },
+      error: err => { console.error(err); alert('Erreur ajout plat'); }
     });
   }
 
-  // Les méthodes updateDish, deleteDish et gestion suppléments restent identiques
-
-  openEditDishModal(item: MenuItem) {
-    this.editDish = { ...item };
-    this.editImagePreview = this.getImageUrl(item.image || '');
-    this.selectedEditImage = null;
+  openEditDishModal(dish: MenuItem) {
+    this.editDish = { ...dish };
     this.showEditDishModal = true;
-  }
-
-  closeEditDishModal() {
-    this.showEditDishModal = false;
-    this.editDish = {};
-    this.editImagePreview = null;
+    this.editImagePreview = this.getImageUrl(dish.image || '');
     this.selectedEditImage = null;
   }
+
+  closeEditDishModal() { this.showEditDishModal = false; this.editDish = {}; this.editImagePreview = null; this.selectedEditImage = null; }
 
   onEditImageSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
@@ -333,78 +301,38 @@ export class RestaurantMenuComponent implements OnInit {
   }
 
   updateDish() {
-    if (!this.editDish._id || !this.editDish.name || !this.editDish.description || !this.editDish.price) {
-      alert('Tous les champs sont requis.');
-      return;
-    }
-
+    if (!this.editDish._id) return;
     const formData = new FormData();
     formData.append('name', this.editDish.name);
     formData.append('description', this.editDish.description);
     formData.append('price', this.editDish.price.toString());
-    if (this.selectedEditImage) {
-      formData.append('image', this.selectedEditImage);
-    }
-    if (this.editDish.supplements && this.editDish.supplements.length > 0) {
-      formData.append('supplements', JSON.stringify(this.editDish.supplements));
-    }
+    if (this.selectedEditImage) formData.append('image', this.selectedEditImage);
+    if (this.editDish.supplements?.length) formData.append('supplements', JSON.stringify(this.editDish.supplements));
 
     this.partenaireService.updateMenuItem(this.editDish._id, formData).subscribe({
-      next: (res: any) => {
-        const index = this.menuItems.findIndex(i => i._id === this.editDish._id);
-        if (index !== -1) this.menuItems[index] = res.menuItem;
+      next: updated => {
+        const index = this.menuItems.findIndex(m => m._id === updated._id);
+        if (index !== -1) this.menuItems[index] = updated;
         this.closeEditDishModal();
+        alert('Plat mis à jour !');
       },
-      error: () => alert('Erreur lors de la modification du plat.')
+      error: err => { console.error(err); alert('Erreur mise à jour'); }
     });
   }
 
-  openDeleteConfirmModal(item: MenuItem) {
-    this.dishToDelete = item;
-    this.showDeleteConfirmModal = true;
-  }
-
-  closeDeleteConfirmModal() {
-    this.showDeleteConfirmModal = false;
-    this.dishToDelete = null;
-  }
+  openDeleteConfirmModal(dish: MenuItem) { this.dishToDelete = dish; this.showDeleteConfirmModal = true; }
+  closeDeleteConfirmModal() { this.dishToDelete = null; this.showDeleteConfirmModal = false; }
 
   confirmDelete() {
     if (!this.dishToDelete?._id) return;
-
     this.partenaireService.deleteMenuItem(this.dishToDelete._id).subscribe({
-      next: () => {
-        this.menuItems = this.menuItems.filter(i => i._id !== this.dishToDelete?._id);
-        this.closeDeleteConfirmModal();
-      },
-      error: () => alert('Erreur lors de la suppression du plat.')
+      next: () => { this.menuItems = this.menuItems.filter(m => m._id !== this.dishToDelete?._id); this.closeDeleteConfirmModal(); alert('Plat supprimé !'); },
+      error: err => { console.error(err); alert('Erreur suppression'); }
     });
   }
 
-  // Méthodes pour gérer les suppléments
-  addNewSupplement() {
-    if (!this.newDish.supplements) {
-      this.newDish.supplements = [];
-    }
-    this.newDish.supplements.push({ name: '', price: 0 });
-  }
-
-  removeNewSupplement(index: number) {
-    if (this.newDish.supplements) {
-      this.newDish.supplements.splice(index, 1);
-    }
-  }
-
-  addEditSupplement() {
-    if (!this.editDish.supplements) {
-      this.editDish.supplements = [];
-    }
-    this.editDish.supplements.push({ name: '', price: 0 });
-  }
-
-  removeEditSupplement(index: number) {
-    if (this.editDish.supplements) {
-      this.editDish.supplements.splice(index, 1);
-    }
-  }
+  addNewSupplement() { this.newDish.supplements.push({ name: '', price: 0 }); }
+  removeNewSupplement(i: number) { this.newDish.supplements.splice(i, 1); }
+  addEditSupplement() { this.editDish.supplements.push({ name: '', price: 0 }); }
+  removeEditSupplement(i: number) { this.editDish.supplements.splice(i, 1); }
 }

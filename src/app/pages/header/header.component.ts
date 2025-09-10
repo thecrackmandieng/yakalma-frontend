@@ -229,7 +229,7 @@ export class HeaderComponent implements OnInit {
 
   const orderPayload = {
     items: this.cartItems.map(item => ({
-      menuItemId: item._id || item.menuItemId, // <-- Ajoute l'id du plat ici
+      dishId: item._id || item.menuItemId,
       name: item.name,
       quantity: item.quantity,
       image: item.image || '',
@@ -240,6 +240,7 @@ export class HeaderComponent implements OnInit {
     address: this.payment.address.trim(),
     contact: this.payment.contact.trim(),
     restaurantId: restaurantId,
+    total: this.getCartTotal(),
     operator: this.selectedOperator?.name || ''
   };
 
@@ -447,6 +448,5 @@ getCartTotal(): number {
       }
     });
   }
-
 
 }

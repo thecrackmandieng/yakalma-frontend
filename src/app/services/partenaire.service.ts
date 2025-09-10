@@ -8,8 +8,11 @@ import { Partenaire } from '../pages/models/partenaire.model';
 import { MenuItem } from '../pages/models/menu-item.model';
 
 export interface OrderItem {
+  dishId: string;
   name: string;
+  price: number;
   quantity: number;
+  supplements: any[];
   image?: string;
 }
 
@@ -20,6 +23,7 @@ export interface Order {
   address: string;
   contact: string;
   restaurantId: string;
+  total: number;
 
   restaurantName?: string;
   restaurantPhone?: string;
