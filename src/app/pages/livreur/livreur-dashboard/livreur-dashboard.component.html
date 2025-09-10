@@ -1,16 +1,16 @@
-<app-header-livreur></app-header-livreur>
+<!-- <app-header-livreur></app-header-livreur>
 
 <div class="container mx-auto p-4">
   <h1 class="text-2xl font-bold mb-6">Liste des Commandes Livrées</h1>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div class="bg-white rounded-xl shadow p-4 flex flex-col" *ngFor="let order of orders">
+    <div class="bg-white rounded-xl shadow p-4 flex flex-col" *ngFor="let order of orders"> -->
 
       <!-- Image + Actions -->
-      <div class="relative mb-4">
+      <!-- <div class="relative mb-4">
         <img [src]="order.image" alt="Image commande" class="w-full h-48 object-cover rounded-lg" [class.opacity-50]="order.status === 'en_cours'">
 
-        <div class="absolute top-2 right-2 flex space-x-2">
+        <div class="absolute top-2 right-2 gap-2 flex space-x-2">
           <button *ngIf="order.status === 'livre'" (click)="acceptOrder(order)"
                   class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
             Accepter
@@ -20,10 +20,10 @@
             <i class="fas fa-location-dot"></i>
           </button>
         </div>
-      </div>
+      </div> -->
 
       <!-- Détails -->
-      <div class="text-gray-700 flex-1">
+      <!-- <div class="text-gray-700 flex-1">
         <h2 class="font-semibold mb-1">Commande #{{ order._id?.slice(0, 6) }}...</h2>
         <p><strong>Client:</strong> {{ order.customerName }}</p>
         <p><strong>Adresse:</strong> {{ order.address }}</p>
@@ -45,19 +45,182 @@
 
     </div>
   </div>
-</div>
+</div> -->
 
 <!-- Modal Navigation -->
-<div *ngIf="selectedOrder" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" (click)="closeModal()">
+<!-- <div *ngIf="selectedOrder" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" (click)="closeModal()">
   <div class="bg-white rounded-xl w-11/12 md:w-3/4 lg:w-2/3 max-w-5xl p-4 relative"
+       (click)="$event.stopPropagation()"> -->
+
+    <!-- Header -->
+    <!-- <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-bold">Navigation vers le client</h3>
+      <button (click)="closeModal()" class="text-gray-600 hover:text-gray-800 text-2xl">&times;</button>
+    </div> -->
+
+    <!-- Infos route -->
+    <!-- <div *ngIf="selectedOrder.routeInfo" class="flex flex-wrap space-x-6 mb-4 text-gray-700">
+      <div class="flex items-center space-x-2">
+        <i class="fas fa-route"></i>
+        <span>Distance: {{ selectedOrder.routeInfo.distance }}</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <i class="fas fa-clock"></i>
+        <span>Temps estimé: {{ selectedOrder.routeInfo.duration }}</span>
+      </div>
+    </div> -->
+
+    <!-- Carte -->
+    <!-- <div id="map-container" class="h-[600px] md:h-[700px] w-full border border-gray-300 rounded-lg mb-4">
+      <div *ngIf="!map" class="flex items-center justify-center h-full text-gray-500">
+        <i class="fas fa-map-marked-alt text-2xl mr-2"></i>
+        <span>Carte de navigation</span>
+      </div>
+    </div> -->
+
+    <!-- Actions -->
+    <!-- <div class="flex justify-end space-x-2">
+      <button (click)="startNavigation()"
+              class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center space-x-2">
+        <i class="fas fa-play"></i>
+        <span>Démarrer la navigation</span>
+      </button>
+      <button (click)="closeModal()"
+              class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center space-x-2">
+        <i class="fas fa-times"></i>
+        <span>Fermer</span>
+      </button>
+    </div> -->
+
+    <!-- Loading / Erreur -->
+     <!-- <div *ngIf="isLoadingLocation" class="flex items-center space-x-2 mt-3 text-gray-700">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Chargement de votre position...</span>
+    </div>
+
+    <div *ngIf="locationError" class="flex items-center space-x-2 mt-3 text-red-600">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>{{ locationError }}</span>
+    </div>
+
+  </div>
+</div> -->
+
+<!-- <app-footer></app-footer> -->
+
+<!-- ======================================================== -->
+
+<app-header-livreur></app-header-livreur>
+
+<div class="container mx-auto p-4 font-serif">
+  <h1 class="text-2xl md:text-3xl font-bold !mt-16 !mb-6 text-center">Liste des Commandes à livrées</h1>
+
+  <!-- Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let order of orders"
+         class="bg-white rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1 cursor-pointer"
+         (click)="selectedOrder = order">
+
+      <!-- Image -->
+      <div class="relative">
+        <img [src]="order.image"
+             alt="Image commande"
+             class="w-full h-48 object-cover rounded-t-xl"
+             [class.opacity-50]="order.status === 'en_cours'">
+        <span class="absolute top-2 left-2 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded">
+          {{ order.status }}
+        </span>
+        <div class="absolute top-2 right-2 gap-2 flex space-x-2">
+          <button *ngIf="order.status === 'livre'" (click)="acceptOrder(order)"
+                  class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+            Accepter
+          </button>
+          <button (click)="showMap(order)" [disabled]="order.status === 'en_cours'"
+                  class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed">
+            <i class="fas fa-location-dot"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Infos basiques -->
+      <div class="flex justify-between p-4">
+        <p class="text-gray-600"><i class="fas fa-user mr-1"></i>{{ order.customerName }}</p>
+        <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-1"></i>{{ order.address }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Modal Détails -->
+<div *ngIf="selectedOrder"
+     class="fixed inset-0 bg-black/60 flex justify-center items-start overflow-y-auto z-50"
+     (click)="closeModal()">
+
+  <div class="bg-white/70 backdrop-blur-sm rounded-xl shadow-xl w-11/12 md:w-3/4 lg:w-2/3 p-6 mt-10 mb-10 relative animate-zoom-in font-serif"
        (click)="$event.stopPropagation()">
 
     <!-- Header -->
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="text-xl font-bold">Navigation vers le client</h3>
-      <button (click)="closeModal()" class="text-gray-600 hover:text-gray-800 text-2xl">&times;</button>
+    <div class="flex justify-between items-center border-b pb-3 mb-4">
+      <button (click)="closeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+    </div>
+    <div class="flex justify-center items-center text-center">
+      <h3 class="text-xl md:text-2xl font-bold text-center !text-[#4169E1]">Détails de la commande</h3>
     </div>
 
+    <!-- Infos Client & Restaurant -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
+      <!-- Client -->
+      <div class="bg-blue-50 p-4 rounded-xl">
+        <h3 class="font-semibold text-lg text-center !text-blue-600 mb-2"><i class="fas fa-user"></i> Client</h3>
+        <div class="flex flex-wrap justify-between items-center mb-2">
+          <p><strong>Client :</strong> {{ selectedOrder.customerName }}</p>
+          <p><strong>Adresse :</strong> {{ selectedOrder.address }}</p>
+        </div>
+        <p><strong>Contact :</strong> {{ selectedOrder.contact }}</p>
+      </div>
+
+      <!-- Restaurant -->
+      <div class="bg-green-50 p-4 rounded-xl">
+        <h3 class="text-lg font-semibold text-center !text-green-600 mb-2"><i class="fas fa-utensils"></i> Restaurant</h3>
+        <div class="flex flex-wrap justify-between items-center mb-2">
+          <p><strong>Restaurant :</strong> {{ selectedOrder.restaurantName }}</p>
+          <p><strong>Adresse :</strong> {{ selectedOrder.restaurantAddress }}</p>
+        </div>
+        <p><strong>Téléphone :</strong> {{ selectedOrder.restaurantPhone }}</p>
+      </div>
+    </div>
+
+    <!-- Articles -->
+    <div class="mt-6 p-4 bg-orange-50 rounded-xl border border-orange-200 mb-4">
+      <h4 class="font-semibold !text-orange-600 mb-2"><i class="fas fa-shopping-cart"></i> Articles</h4>
+      <ul class="list-disc list-inside !text-orange-600">
+        <li *ngFor="let item of selectedOrder.items">
+          {{ item.name }} – {{ item.quantity }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- Carte -->
+    <!-- <div id="map-container" class="h-80 w-full border mt-6 rounded-lg flex items-center justify-center text-gray-500">
+      <i class="fas fa-map-marked-alt text-2xl mr-2"></i>
+      Carte de navigation
+    </div> -->
+
+    <!-- Actions -->
+    <!-- <div class="flex justify-end gap-3 mt-6">
+      <button (click)="startNavigation()"
+              class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center space-x-2">
+        <i class="fas fa-play"></i>
+        <span>Démarrer</span>
+      </button>
+      <button (click)="closeModal()"
+              class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center space-x-2">
+        <i class="fas fa-times"></i>
+        <span>Fermer</span>
+      </button>
+    </div> -->
+
+    <!-- ==================================== -->
     <!-- Infos route -->
     <div *ngIf="selectedOrder.routeInfo" class="flex flex-wrap space-x-6 mb-4 text-gray-700">
       <div class="flex items-center space-x-2">
@@ -71,7 +234,7 @@
     </div>
 
     <!-- Carte -->
-    <div id="map-container" class="h-[600px] md:h-[700px] w-full border border-gray-300 rounded-lg mb-4">
+    <div id="map-container" class="md:h-80 w-full border border-gray-300 rounded-lg mb-4">
       <div *ngIf="!map" class="flex items-center justify-center h-full text-gray-500">
         <i class="fas fa-map-marked-alt text-2xl mr-2"></i>
         <span>Carte de navigation</span>
@@ -102,6 +265,7 @@
       <i class="fas fa-exclamation-triangle"></i>
       <span>{{ locationError }}</span>
     </div>
+    <!-- ============================================= -->
 
   </div>
 </div>
