@@ -33,6 +33,7 @@ export class LivreurDashboardComponent implements OnInit {
   clientMarker: any = null;
   courierMarker: any = null;
   directionsRenderer: any = null;
+  polyline: any = null;
   routeSteps: Array<google.maps.DirectionsStep & { spoken?: boolean }> = [];
   watchId: number | null = null;
   private spokenInstructions = new Set<string>();
@@ -72,29 +73,24 @@ export class LivreurDashboardComponent implements OnInit {
     }
   }
 
-  // ✅ Correction ici
   async showMap(order: Order): Promise<void> {
     if (!this.isBrowser) return;
     this.selectedOrder = { ...order };
 
     await this.loadGoogleMapsScript();
-
-    // 1. Position du livreur
     await this.getCurrentLocation();
 
-    // 2. Position du client
     if (order.address) {
       try {
         this.clientLocation = await this.geocodeAddress(order.address);
       } catch (error) {
         console.error('Erreur géocodage adresse client:', error);
-        this.clientLocation = { latitude: 14.6928, longitude: -17.4467 }; // Dakar fallback
+        this.clientLocation = { latitude: 14.6928, longitude: -17.4467 }; // Dakar par défaut
       }
     } else {
       this.clientLocation = { latitude: 14.6928, longitude: -17.4467 };
     }
 
-    // 3. Lancer la carte seulement si les deux positions existent
     if (this.userLocation && this.clientLocation) {
       this.initGoogleMap();
       this.calculateRoute();
@@ -108,10 +104,10 @@ export class LivreurDashboardComponent implements OnInit {
     if ((window as any).google) return;
     return new Promise<void>((resolve, reject) => {
       const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAGs3CBy6cHrNqb3d0ZS89NlY-8jmwwXzU`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAGs3CBy6cHrNqb3d0ZS89NlY-8jmwwXzU&loading=async&callback=initMap`;
       script.async = true;
       script.defer = true;
-      script.onload = () => resolve();
+      (window as any).initMap = () => resolve();
       script.onerror = err => reject(err);
       document.head.appendChild(script);
     });
@@ -144,10 +140,7 @@ export class LivreurDashboardComponent implements OnInit {
       geocoder.geocode({ address }, (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
         if (status === google.maps.GeocoderStatus.OK && results && results[0]) {
           const location = results[0].geometry.location;
-          resolve({
-            latitude: location.lat(),
-            longitude: location.lng()
-          });
+          resolve({ latitude: location.lat(), longitude: location.lng() });
         } else {
           reject('Erreur de géocodage: ' + status);
         }
@@ -165,24 +158,39 @@ export class LivreurDashboardComponent implements OnInit {
       zoom: 14
     });
 
-    this.courierMarker = new google.maps.Marker({
-      position: { lat: this.userLocation.latitude, lng: this.userLocation.longitude },
-      map: this.map,
-      title: 'Votre position',
-      icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
-    });
+    const AdvancedMarkerElement = google.maps.marker?.AdvancedMarkerElement;
 
-    this.clientMarker = new google.maps.Marker({
-      position: { lat: this.clientLocation.latitude, lng: this.clientLocation.longitude },
-      map: this.map,
-      title: 'Adresse du client'
-    });
+    if (AdvancedMarkerElement) {
+      this.courierMarker = new AdvancedMarkerElement({
+        map: this.map,
+        position: { lat: this.userLocation.latitude, lng: this.userLocation.longitude },
+        title: 'Votre position'
+      });
+
+      this.clientMarker = new AdvancedMarkerElement({
+        map: this.map,
+        position: { lat: this.clientLocation.latitude, lng: this.clientLocation.longitude },
+        title: 'Adresse du client'
+      });
+    } else {
+      this.courierMarker = new google.maps.Marker({
+        map: this.map,
+        position: { lat: this.userLocation.latitude, lng: this.userLocation.longitude },
+        title: 'Votre position'
+      });
+
+      this.clientMarker = new google.maps.Marker({
+        map: this.map,
+        position: { lat: this.clientLocation.latitude, lng: this.clientLocation.longitude },
+        title: 'Adresse du client'
+      });
+    }
 
     this.directionsRenderer = new google.maps.DirectionsRenderer({ map: this.map });
   }
 
   calculateRoute(): void {
-    if (!this.userLocation || !this.selectedOrder || !this.map || !this.clientLocation) return;
+    if (!this.userLocation || !this.clientLocation || !this.map) return;
 
     const directionsService = new google.maps.DirectionsService();
 
@@ -193,6 +201,17 @@ export class LivreurDashboardComponent implements OnInit {
     }, (result: google.maps.DirectionsResult, status: google.maps.DirectionsStatus) => {
       if (status === 'OK') {
         this.directionsRenderer.setDirections(result);
+
+        // ✅ tracer une polyline de l’itinéraire
+        if (this.polyline) this.polyline.setMap(null); // enlever l’ancienne
+        this.polyline = new google.maps.Polyline({
+          path: result.routes[0].overview_path,
+          strokeColor: '#007bff',
+          strokeOpacity: 0.8,
+          strokeWeight: 6,
+          map: this.map
+        });
+
         const route = result.routes[0]?.legs[0];
         if (route) {
           this.selectedOrder!.routeInfo = {
@@ -207,9 +226,14 @@ export class LivreurDashboardComponent implements OnInit {
     });
   }
 
+  /** ✅ Nouvelle méthode : démarrer navigation */
   startNavigation(): void {
-    if (!this.userLocation || !this.selectedOrder || !this.map) return;
-    this.spokenInstructions.clear();
+    if (!this.userLocation || !this.clientLocation) {
+      console.error("Impossible de démarrer la navigation : localisation manquante");
+      return;
+    }
+
+    this.speakFrench("Navigation démarrée. Suivez les instructions.");
     this.calculateRoute();
     this.startTrackingPosition();
   }
@@ -226,23 +250,28 @@ export class LivreurDashboardComponent implements OnInit {
           longitude: position.coords.longitude
         };
 
-        this.courierMarker.setPosition({ lat: this.userLocation.latitude, lng: this.userLocation.longitude });
+        if (this.courierMarker.position) {
+          this.courierMarker.position = { lat: this.userLocation.latitude, lng: this.userLocation.longitude };
+        } else if (this.courierMarker.setPosition) {
+          this.courierMarker.setPosition({ lat: this.userLocation.latitude, lng: this.userLocation.longitude });
+        }
+
         this.map.setCenter({ lat: this.userLocation.latitude, lng: this.userLocation.longitude });
 
+        // ✅ recalculer la route à chaque mouvement
         this.calculateRoute();
 
-        this.routeSteps.forEach(step => {
-          if (!step.end_location) return;
-          const stepLat = step.end_location.lat();
-          const stepLng = step.end_location.lng();
-          const distance = this.getDistance(this.userLocation!.latitude, this.userLocation!.longitude, stepLat, stepLng);
+        this.checkStepsAndSpeak();
 
-          if (distance < 30 && !step.spoken) {
-            const instruction = step.instructions.replace(/<[^>]+>/g, '');
-            this.speakFrench(instruction);
-            step.spoken = true;
-          }
-        });
+        if (this.getDistance(
+          this.userLocation.latitude,
+          this.userLocation.longitude,
+          this.clientLocation!.latitude,
+          this.clientLocation!.longitude
+        ) < 20) {
+          this.speakFrench("Vous êtes arrivé à destination.");
+          this.stopTrackingPosition();
+        }
       },
       err => {
         if (err.code === 1) {
@@ -254,8 +283,28 @@ export class LivreurDashboardComponent implements OnInit {
         }
         console.error('Erreur suivi GPS:', err);
       },
-      { enableHighAccuracy: true, maximumAge: 10000 }
+      { enableHighAccuracy: true, maximumAge: 5000 }
     );
+  }
+
+  private checkStepsAndSpeak(): void {
+    this.routeSteps.forEach(step => {
+      if (!step.end_location) return;
+      const stepLat = step.end_location.lat();
+      const stepLng = step.end_location.lng();
+      const distance = this.getDistance(
+        this.userLocation!.latitude,
+        this.userLocation!.longitude,
+        stepLat,
+        stepLng
+      );
+
+      if (distance < 30 && !step.spoken) {
+        const instruction = step.instructions.replace(/<[^>]+>/g, '');
+        this.speakFrench(instruction);
+        step.spoken = true;
+      }
+    });
   }
 
   stopTrackingPosition(): void {
@@ -267,8 +316,8 @@ export class LivreurDashboardComponent implements OnInit {
 
   speakFrench(text: string): void {
     if (!this.isBrowser || !('speechSynthesis' in window)) return;
-
     if (this.spokenInstructions.has(text)) return;
+
     this.spokenInstructions.add(text);
 
     const utterance = new SpeechSynthesisUtterance(text);
@@ -279,14 +328,9 @@ export class LivreurDashboardComponent implements OnInit {
 
     const voices = speechSynthesis.getVoices();
     const frenchVoice = voices.find(voice => voice.lang.startsWith('fr'));
-    if (frenchVoice) {
-      utterance.voice = frenchVoice;
-    }
+    if (frenchVoice) utterance.voice = frenchVoice;
 
-    utterance.onerror = (event) => {
-      console.error('Erreur synthèse vocale:', event.error);
-    };
-
+    utterance.onerror = (event) => console.error('Erreur synthèse vocale:', event.error);
     speechSynthesis.speak(utterance);
   }
 
@@ -298,6 +342,7 @@ export class LivreurDashboardComponent implements OnInit {
     this.clientMarker = null;
     this.courierMarker = null;
     this.directionsRenderer = null;
+    this.polyline = null;
     this.routeSteps = [];
     this.spokenInstructions.clear();
   }
