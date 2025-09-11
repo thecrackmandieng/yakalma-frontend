@@ -136,8 +136,10 @@ export class RestaurantMenuComponent implements OnInit {
     this.showPaymentForm = true;
     this.payment = { name: '', contact: '', address: '' };
 
+    // ✅ Initialiser les suppléments avec selected = false
     this.modalSupplements = (item.supplements || []).map((s: any) => ({
-      ...s,
+      name: s.name,
+      price: s.price,
       selected: false
     }));
   }
@@ -154,24 +156,29 @@ export class RestaurantMenuComponent implements OnInit {
 
   calculateTotalPrice(): number {
     if (!this.modalItem) return 0;
+
     const basePrice = this.modalItem.price * this.quantity;
     const supplementsTotal = this.modalSupplements
       .filter(s => s.selected)
       .reduce((sum, s) => sum + (s.price * this.quantity), 0);
+
     return basePrice + supplementsTotal + this.deliveryFee + this.serviceFee;
   }
 
   addToCart() {
     if (!this.modalItem) return;
+
     const selectedSupplements = this.modalSupplements
       .filter(s => s.selected)
       .map(s => ({ name: s.name, price: s.price }));
+
     const itemToAdd = {
       ...this.modalItem,
       quantity: this.quantity,
       supplements: selectedSupplements,
       total: this.calculateTotalPrice()
     };
+
     this.cartService.addToCart(itemToAdd);
     this.closeModal();
   }
@@ -331,6 +338,7 @@ export class RestaurantMenuComponent implements OnInit {
     });
   }
 
+  // --- Suppléments dynamique pour ajout/édition plats ---
   addNewSupplement() { this.newDish.supplements.push({ name: '', price: 0 }); }
   removeNewSupplement(i: number) { this.newDish.supplements.splice(i, 1); }
   addEditSupplement() { this.editDish.supplements.push({ name: '', price: 0 }); }
