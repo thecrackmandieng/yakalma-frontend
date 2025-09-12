@@ -136,7 +136,6 @@ export class RestaurantMenuComponent implements OnInit {
     this.showPaymentForm = true;
     this.payment = { name: '', contact: '', address: '' };
 
-    // ✅ Initialiser les suppléments avec selected = false
     this.modalSupplements = (item.supplements || []).map((s: any) => ({
       name: s.name,
       price: s.price,
@@ -156,7 +155,6 @@ export class RestaurantMenuComponent implements OnInit {
 
   calculateTotalPrice(): number {
     if (!this.modalItem) return 0;
-
     const basePrice = this.modalItem.price * this.quantity;
     const supplementsTotal = this.modalSupplements
       .filter(s => s.selected)
@@ -167,7 +165,6 @@ export class RestaurantMenuComponent implements OnInit {
 
   addToCart() {
     if (!this.modalItem) return;
-
     const selectedSupplements = this.modalSupplements
       .filter(s => s.selected)
       .map(s => ({ name: s.name, price: s.price }));
@@ -183,6 +180,7 @@ export class RestaurantMenuComponent implements OnInit {
     this.closeModal();
   }
 
+  // --- Paiement ---
   payNow() {
     if (!this.modalItem || !this.payment.name || !this.payment.contact || !this.payment.address) {
       alert('Veuillez remplir tous les champs et sélectionner un plat.');
@@ -190,11 +188,12 @@ export class RestaurantMenuComponent implements OnInit {
     }
 
     const totalPrice = this.calculateTotalPrice();
+    const ref = `CMD${Date.now()}`;
     const paymentPayload = {
       item_name: this.modalItem.name,
       item_price: totalPrice,
       currency: "XOF",
-      ref_command: `CMD${Date.now()}`,
+      ref_command: ref,
       customerName: this.payment.name,
       customerEmail: "moustaphadieng0405@gmail.com"
     };
@@ -202,7 +201,8 @@ export class RestaurantMenuComponent implements OnInit {
     this.paymentService.initPayment(paymentPayload).subscribe({
       next: (res) => {
         if (res.redirect_url) {
-          this.saveOrder(totalPrice);
+          // ✅ redirection uniquement, pas de saveOrder ici
+          localStorage.setItem('pending_ref', ref);
           window.location.href = res.redirect_url;
         } else {
           alert('Erreur : URL de redirection non reçue.');
@@ -212,9 +212,29 @@ export class RestaurantMenuComponent implements OnInit {
     });
   }
 
+  // --- Vérification après retour ---
+  verifyAndSaveOrder() {
+    const ref = localStorage.getItem('pending_ref');
+    if (!ref) return;
+
+    this.paymentService.verifyPayment(ref).subscribe({
+      next: (res: { status: string }) => {
+        if (res.status === 'success') {
+          const totalPrice = this.calculateTotalPrice();
+          this.saveOrder(totalPrice);
+          localStorage.removeItem('pending_ref');
+          this.router.navigate(['/success']); // ✅ affichage succès uniquement après paiement validé
+        } else {
+          alert('Paiement non confirmé.');
+          this.router.navigate(['/failed']); // redirection en cas d’échec
+        }
+      },
+      error: (err) => console.error('Erreur vérification paiement:', err)
+    });
+  }
+
   private saveOrder(totalPrice: number) {
     if (!this.modalItem) return;
-
     const selectedSupplements = this.modalSupplements
       .filter(s => s.selected)
       .map(s => ({ name: s.name, price: s.price }));
@@ -239,7 +259,6 @@ export class RestaurantMenuComponent implements OnInit {
     this.partenaireService.createOrder(orderPayload).subscribe({
       next: (response) => {
         console.log('Commande enregistrée:', response);
-        alert('Commande enregistrée avec succès !');
       },
       error: (err) => {
         console.error('Erreur enregistrement commande:', err);
@@ -254,7 +273,7 @@ export class RestaurantMenuComponent implements OnInit {
     return `https://yakalma.onrender.com/${imagePath}`;
   }
 
-  // --- Gestion Ajout / Edition / Suppression plats ---
+  // --- Gestion plats ---
   openAddDishModal() { this.showAddDishModal = true; }
   closeAddDishModal() {
     this.showAddDishModal = false;
@@ -338,7 +357,6 @@ export class RestaurantMenuComponent implements OnInit {
     });
   }
 
-  // --- Suppléments dynamique pour ajout/édition plats ---
   addNewSupplement() { this.newDish.supplements.push({ name: '', price: 0 }); }
   removeNewSupplement(i: number) { this.newDish.supplements.splice(i, 1); }
   addEditSupplement() { this.editDish.supplements.push({ name: '', price: 0 }); }
