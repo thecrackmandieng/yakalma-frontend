@@ -1,4 +1,4 @@
-<div class="container mx-auto p-4">
+<!-- <div class="container mx-auto p-4">
   <h1 class="text-2xl font-bold mb-4">Historique des Commandes</h1>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -16,10 +16,10 @@
         {{ order.status === 'en_attente' ? 'En attente' : order.status === 'en_cours' ? 'En cours' : 'Livrée' }}
       </span>
     </div>
-  </div>
+  </div> -->
 
   <!-- Modal Détails Commande -->
-  <div *ngIf="selectedOrder" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" (click)="closeOrderDetails()">
+  <!-- <div *ngIf="selectedOrder" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" (click)="closeOrderDetails()">
     <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4" (click)="$event.stopPropagation()">
       <h2 class="text-xl font-bold mb-4">Détails de la Commande</h2>
       <img [src]="getOrderImage(selectedOrder)" alt="Commande" class="w-full h-32 object-cover rounded mb-4">
@@ -35,4 +35,168 @@
       <button class="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" (click)="closeOrderDetails()">Fermer</button>
     </div>
   </div>
+</div> -->
+
+<!-- ===================== -->
+
+<app-header-client></app-header-client>
+
+<div class="px-4 py-6 md:pt-24 bg-gray-50 min-h-screen font-serif">
+  <h1 class="text-3xl font-bold text-gray-800 text-center !mb-8">
+    Mes Commandes
+  </h1>
+
+  <!-- Grid responsive -->
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+    <!-- Card -->
+    <div
+      *ngFor="let order of orders"
+      class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer flex flex-col"
+      (click)="openOrderDetails(order)"
+    >
+      <!-- Image -->
+      <div class="relative">
+        <img
+          [src]="getOrderImage(order)"
+          alt="Image commande"
+          class="w-full h-52 object-cover"
+          onerror="this.src='assets/images/fallback.png'"
+        />
+
+        <!-- Actions -->
+        <div
+          class="absolute bottom-0 inset-x-0 bg-white/70 backdrop-blur-sm p-3 flex flex-col items-end"
+        >
+
+          <!-- Bouton Accepter -->
+          <button
+            *ngIf="order.status === 'en_attente'"
+            class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded-md shadow mb-2"
+            (click)="acceptOrder(order); $event.stopPropagation()"
+          >
+            Accepter
+          </button>
+
+          <!-- Bouton Livrer -->
+          <button
+            *ngIf="order.status === 'en_cours'"
+            class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded-md shadow"
+            (click)="deliverOrder(order); $event.stopPropagation()"
+          >
+            Livrer
+          </button>
+
+          <!-- Statut -->
+          <p class="text-sm font-semibold mt-2">
+            Statut :
+            <span
+              [ngClass]="{
+                'text-yellow-500': order.status === 'en_attente',
+                'text-blue-500': order.status === 'en_cours',
+                'text-green-600': order.status === 'livre'
+              }"
+            >
+              {{ order.status?.replace('_', ' ') }}
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- ✅ Modal détails commande -->
+<div
+  *ngIf="selectedOrder"
+  class="fixed inset-0 bg-black/50 flex items-center justify-center overflow-y-auto font-serif z-50"
+  (click)="closeOrderDetails()"
+>
+  <div
+    class="bg-white/70 backdrop-blur-sm rounded-lg shadow-xl w-11/12 md:w-3/4 lg:w-1/2 p-6 relative animate-fade-in-up mt-10 mb-10"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Bouton fermer -->
+    <button
+      class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+      (click)="closeOrderDetails()"
+    >
+      ✕
+    </button>
+
+    <h2 class="text-xl font-bold md:text-2xl text-center mb-4 !text-[#4169E1]">
+      Détails de la commande
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="p-4 flex flex-col bg-purple-50 rounded-xl border border-purple-200">
+        <img
+          [src]="getOrderImage(selectedOrder)"
+          alt="Image commande"
+          class="h-52 object-cover rounded-md"
+          onerror="this.src='assets/images/fallback.png'"
+        />
+      </div>
+
+      <div class="p-4 bg-orange-50 rounded-xl border border-orange-200">
+        <h3 class="text-lg text-center font-semibold !text-orange-600 mb-2"><i class="fas fa-receipt"></i> Commande</h3>
+        <h2 class="!text-lg !font-bold mb-2 !text-orange-600">
+          numéro : #{{ selectedOrder._id }}
+        </h2>
+        <p class="font-semibold !text-orange-600">Articles :</p>
+        <ul class="list-disc !text-orange-600 ml-6">
+          <li *ngFor="let item of selectedOrder.items">
+            {{ item.name }} - {{ item.quantity }}
+          </li>
+        </ul>
+      </div>
+
+      <div class="p-4 bg-green-50 rounded-xl border border-green-200">
+        <h3 class="text-lg font-semibold text-center !text-green-600 mb-2"><i class="fas fa-utensils"></i> Restaurant</h3>
+        <div class="flex flex-wrap justify-between items-center mb-2">
+          <p><strong>Restaurant :</strong> {{ selectedOrder.restaurantName }}</p>
+          <p><strong>Adresse :</strong> {{ selectedOrder.restaurantAddress }}</p>
+        </div>
+        <p><strong>Téléphone :</strong> {{ selectedOrder.restaurantPhone }}</p>
+      </div>
+
+      <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
+        <h3 class="text-lg font-semibold text-center !text-blue-600 mb-2"><i class="fa fa-user"></i> Client</h3>
+        <div class="flex flex-wrap justify-between items-center mb-2">
+          <p><strong>Client :</strong> {{ selectedOrder.customerName }}</p>
+          <p><strong>Adresse :</strong> {{ selectedOrder.address }}</p>
+        </div>
+        <p><strong>Contact :</strong> {{ selectedOrder.contact }}</p>
+      </div>
+
+      <div *ngIf="selectedOrder.validationCode" class="p-4 bg-red-50 rounded-xl border border-red-200 md:col-span-2">
+        <h3 class="text-lg font-semibold text-center !text-red-600 mb-2"><i class="fas fa-key"></i> Code de Validation</h3>
+        <p class="text-center text-xl font-bold !text-red-600">{{ selectedOrder.validationCode }}</p>
+        <p class="text-sm text-center text-gray-600">Ce code doit être donné au client pour la validation de la livraison par le livreur.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ✅ Modal de succès livraison -->
+<div
+  *ngIf="showSuccessModal"
+  class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+>
+  <div
+    class="bg-white rounded-xl shadow-lg p-6 text-center w-[90%] max-w-sm animate-fade-in"
+  >
+    <h2 class="text-green-600 text-2xl font-bold mb-2">Succès !</h2>
+    <p class="text-gray-700 mb-4">
+      La commande #{{ currentOrderId }} est prête et envoyée aux livreurs.
+    </p>
+    <button
+      (click)="closeSuccessModal()"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+    >
+      Fermer
+    </button>
+  </div>
+</div>
+
+<app-footer></app-footer>
