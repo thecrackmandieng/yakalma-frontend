@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { PartenaireService } from '../../services/partenaire.service';
 
 @Component({
   selector: 'app-header-livreur',
@@ -38,7 +39,8 @@ export class HeaderLivreurComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private partenaireService: PartenaireService
   ) {}
 
   ngOnInit(): void {
@@ -76,12 +78,22 @@ export class HeaderLivreurComponent implements OnInit {
   }
 
   validateCode(): void {
-    if (/^\d{4}$/.test(this.validationCode)) {
-      this.showInput = false;
-      this.showSuccessMessage('Code validé avec succès');
-    } else {
-      this.showErrorMessage('Le code doit être un nombre à 4 chiffres.');
+    if (!this.validationCode) {
+      this.showErrorMessage('Veuillez saisir le code de validation.');
+      return;
     }
+
+    this.partenaireService.validateOrderWithCode(this.validationCode).subscribe({
+      next: () => {
+        this.showInput = false;
+        this.validationCode = '';
+        this.showSuccessMessage('Commande validée avec succès. Elle a été supprimée côté restaurant.');
+      },
+      error: (err: any) => {
+        console.error('Erreur validation code:', err);
+        this.showErrorMessage('Code de validation incorrect ou commande introuvable.');
+      }
+    });
   }
 
   toggleDropdown(): void {

@@ -126,6 +126,12 @@
         </div>
         <p><strong>Contact :</strong> {{ selectedOrder.contact }}</p>
       </div>
+
+      <div *ngIf="selectedOrder.validationCode" class="p-4 bg-red-50 rounded-xl border border-red-200 md:col-span-2">
+        <h3 class="text-lg font-semibold text-center !text-red-600 mb-2"><i class="fas fa-key"></i> Code de Validation</h3>
+        <p class="text-center text-xl font-bold !text-red-600">{{ selectedOrder.validationCode }}</p>
+        <p class="text-sm text-center text-gray-600">Ce code doit être donné au client pour la validation de la livraison par le livreur.</p>
+      </div>
     </div>
 
   </div>

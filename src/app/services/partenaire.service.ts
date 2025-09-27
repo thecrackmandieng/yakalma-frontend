@@ -38,6 +38,8 @@ export interface Order {
     exp?: string;
     cvc?: string;
   };
+
+  validationCode?: string; // Code de validation généré lors de l'acceptation
 }
 
 @Injectable({ providedIn: 'root' })
@@ -183,5 +185,10 @@ export class PartenaireService {
 
   assignOrderToCourier(orderId: string): Observable<Order> {
     return this.http.patch<Order>(`${this.ordersUrl}/${orderId}/assign`, {}, this.getAuthHeaders());
+  }
+
+  /** Valider une commande avec le code de validation (pour le livreur) */
+  validateOrderWithCode(validationCode: string): Observable<Order> {
+    return this.http.post<Order>(`${this.ordersUrl}/validate`, { validationCode }, this.getAuthHeaders());
   }
 }
