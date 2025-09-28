@@ -86,17 +86,18 @@
             Livrer
           </button>
 
-          <!-- Statut -->
+          <!-- Statut client -->
           <p class="text-sm font-semibold mt-2">
             Statut :
             <span
               [ngClass]="{
-                'text-yellow-500': order.status === 'en_attente',
-                'text-blue-500': order.status === 'en_cours',
-                'text-green-600': order.status === 'livre'
+                'text-blue-500': order.clientStatus === 'en_cours',
+                'text-green-600': order.clientStatus === 'accepte',
+                'text-red-500': order.clientStatus === 'rembourse',
+                'text-gray-500': order.clientStatus === 'annullee'
               }"
             >
-              {{ order.status?.replace('_', ' ') }}
+              {{ getClientStatusLabel(order.clientStatus) }}
             </span>
           </p>
         </div>
@@ -172,6 +173,17 @@
         <h3 class="text-lg font-semibold text-center !text-red-600 mb-2"><i class="fas fa-key"></i> Code de Validation</h3>
         <p class="text-center text-xl font-bold !text-red-600">{{ selectedOrder.validationCode }}</p>
         <p class="text-sm text-center text-gray-600">Ce code doit être donné au client pour la validation de la livraison par le livreur.</p>
+      </div>
+
+      <!-- Suivi du livreur -->
+      <div *ngIf="selectedOrder.status === 'en_cours' && selectedOrder.courierId" class="p-4 bg-blue-50 rounded-xl border border-blue-200 md:col-span-2">
+        <h3 class="text-lg font-semibold text-center !text-blue-600 mb-2"><i class="fas fa-map-marker-alt"></i> Suivi du Livreur</h3>
+        <p class="text-sm text-center text-gray-600 mb-4">Localisation en temps réel du livreur</p>
+        <!-- Placeholder pour la carte Google Maps -->
+        <div class="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
+          <p class="text-gray-500">Carte Google Maps à intégrer ici</p>
+          <!-- TODO: Intégrer Google Maps avec localisation livreur -->
+        </div>
       </div>
     </div>
 

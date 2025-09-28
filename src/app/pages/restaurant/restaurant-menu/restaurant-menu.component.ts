@@ -26,7 +26,8 @@ export class RestaurantMenuComponent implements OnInit {
   quantity = 1;
 
   showPaymentForm = false;
-  payment = { name: '', contact: '', address: '' };
+  payment = { name: '', contact: '', address: '', email: '' };
+  createAccount = false;
 
   showAddDishModal = false;
   newDish: any = { name: '', description: '', price: 0, image: '', supplements: [] };
@@ -134,7 +135,8 @@ export class RestaurantMenuComponent implements OnInit {
     this.quantity = 1;
     this.showModal = true;
     this.showPaymentForm = true;
-    this.payment = { name: '', contact: '', address: '' };
+    this.payment = { name: '', contact: '', address: '', email: '' };
+    this.createAccount = false;
 
     this.modalSupplements = (item.supplements || []).map((s: any) => ({
       name: s.name,
@@ -182,7 +184,7 @@ export class RestaurantMenuComponent implements OnInit {
 
   // --- Paiement ---
   payNow() {
-    if (!this.modalItem || !this.payment.name || !this.payment.contact || !this.payment.address) {
+    if (!this.modalItem || !this.payment.name || !this.payment.contact || !this.payment.address || !this.payment.email) {
       alert('Veuillez remplir tous les champs et sélectionner un plat.');
       return;
     }
@@ -233,13 +235,33 @@ export class RestaurantMenuComponent implements OnInit {
     });
   }
 
-  private saveOrder(totalPrice: number) {
+  private async saveOrder(totalPrice: number) {
     if (!this.modalItem) return;
+
+    let clientId: string | null = null;
+
+    // Créer un compte client si demandé
+    if (this.createAccount) {
+      try {
+        const clientResponse = await this.partenaireService.registerClient({
+          fullName: this.payment.name,
+          email: this.payment.email,
+          phone: this.payment.contact,
+          address: this.payment.address
+        }).toPromise();
+        clientId = clientResponse.client?._id || clientResponse._id;
+        console.log('Client créé:', clientId);
+      } catch (err) {
+        console.error('Erreur création client:', err);
+        alert("Erreur lors de la création du compte client. La commande sera enregistrée sans compte.");
+      }
+    }
+
     const selectedSupplements = this.modalSupplements
       .filter(s => s.selected)
       .map(s => ({ name: s.name, price: s.price }));
 
-    const orderPayload: Order = {
+    const orderPayload: any = {
       restaurantId: this.restaurantId,
       items: [{
         dishId: this.modalItem._id!,
@@ -253,12 +275,16 @@ export class RestaurantMenuComponent implements OnInit {
       address: this.payment.address,
       contact: this.payment.contact,
       total: totalPrice,
-      status: 'en_attente'
+      status: 'en_attente',
+      clientId: clientId
     };
 
     this.partenaireService.createOrder(orderPayload).subscribe({
       next: (response) => {
         console.log('Commande enregistrée:', response);
+        if (this.createAccount && clientId) {
+          alert("Commande enregistrée et compte client créé. Vérifiez votre email pour le mot de passe temporaire.");
+        }
       },
       error: (err) => {
         console.error('Erreur enregistrement commande:', err);

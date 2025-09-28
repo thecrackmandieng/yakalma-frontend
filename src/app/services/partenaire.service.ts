@@ -31,6 +31,8 @@ export interface Order {
 
   courierId?: string;
   status?: 'en_attente' | 'en_cours' | 'livre';
+  clientId?: string;
+  clientStatus?: 'en_cours' | 'accepte' | 'rembourse' | 'annullee';
   createdAt?: string;
 
   paymentInfo?: {
@@ -46,6 +48,7 @@ export interface Order {
 export class PartenaireService {
   private baseUrl = 'https://yakalma.onrender.com/api/restaurants';
   private ordersUrl = 'https://yakalma.onrender.com/api/orders';
+  private clientsUrl = 'https://yakalma.onrender.com/api/clients';
 
   constructor(
     private http: HttpClient,
@@ -190,5 +193,21 @@ export class PartenaireService {
   /** Valider une commande avec le code de validation (pour le livreur) */
   validateOrderWithCode(validationCode: string): Observable<Order> {
     return this.http.post<Order>(`${this.ordersUrl}/validate`, { validationCode }, this.getAuthHeaders());
+  }
+
+  // -------------------- CLIENTS --------------------
+
+  registerClient(clientData: { fullName: string; email: string; phone: string; address?: string }): Observable<any> {
+    return this.http.post(`${this.clientsUrl}/register`, clientData, this.getAuthHeaders());
+  }
+
+  // -------------------- LIVREURS --------------------
+
+  updateLivreurLocation(locationData: { latitude: number; longitude: number }): Observable<any> {
+    return this.http.put(`${this.baseUrl.replace('restaurants', 'livreurs')}/location`, locationData, this.getAuthHeaders());
+  }
+
+  getLivreurLocation(livreurId: string): Observable<{ location: { latitude: number; longitude: number; lastUpdated: Date } }> {
+    return this.http.get<{ location: { latitude: number; longitude: number; lastUpdated: Date } }>(`${this.baseUrl.replace('restaurants', 'livreurs')}/location/${livreurId}`);
   }
 }

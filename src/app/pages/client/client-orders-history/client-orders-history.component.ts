@@ -155,11 +155,38 @@ loadOrders(): void {
   // Ouvrir la popup détails
   openOrderDetails(order: Order): void {
     this.selectedOrder = order;
+    this.loadDelivererLocation(order);
   }
 
   // Fermer la popup
   closeOrderDetails(): void {
     this.selectedOrder = null;
+  }
+
+  // Retourne le label du statut client
+  getClientStatusLabel(clientStatus?: string): string {
+    switch (clientStatus) {
+      case 'en_cours': return 'En cours';
+      case 'accepte': return 'Acceptée';
+      case 'rembourse': return 'Remboursée';
+      case 'annullee': return 'Annulée';
+      default: return 'En cours';
+    }
+  }
+
+  // Charge la localisation du livreur pour une commande
+  loadDelivererLocation(order: Order): void {
+    if (order.courierId && order.status === 'en_cours') {
+      this.partenaireService.getLivreurLocation(order.courierId).subscribe({
+        next: (response) => {
+          // TODO: Intégrer avec Google Maps pour afficher la localisation
+          console.log('Localisation livreur:', response.location);
+        },
+        error: (err) => {
+          console.error('Erreur récupération localisation livreur:', err);
+        }
+      });
+    }
   }
 }
 
