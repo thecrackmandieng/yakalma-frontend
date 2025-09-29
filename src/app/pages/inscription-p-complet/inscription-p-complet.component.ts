@@ -70,7 +70,7 @@ export class InscriptionPCompletComponent {
     }
 
     // Validation fichiers
-    if (!this.files['permis'] || !this.files['certificat'] || !this.files['autresDocs'] || !this.files['idCardCopy'] || !this.files['photo']) {
+    if (!this.files['permis'] || !this.files['certificat'] || !this.files['idCardCopy'] || !this.files['photo']) {
       this.errorMessage = "Tous les fichiers sont requis.";
       this.isLoading = false;
       return;

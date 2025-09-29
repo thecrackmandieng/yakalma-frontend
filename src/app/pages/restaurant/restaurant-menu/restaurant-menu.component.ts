@@ -9,6 +9,7 @@ import { MenuItem } from '../../models/menu-item.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaymentService } from '../../../services/payment.service';
 
+
 @Component({
   selector: 'app-restaurant-menu',
   standalone: true,

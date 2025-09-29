@@ -100,7 +100,9 @@
 
         <div>
           <label>Photo <span class="text-red-500">*</span></label>
-          <input type="file" (change)="onFileSelected($event, 'photo')" class="w-full border rounded-md px-3 py-2 cursor-pointer" required />
+          <input type="file" (change)="onFileSelected($event, 'photo')"   accept=".pdf,.jpg,.jpeg,.png,.avif"
+          class="w-full border rounded-md px-3 py-2 cursor-pointer" required />
+
         </div>
 
         <div class="md:col-span-2">
