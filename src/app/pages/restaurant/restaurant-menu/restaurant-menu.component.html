@@ -169,7 +169,7 @@
 
 <!-- Modal détail plat -->
 <div
-  class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 font-serif"
+  class="fixed inset-0 z-40 flex items-center mt-10 md:mt-15 justify-center bg-black bg-opacity-50 font-serif"
   *ngIf="showModal"
   (click)="closeModal()"
 >
@@ -219,9 +219,9 @@
         <div class="flex-1">
           <p class="text-sm text-gray-600 mb-2">Suppléments</p>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <label *ngFor="let extra of modalSupplements" class="flex items-center gap-2">
+            <label *ngFor="let extra of modalSupplements" class="flex items-center gap-4">
               <input type="checkbox" [(ngModel)]="extra.selected" />
-              <span class="text-sm">{{ extra.name }} (+{{ extra.price | currency:'XOF' }})</span>
+              <span class="text-sm px-1">{{ extra.name }} (+{{ extra.price | currency:'XOF' }})</span>
             </label>
           </div>
         </div>
@@ -235,12 +235,12 @@
     </div>
 
     <!-- Formulaire de paiement -->
-    <div *ngIf="showPaymentForm" class="mt-6 border-t pt-6">
+    <div *ngIf="showPaymentForm" class="mt-2 border-t pt-6">
       <h3 class="text-lg font-semibold text-gray-800 mb-4">Informations de livraison</h3>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Nom complet *</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nom complet <span class="text-red-600">*</span></label>
           <input
             type="text"
             [(ngModel)]="payment.name"
@@ -251,7 +251,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Contact (Téléphone) *</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Contact (Téléphone) <span class="text-red-600">*</span></label>
           <input
             type="tel"
             [(ngModel)]="payment.contact"
@@ -263,7 +263,7 @@
       </div>
 
       <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Adresse email *</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Adresse email <span class="text-red-600">*</span></label>
         <input
           type="email"
           [(ngModel)]="payment.email"
@@ -274,19 +274,19 @@
       </div>
 
       <div class="mb-4">
-        <label class="flex items-center">
+        <label class="flex items-center gap-2">
           <input
             type="checkbox"
             [(ngModel)]="createAccount"
             class="mr-2"
           />
-          <span class="text-sm font-medium text-gray-700">Créer un compte client</span>
+          <span class="text-sm font-medium px-1 text-gray-700">Créer un compte client</span>
         </label>
         <p class="text-xs text-gray-500 mt-1">En cochant cette case, un compte client sera créé avec vos informations, vous permettant d'accéder à votre dashboard et de suivre vos commandes.</p>
       </div>
 
       <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Adresse de livraison *</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Adresse de livraison <span class="text-red-600">*</span></label>
         <textarea
           [(ngModel)]="payment.address"
           placeholder="Votre adresse complète pour la livraison"
@@ -298,9 +298,9 @@
     </div>
 
     <!-- Actions -->
-    <div class="flex justify-end gap-3 mt-6">
+    <div class="flex flex-col md:flex-row justify-center gap-3 mt-6">
       <button
-        class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-semibold"
+        class="bg-green-600 hover:bg-green-700 text-white px-5 py-2  rounded-lg font-semibold"
         (click)="addToCart()"
       >
         Ajouter au panier
