@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -37,6 +37,8 @@ export class HeaderLivreurComponent implements OnInit {
   confirmPassword = '';
   passwordError = '';
 
+  @ViewChild('dropdownContainer', { static: false }) dropdownContainer!: ElementRef;
+
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -45,6 +47,13 @@ export class HeaderLivreurComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProfile();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    if (this.dropdownContainer && !this.dropdownContainer.nativeElement.contains(event.target as Node)) {
+      this.dropdownOpen = false;
+    }
   }
 
   loadProfile(): void {

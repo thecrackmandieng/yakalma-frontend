@@ -17,9 +17,11 @@
     <!-- Input + Valider -->
     <div *ngIf="showInput" class="flex gap-2">
       <input [(ngModel)]="validationCode"
-             type="text"
+             type="number"
              placeholder="Code Validation"
-             class="border rounded px-3 py-2 font-bold text-black w-32 sm:w-48 focus:ring focus:ring-blue-300" />
+             class="border rounded px-3 py-2 font-bold text-white w-32 sm:w-48 focus:ring !focus:ring-blue-300"
+             style="appearance: none; -moz-appearance: textfield; -webkit-appearance: none;"
+      />
       <button (click)="validateCode()"
               class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded font-bold text-sm md:text-base">
         Valider
@@ -28,7 +30,7 @@
   </div>
 
   <!-- Profil Dropdown -->
-  <div class="relative" (click)="toggleDropdown()">
+  <div #dropdownContainer class="relative" (click)="toggleDropdown()">
     <div class="flex items-center gap-2 cursor-pointer">
       <img src="assets/li.webp" alt="Avatar" class="w-8 h-8 rounded-full object-cover" />
       <span class="hidden sm:inline">Mon Compte</span>
@@ -41,17 +43,17 @@
       <a
         role="menuitem"
         (click)="goToProfile()"
-        class="block px-6 py-2 hover:bg-[#4169E1] !text-gray-800 hover:!text-white !no-underline transition"
+        class="block px-6 py-2 hover:bg-[#4169E1] !text-gray-800 hover:!text-white !no-underline transition cursor-pointer"
       ><i class="fas fa-user-circle text-[#bbb] hover:!bg-white text-xl"></i> Profil</a>
       <a
         role="menuitem"
         (click)="changePassword()"
-        class="block px-2 py-2 hover:bg-[#4169E1] text-left !text-gray-800 hover:!text-white !no-underline transition"
+        class="block px-2 py-2 hover:bg-[#4169E1] text-left !text-gray-800 hover:!text-white !no-underline transition cursor-pointer"
       ><i class="fas fa-key text-[#bbb] text-xl"></i> Changer mot de passe</a>
       <a
         role="menuitem"
         (click)="logout()"
-        class="block px-4 py-2 hover:bg-red-500 !text-gray-800 hover:!text-white !no-underline transition"
+        class="block px-4 py-2 hover:bg-red-500 !text-gray-800 hover:!text-white !no-underline transition cursor-pointer"
       ><i class="fas fa-sign-out-alt text-red-300 text-xl"></i> Déconnexion</a>
     </div>
   </div>
@@ -70,8 +72,9 @@
 
 <!-- ✅ MODALE PROFIL -->
 <div *ngIf="showProfileModal"
+     (click)="closeProfileModal()"
      class="fixed inset-0 bg-black/60 flex justify-center items-center z-[9999] p-4">
-  <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+  <div (click)="$event.stopPropagation()" class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
     <h2 class="text-xl font-bold mb-4 text-center">Mon Profil</h2>
     <form (submit)="saveProfile(); $event.preventDefault()" class="space-y-4">
       <div>
@@ -104,8 +107,9 @@
 
 <!-- ✅ MODALE CHANGEMENT MDP -->
 <div *ngIf="showPasswordModal"
+     (click)="closePasswordModal()"
      class="fixed inset-0 bg-black/60 flex justify-center items-center z-[9999] p-4">
-  <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+  <div (click)="$event.stopPropagation()" class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
     <h2 class="text-xl font-bold mb-4 text-center">Changer le mot de passe</h2>
     <form (submit)="submitPasswordChange(); $event.preventDefault()" class="space-y-4">
       <div>
