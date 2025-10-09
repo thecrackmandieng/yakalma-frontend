@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
@@ -48,6 +48,9 @@ export class HeaderComponent implements OnInit {
   faBars = faBars;
   faTimes = faTimes;
   faShoppingCart = faShoppingCart;
+
+  @ViewChild('cartDropdown') cartDropdown!: ElementRef;
+  @ViewChild('cartToggle') cartToggle!: ElementRef;
 
   // Modal commande multi-étapes
   showOrderModal = false;
@@ -124,6 +127,13 @@ export class HeaderComponent implements OnInit {
   private showInfo(msg: string) {
     this.infoMessage = msg;
     setTimeout(() => this.infoMessage = '', 3000);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    if (this.showCartDropdown && this.cartDropdown && !this.cartDropdown.nativeElement.contains(event.target as Node) && !this.cartToggle.nativeElement.contains(event.target as Node)) {
+      this.showCartDropdown = false;
+    }
   }
 
   // Menu
