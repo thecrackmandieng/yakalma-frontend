@@ -52,11 +52,11 @@
       </div>
 
       <!-- Mini Panier -->
-      <div class="relative" (click)="toggleCartDropdown()" tabindex="0" (keydown.enter)="toggleCartDropdown()">
+      <div class="relative" #cartToggle (click)="toggleCartDropdown()" tabindex="0" (keydown.enter)="toggleCartDropdown()">
         <fa-icon [icon]="faShoppingCart" size="lg" class="text-[#5371ff] cursor-pointer"></fa-icon>
         <span *ngIf="cartCount > 0" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-semibold rounded-full px-1.5 py-0.5 select-none">{{ cartCount }}</span>
 
-        <div *ngIf="showCartDropdown" class="absolute right-0 mt-3 w-80 bg-white border border-gray-300 rounded-lg shadow-lg z-50 p-4 animate-fadeIn" (click)="$event.stopPropagation()">
+        <div *ngIf="showCartDropdown" #cartDropdown class="absolute right-0 mt-3 w-80 bg-white border border-gray-300 rounded-lg shadow-lg z-50 p-4 animate-fadeIn" (click)="$event.stopPropagation()">
           <h3 class="text-lg font-semibold mb-4 border-b border-gray-200 pb-2">Panier ({{ cartCount }})</h3>
 
           <div *ngIf="cartItems.length > 0; else emptyCartTemplate">

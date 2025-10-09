@@ -169,7 +169,7 @@
 
 <!-- Modal détail plat -->
 <div
-  class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 font-serif"
+  class="fixed inset-0 z-40 flex items-center mt-10 md:mt-15 justify-center bg-black bg-opacity-50 font-serif"
   *ngIf="showModal"
   (click)="closeModal()"
 >
@@ -219,9 +219,9 @@
         <div class="flex-1">
           <p class="text-sm text-gray-600 mb-2">Suppléments</p>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <label *ngFor="let extra of modalSupplements" class="flex items-center gap-2">
+            <label *ngFor="let extra of modalSupplements" class="flex items-center gap-4">
               <input type="checkbox" [(ngModel)]="extra.selected" />
-              <span class="text-sm">{{ extra.name }} (+{{ extra.price | currency:'XOF' }})</span>
+              <span class="text-sm px-1">{{ extra.name }} (+{{ extra.price | currency:'XOF' }})</span>
             </label>
           </div>
         </div>
@@ -235,12 +235,12 @@
     </div>
 
     <!-- Formulaire de paiement -->
-    <div *ngIf="showPaymentForm" class="mt-6 border-t pt-6">
+    <div *ngIf="showPaymentForm" class="mt-2 border-t pt-6">
       <h3 class="text-lg font-semibold text-gray-800 mb-4">Informations de livraison</h3>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Nom complet *</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nom complet <span class="text-red-600">*</span></label>
           <input
             type="text"
             [(ngModel)]="payment.name"
@@ -251,7 +251,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Contact (Téléphone) *</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Contact (Téléphone) <span class="text-red-600">*</span></label>
           <input
             type="tel"
             [(ngModel)]="payment.contact"
@@ -263,7 +263,7 @@
       </div>
 
       <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Adresse email *</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Adresse email <span class="text-red-600">*</span></label>
         <input
           type="email"
           [(ngModel)]="payment.email"
@@ -274,19 +274,19 @@
       </div>
 
       <div class="mb-4">
-        <label class="flex items-center">
+        <label class="flex items-center gap-2">
           <input
             type="checkbox"
             [(ngModel)]="createAccount"
             class="mr-2"
           />
-          <span class="text-sm font-medium text-gray-700">Créer un compte client</span>
+          <span class="text-sm font-medium px-1 text-gray-700">Créer un compte client</span>
         </label>
         <p class="text-xs text-gray-500 mt-1">En cochant cette case, un compte client sera créé avec vos informations, vous permettant d'accéder à votre dashboard et de suivre vos commandes.</p>
       </div>
 
       <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Adresse de livraison *</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Adresse de livraison <span class="text-red-600">*</span></label>
         <textarea
           [(ngModel)]="payment.address"
           placeholder="Votre adresse complète pour la livraison"
@@ -298,9 +298,9 @@
     </div>
 
     <!-- Actions -->
-    <div class="flex justify-end gap-3 mt-6">
+    <div class="flex flex-col md:flex-row justify-center gap-3 mt-6">
       <button
-        class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg font-semibold"
+        class="bg-green-600 hover:bg-green-700 text-white px-5 py-2  rounded-lg font-semibold"
         (click)="addToCart()"
       >
         Ajouter au panier
@@ -323,44 +323,163 @@
 </div>
 
 <!-- Modal d'édition -->
-<div class="modal-backdrop" *ngIf="showEditDishModal" (click)="closeEditDishModal()"></div>
-<div class="modal" *ngIf="showEditDishModal">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <h2>Modifier un plat</h2>
-    <form (ngSubmit)="updateDish()" #editDishForm="ngForm" enctype="multipart/form-data">
-      <div style="margin-bottom:12px;">
-        <input type="text" [(ngModel)]="editDish.name" name="editName" placeholder="Nom du plat" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+
+<!-- Backdrop -->
+<div
+  class="fixed inset-0 bg-black/45 z-[2000]"
+  *ngIf="showEditDishModal"
+  (click)="closeEditDishModal()"
+  aria-hidden="true"
+></div>
+
+<!-- Modal -->
+<div
+  class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[2100] w-[100%] sm:w-[80%] md:max-w-[35vw] max-h-[73vh] bg-white rounded-xl shadow-2xl overflow-y-auto"
+  *ngIf="showEditDishModal"
+  role="dialog"
+  aria-labelledby="modal-title"
+  aria-describedby="modal-description"
+  aria-modal="true"
+  tabindex="-1"
+  (keydown.esc)="closeEditDishModal()"
+>
+  <div
+    class="w-full h-full flex flex-col items-center justify-center p-6"
+    (click)="$event.stopPropagation()"
+    aria-labelledby="modal-title"
+  >
+    <!-- Titre de la modal -->
+    <h2 id="modal-title" class="text-xl font-semibold text-center mb-4">Modifier un plat</h2>
+
+    <!-- Description de la modal -->
+    <p id="modal-description" class="text-sm text-center mb-6">
+      Modifier les informations du plat <strong>{{ editDish?.name }}</strong>
+    </p>
+
+    <!-- Formulaire -->
+    <form (ngSubmit)="updateDish()" #editDishForm="ngForm" enctype="multipart/form-data" class="w-full">
+
+      <!-- Nom du plat -->
+      <div class="mb-3">
+        <input
+          type="text"
+          [(ngModel)]="editDish.name"
+          name="editName"
+          placeholder="Nom du plat"
+          required
+          class="w-full p-3 border border-gray-300 rounded-md"
+          aria-label="Nom du plat"
+        />
       </div>
-      <div style="margin-bottom:12px;">
-        <input type="text" [(ngModel)]="editDish.description" name="editDescription" placeholder="Description" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+
+      <!-- Description -->
+      <div class="mb-3">
+        <input
+          type="text"
+          [(ngModel)]="editDish.description"
+          name="editDescription"
+          placeholder="Description"
+          required
+          class="w-full p-3 border border-gray-300 rounded-md"
+          aria-label="Description du plat"
+        />
       </div>
-      <div style="margin-bottom:12px;">
-        <input type="number" [(ngModel)]="editDish.price" name="editPrice" placeholder="Prix" required style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+
+      <!-- Prix -->
+      <div class="mb-3">
+        <input
+          type="number"
+          [(ngModel)]="editDish.price"
+          name="editPrice"
+          placeholder="Prix"
+          required
+          class="w-full p-3 border border-gray-300 rounded-md"
+          aria-label="Prix du plat"
+        />
       </div>
-      <div style="margin-bottom:12px;">
-        <input type="file" (change)="onEditImageSelected($event)" accept="image/*" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;">
+
+      <!-- Image -->
+      <div class="mb-3">
+        <input
+          type="file"
+          (change)="onEditImageSelected($event)"
+          accept="image/*"
+          class="w-full p-3 border border-gray-300 cursor-pointer rounded-md"
+          aria-label="Sélectionner une image"
+        />
       </div>
-      <div *ngIf="editImagePreview" style="margin-bottom:12px;text-align:center;">
-        <img [src]="editImagePreview" alt="Aperçu de l'image" style="max-width:100%;max-height:150px;border-radius:8px;">
+
+      <!-- Aperçu de l'image -->
+      <div *ngIf="editImagePreview" class="mb-3 text-center">
+        <img
+          [src]="editImagePreview"
+          alt="Aperçu de l'image"
+          class="max-w-full max-h-40 rounded-lg"
+          aria-live="polite"
+        />
       </div>
-      <div class="modal-actions">
-        <button class="order-button" type="submit">Enregistrer</button>
-        <button class="cancel-button" type="button" (click)="closeEditDishModal()">Annuler</button>
+
+      <!-- Actions -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center w-full mt-4">
+        <button
+          class="bg-[#5371ff] hover:bg-[#415ad8] text-white font-bold rounded-md px-6 py-3 text-base w-full sm:w-auto"
+          type="submit"
+          aria-label="Enregistrer les modifications"
+        >
+          Enregistrer
+        </button>
+        <button
+          class="bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md px-5 py-2.5 text-base w-full sm:w-auto"
+          type="button"
+          (click)="closeEditDishModal()"
+          aria-label="Annuler les modifications"
+        >
+          Annuler
+        </button>
       </div>
     </form>
   </div>
 </div>
+
 <!-- Modal confirmation suppression -->
-<div class="modal-backdrop" *ngIf="showDeleteConfirmModal" (click)="closeDeleteConfirmModal()"></div>
-<div class="modal" *ngIf="showDeleteConfirmModal">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <h2>Confirmer la suppression</h2>
-    <p>Voulez-vous vraiment supprimer le plat <strong>{{ dishToDelete?.name }}</strong> ?</p>
-    <div class="modal-actions">
-      <button class="order-button" (click)="confirmDelete()">Oui, supprimer</button>
-      <button class="cancel-button" (click)="closeDeleteConfirmModal()">Annuler</button>
+<!-- Backdrop -->
+<div
+  class="fixed inset-0 bg-black/45 z-[2000]"
+  *ngIf="showDeleteConfirmModal"
+  (click)="closeDeleteConfirmModal()"
+></div>
+
+<!-- Modal -->
+<div
+  class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[2100] w-[90%] sm:w-[80%] md:max-w-[35vw] max-h-[58vh] bg-white rounded-xl shadow-2xl flex items-center justify-center overflow-hidden"
+  *ngIf="showDeleteConfirmModal"
+>
+  <div
+    class="w-full h-full flex flex-col items-center justify-center p-6"
+    (click)="$event.stopPropagation()"
+  >
+    <h2 class="text-xl font-semibold text-center mb-4">Confirmer la suppression</h2>
+    <p class="text-center text-base mb-6">
+      Voulez-vous vraiment supprimer le plat
+      <strong>{{ dishToDelete?.name }}</strong> ?
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center w-full">
+      <button
+        class="bg-red-400 hover:bg-red-500 text-white font-bold rounded-md px-6 py-3 text-base w-full sm:w-auto"
+        (click)="confirmDelete()"
+      >
+        Oui, supprimer
+      </button>
+      <button
+        class="bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md px-5 py-2.5 text-base w-full sm:w-auto"
+        (click)="closeDeleteConfirmModal()"
+      >
+        Annuler
+      </button>
     </div>
   </div>
 </div>
+
 
 <app-footer></app-footer>
