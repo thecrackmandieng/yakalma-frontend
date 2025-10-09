@@ -24,6 +24,8 @@ export class LoginComponent {
   emailOrPhone: string = '';
   password: string = '';
   errorMessage: string = '';
+  isEmailValid: boolean = false;
+  isPasswordValid: boolean = false;
   isLoading: boolean = false;
   isBrowser: boolean;
 
@@ -37,7 +39,7 @@ export class LoginComponent {
 
   onLogin(): void {
     if (!this.isFormValid()) {
-      this.errorMessage = 'Veuillez remplir tous les champs.';
+      this.errorMessage = "Veuillez remplir correctement le formulaire.";
       return;
     }
 
@@ -63,15 +65,31 @@ export class LoginComponent {
   }
 
   validateEmailOrPhone(): void {
-    this.errorMessage = '';
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const phoneRegex = /^(\+?\d{1,3}[- ]?)?\d{8,14}$/;
+    this.isEmailValid = emailRegex.test(this.emailOrPhone) || phoneRegex.test(this.emailOrPhone);
+    this.updateErrorMessage();
   }
 
   validatePassword(): void {
-    this.errorMessage = '';
+    this.isPasswordValid = this.password.length >= 6;
+    this.updateErrorMessage();
+  }
+
+  updateErrorMessage(): void {
+    if (!this.isEmailValid && this.emailOrPhone) {
+      this.errorMessage = 'Veuillez entrer un email ou numéro valide.';
+    } else if (!this.isPasswordValid && this.password) {
+      this.errorMessage = 'Le mot de passe doit avoir au moins 6 caractères.';
+    } else {
+      this.errorMessage = '';
+    }
   }
 
   isFormValid(): boolean {
-    return this.emailOrPhone.trim() !== '' && this.password.trim() !== '';
+    this.validateEmailOrPhone();
+    this.validatePassword();
+    return this.isEmailValid && this.isPasswordValid;
   }
 
   private redirectBasedOnRole(role: string): void {
