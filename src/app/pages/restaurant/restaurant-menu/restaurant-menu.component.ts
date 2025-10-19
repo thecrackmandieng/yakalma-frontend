@@ -2,23 +2,26 @@ import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { HeaderRestaurantComponent } from "../../header-restaurant/header-restaurant.component";
 import { FooterComponent } from "../../footer/footer.component";
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { PartenaireService, Order } from '../../../services/partenaire.service';
 import { CartService } from '../../../services/cart.service';
 import { MenuItem } from '../../models/menu-item.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaymentService } from '../../../services/payment.service';
+import { ToastSuccessComponent } from '../../../components/toast-success/toast-success.component';
+import { ToastErrorComponent } from '../../../components/toast-error/toast-error.component';
 
 
 @Component({
   selector: 'app-restaurant-menu',
   standalone: true,
-  imports: [HeaderRestaurantComponent, FooterComponent, CommonModule, FormsModule],
+  imports: [HeaderRestaurantComponent, FooterComponent, CommonModule, FormsModule, ToastSuccessComponent, ToastErrorComponent],
   templateUrl: './restaurant-menu.component.html',
   styleUrls: ['./restaurant-menu.component.css'],
 })
 export class RestaurantMenuComponent implements OnInit {
   menuItems: MenuItem[] = [];
+  loading: boolean = false;
   imagePreview: string | ArrayBuffer | null = null;
   selectedImage: File | null = null;
 
@@ -49,6 +52,9 @@ export class RestaurantMenuComponent implements OnInit {
   serviceFee = 300;
 
   modalSupplements: { name: string, price: number, selected: boolean }[] = [];
+
+  successMessage: string = '';
+  errorMessage: string = '';
 
   constructor(
     private partenaireService: PartenaireService,
@@ -107,11 +113,16 @@ export class RestaurantMenuComponent implements OnInit {
     const id = this.restaurantId || localStorage.getItem('restaurantId') || '';
     if (!id) return console.error('ID du restaurant introuvable.');
 
+    this.loading = true;
     this.partenaireService.getMenuByRestaurantId(id).subscribe({
-      next: (menus) => this.menuItems = menus,
+      next: (menus) => {
+        this.menuItems = menus;
+        this.loading = false;
+      },
       error: (err) => {
         console.error('Erreur récupération menus:', err);
         this.menuItems = [];
+        this.loading = false;
       }
     });
   }
@@ -180,13 +191,14 @@ export class RestaurantMenuComponent implements OnInit {
     };
 
     this.cartService.addToCart(itemToAdd);
+    this.successMessage = 'Plat ajouté au panier avec succès !';
     this.closeModal();
   }
 
   // --- Paiement ---
   payNow() {
     if (!this.modalItem || !this.payment.name || !this.payment.contact || !this.payment.address || !this.payment.email) {
-      alert('Veuillez remplir tous les champs et sélectionner un plat.');
+      this.errorMessage = 'Veuillez remplir tous les champs correctement et sélectionner un plat.';
       return;
     }
 
@@ -208,10 +220,10 @@ export class RestaurantMenuComponent implements OnInit {
           localStorage.setItem('pending_ref', ref);
           window.location.href = res.redirect_url;
         } else {
-          alert('Erreur : URL de redirection non reçue.');
+          this.errorMessage = 'Erreur : URL de redirection non reçue.';
         }
       },
-      error: (err) => alert(err.message || 'Erreur paiement.')
+      error: (err) => this.errorMessage = err.message || 'Erreur paiement.'
     });
   }
 
@@ -228,7 +240,7 @@ export class RestaurantMenuComponent implements OnInit {
           localStorage.removeItem('pending_ref');
           this.router.navigate(['/success']); // ✅ affichage succès uniquement après paiement validé
         } else {
-          alert('Paiement non confirmé.');
+          this.errorMessage = 'Paiement non confirmé.';
           this.router.navigate(['/failed']); // redirection en cas d’échec
         }
       },
@@ -254,7 +266,7 @@ export class RestaurantMenuComponent implements OnInit {
         console.log('Client créé:', clientId);
       } catch (err) {
         console.error('Erreur création client:', err);
-        alert("Erreur lors de la création du compte client. La commande sera enregistrée sans compte.");
+        this.errorMessage = "Erreur lors de la création du compte client. La commande sera enregistrée sans compte.";
       }
     }
 
@@ -284,12 +296,12 @@ export class RestaurantMenuComponent implements OnInit {
       next: (response) => {
         console.log('Commande enregistrée:', response);
         if (this.createAccount && clientId) {
-          alert("Commande enregistrée et compte client créé. Vérifiez votre email pour le mot de passe temporaire.");
+          this.successMessage = "Commande enregistrée et compte client créé. Vérifiez votre email pour le mot de passe temporaire.";
         }
       },
       error: (err) => {
         console.error('Erreur enregistrement commande:', err);
-        alert("Impossible d'enregistrer la commande.");
+        this.errorMessage = "Impossible d'enregistrer la commande.";
       }
     });
   }
@@ -329,8 +341,8 @@ export class RestaurantMenuComponent implements OnInit {
     if (this.newDish.supplements?.length) formData.append('supplements', JSON.stringify(this.newDish.supplements));
 
     this.partenaireService.addMenuItem(formData).subscribe({
-      next: res => { this.menuItems.push(res.menuItem); this.closeAddDishModal(); alert('Plat ajouté !'); },
-      error: err => { console.error(err); alert('Erreur ajout plat'); }
+      next: res => { this.menuItems.push(res.menuItem); this.closeAddDishModal(); this.successMessage = 'Plat ajouté !'; },
+      error: err => { console.error(err); this.errorMessage = 'Erreur ajout plat'; }
     });
   }
 
@@ -367,9 +379,9 @@ export class RestaurantMenuComponent implements OnInit {
         const index = this.menuItems.findIndex(m => m._id === updated._id);
         if (index !== -1) this.menuItems[index] = updated;
         this.closeEditDishModal();
-        alert('Plat mis à jour !');
+        this.successMessage = 'Plat mis à jour !';
       },
-      error: err => { console.error(err); alert('Erreur mise à jour'); }
+      error: err => { console.error(err); this.errorMessage = 'Erreur mise à jour'; }
     });
   }
 
@@ -379,8 +391,8 @@ export class RestaurantMenuComponent implements OnInit {
   confirmDelete() {
     if (!this.dishToDelete?._id) return;
     this.partenaireService.deleteMenuItem(this.dishToDelete._id).subscribe({
-      next: () => { this.menuItems = this.menuItems.filter(m => m._id !== this.dishToDelete?._id); this.closeDeleteConfirmModal(); alert('Plat supprimé !'); },
-      error: err => { console.error(err); alert('Erreur suppression'); }
+      next: () => { this.menuItems = this.menuItems.filter(m => m._id !== this.dishToDelete?._id); this.closeDeleteConfirmModal(); this.successMessage = 'Plat supprimé !'; },
+      error: err => { console.error(err); this.errorMessage = 'Erreur suppression'; }
     });
   }
 
