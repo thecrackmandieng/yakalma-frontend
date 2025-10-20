@@ -1,8 +1,123 @@
 <app-header></app-header>
-<div class="container">
-  <app-sidebar></app-sidebar>
-  <div class="main-content">
-    <button class="btn-add" (click)="openAddLivreurModal()">Ajouter un livreur</button> <!-- Modal d'ajout -->
+<app-sidebar></app-sidebar>
+
+<div class="dashboard-container px-2 md:px-8 py-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen font-serif">
+  <!-- Titre du Dashboard -->
+  <div class="mb-8 text-center">
+    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Gestion des Livreurs</h1>
+    <p class="text-gray-600 text-lg">Surveillez et gérez les livreurs de Yakalma</p>
+  </div>
+
+  <!-- Bouton Ajouter -->
+  <div class="mb-6 flex justify-center">
+    <button class="px-6 py-3 bg-gradient-to-r from-[#5371FF] to-[#415ad8] text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105" (click)="openAddLivreurModal()">
+      <fa-icon [icon]="faUsers" class="mr-2"></fa-icon>
+      Ajouter un Livreur
+    </button>
+  </div>
+
+  <!-- Cartes statistiques -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-gradient-to-r from-[#5371FF] to-[#415ad8] rounded-xl shadow-lg p-8 flex flex-col items-center justify-center transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+      <fa-icon [icon]="faUsers" class="large-icon text-4xl text-white mb-3 animate-pulse"></fa-icon>
+      <h3 class="text-lg font-semibold text-white mb-1">Total Livreurs</h3>
+      <p class="text-2xl font-bold text-white">{{ totalLivreurs }}</p>
+    </div>
+    <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-lg p-8 flex flex-col items-center justify-center transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+      <fa-icon [icon]="faCheckCircle" class="large-icon text-4xl text-white mb-3 animate-pulse"></fa-icon>
+      <h3 class="text-lg font-semibold text-white mb-1">Approuvés</h3>
+      <p class="text-2xl font-bold text-white">{{ approvedLivreurs }}</p>
+    </div>
+    <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl shadow-lg p-8 flex flex-col items-center justify-center transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+      <fa-icon [icon]="faClock" class="large-icon text-4xl text-white mb-3 animate-pulse"></fa-icon>
+      <h3 class="text-lg font-semibold text-white mb-1">En Attente</h3>
+      <p class="text-2xl font-bold text-white">{{ pendingLivreurs }}</p>
+    </div>
+    <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-xl shadow-lg p-8 flex flex-col items-center justify-center transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+      <fa-icon [icon]="faTimesCircle" class="large-icon text-4xl text-white mb-3 animate-pulse"></fa-icon>
+      <h3 class="text-lg font-semibold text-white mb-1">Rejetés</h3>
+      <p class="text-2xl font-bold text-white">{{ rejectedLivreurs }}</p>
+    </div>
+  </div>
+
+  <!-- Liste des livreurs -->
+  <div class="livreurs-list bg-white rounded-xl shadow-lg p-8 transform transition-all duration-300 hover:shadow-xl">
+    <h3 class="text-xl font-semibold mb-6 text-gray-800 text-center">Liste des Livreurs</h3>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 rounded-lg overflow-hidden">
+        <thead class="!bg-gradient-to-r !from-[#5371FF] !to-[#415ad8] text-white">
+          <tr>
+            <th class="px-4 py-3 text-left text-sm font-semibold uppercase">#</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold uppercase">Nom</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold uppercase">Email</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold uppercase">Téléphone</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold uppercase">Véhicule</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold uppercase">Immatriculation</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold uppercase">Carte ID</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold uppercase">Assurance</th>
+            <th class="px-4 py-3 text-left text-sm font-semibold uppercase">Status</th>
+            <th class="px-4 py-3 text-center text-sm font-semibold uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-100">
+          <tr *ngFor="let livreur of paginatedLivreurs(); let i = index" class="hover:bg-gray-50 transition-colors duration-200">
+            <td class="px-4 py-3 text-sm">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+            <td class="px-4 py-3 text-sm font-medium">{{ livreur.name }}</td>
+            <td class="px-4 py-3 text-sm">{{ livreur.email }}</td>
+            <td class="px-4 py-3 text-sm">{{ livreur.phone }}</td>
+            <td class="px-4 py-3 text-sm">{{ livreur.vehicleType || '-' }}</td>
+            <td class="px-4 py-3 text-sm">{{ livreur.vehicleNumber || '-' }}</td>
+            <td class="px-4 py-3 text-sm">
+              <a *ngIf="livreur.idCardCopy" [href]="getFileUrl(livreur.idCardCopy)" target="_blank" class="text-blue-600 hover:text-blue-800">Voir</a>
+              <span *ngIf="!livreur.idCardCopy">-</span>
+            </td>
+            <td class="px-4 py-3 text-sm">
+              <a *ngIf="livreur.insuranceCopy" [href]="getFileUrl(livreur.insuranceCopy)" target="_blank" class="text-blue-600 hover:text-blue-800">Voir</a>
+              <span *ngIf="!livreur.insuranceCopy">-</span>
+            </td>
+            <td class="px-4 py-3">
+              <span [ngClass]="livreur.status === 'approved' ? 'bg-green-100 text-green-800 border-green-200' : livreur.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : livreur.status === 'rejected' ? 'bg-red-100 text-red-800 border-red-200' : 'bg-gray-100 text-gray-800 border-gray-200'"
+                    class="px-3 py-1 rounded-full text-xs font-semibold border">
+                {{ livreur.status === 'approved' ? 'Approuvé' : livreur.status === 'pending' ? 'En attente' : livreur.status === 'rejected' ? 'Rejeté' : livreur.status }}
+              </span>
+            </td>
+            <td class="px-4 py-3 flex gap-3 justify-center">
+              <button (click)="editLivreur(livreur)" class="text-blue-600 hover:text-blue-800 text-xl transition-colors duration-200" title="Modifier" aria-label="Modifier livreur">
+                <fa-icon [icon]="faEdit" class="w-5 h-5"></fa-icon>
+              </button>
+              <button (click)="openDeleteModal(livreur.id)" class="text-red-600 hover:text-red-800 text-xl transition-colors duration-200" title="Supprimer" aria-label="Supprimer livreur">
+                <fa-icon [icon]="faTrash" class="w-5 h-5"></fa-icon>
+              </button>
+              <button class="btn-approve" (click)="approveLivreur(livreur.id)" [disabled]="livreur.status === 'approved'">Approuver</button>
+              <button class="btn-reject" (click)="rejectLivreur(livreur.id)" [disabled]="livreur.status === 'rejected'">Rejeter</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4" *ngIf="totalPages() > 1">
+      <button (click)="prevPage()" [disabled]="currentPage === 1"
+        class="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-200 shadow-md flex items-center gap-2">
+        <fa-icon [icon]="faChevronLeft" class="w-4 h-4"></fa-icon> Précédent
+      </button>
+      <div class="flex gap-2">
+        <span *ngFor="let page of [].constructor(totalPages()); let i = index"
+              (click)="currentPage = i + 1"
+              class="px-3 py-2 rounded-lg cursor-pointer transition-colors duration-200"
+              [ngClass]="currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'">
+          {{ i + 1 }}
+        </span>
+      </div>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages()"
+        class="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-200 shadow-md flex items-center gap-2">
+        Suivant <fa-icon [icon]="faChevronRight" class="w-4 h-4"></fa-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal d'ajout -->
     <div *ngIf="isAddModalVisible" class="modal">
       <div class="modal-content"> <span class="close" (click)="closeAddModal()">&times;</span>
         <h2>Ajouter un Livreur</h2> <!-- Étape 1 : infos personnelles -->
@@ -61,47 +176,7 @@
         <p>Voulez-vous vraiment supprimer ce livreur ?</p> <button (click)="confirmDelete()"
           class="btn-delete">Supprimer</button> <button (click)="cancelDelete()" class="btn-cancel">Annuler</button>
       </div>
-    </div> <!-- Messages globaux -->
-    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
-    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div> <!-- Liste des livreurs -->
-    <div class="livreurs-list">
-      <h2>Liste des Livreurs</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Nom</th>
-            <th>Email</th>
-            <th>Téléphone</th>
-            <th>Véhicule</th>
-            <th>Immatriculation</th>
-            <th>Carte ID</th>
-            <th>Assurance</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let livreur of livreurs">
-            <td>{{ livreur.name }}</td>
-            <td>{{ livreur.email }}</td>
-            <td>{{ livreur.phone }}</td>
-            <td>{{ livreur.vehicleType || '-' }}</td>
-            <td>{{ livreur.vehicleNumber || '-' }}</td>
-            <td> <a *ngIf="livreur.idCardCopy" [href]="getFileUrl(livreur.idCardCopy)" target="_blank">Voir</a> </td>
-            <td> <a *ngIf="livreur.insuranceCopy" [href]="getFileUrl(livreur.insuranceCopy)" target="_blank">Voir</a>
-            </td>
-            <td> <span
-                [ngClass]="{ 'badge-approved': livreur.status === 'approved', 'badge-incomplete': livreur.status === 'incomplete', 'badge-rejected': livreur.status === 'rejected', 'badge-pending': livreur.status === 'pending', 'badge-blocked': livreur.status === 'blocked' }">{{
-                livreur.status }}</span> </td>
-            <td> <button class="icon-button edit" (click)="editLivreur(livreur)" title="Modifier"> <i
-                  class="fas fa-edit"></i> </button> <button class="icon-button delete"
-                (click)="openDeleteModal(livreur.id)" title="Supprimer"> <i class="fas fa-trash"></i> </button> <button
-                class="btn-approve" (click)="approveLivreur(livreur.id)"
-                [disabled]="livreur.status === 'approved'">Approuver</button> <button class="btn-reject"
-                (click)="rejectLivreur(livreur.id)" [disabled]="livreur.status === 'rejected'">Rejeter</button> </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <!-- Messages globaux -->
+  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
 </div>

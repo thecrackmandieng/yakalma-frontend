@@ -1,208 +1,212 @@
 <app-header></app-header>
-<div class="container flex flex-col lg:flex-row min-h-screen font-serif">
-  <app-sidebar class="w-full lg:w-64"></app-sidebar>
-  <div class="main-content flex-1 p-4 md:p-8 lg:ml-4 bg-gray-100 rounded-l-xl shadow-lg">
-    <div class="header-section flex flex-col md:flex-row justify-between items-center mb-6 p-4 bg-white rounded-lg shadow-md">
-      <h1 class="page-title text-2xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-0">Gestion des Partenaires</h1>
-      <button class="btn-add w-full md:w-auto" (click)="openAddModal()">
-        <i class="fas fa-plus"></i> Ajouter un partenaire
+<app-sidebar></app-sidebar>
+<div class="flex min-h-screen bg-gradient-to-br from-[#5371FF] to-[#415ad8] font-serif">
+  <div class="flex flex-col  p-6 md:p-8 lg:ml-65 bg-gray-100 rounded-l-3xl shadow-[-5px_0_15px_rgba(0,0,0,0.1)]">
+    <div class="flex w-full flex-col md:flex-row justify-between items-center mb-8 p-5 bg-white rounded-xl shadow-md">
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-0 bg-gradient-to-r from-[#5371FF] to-[#415ad8] bg-clip-text text-transparent">Gestion des Partenaires</h1>
+      <button class="flex items-center justify-center w-full md:w-auto px-6 py-3 bg-gradient-to-br from-[#5371FF] to-[#415ad8] text-white rounded-full font-semibold text-base uppercase tracking-wide shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300" (click)="openAddModal()">
+        <i class="fas fa-plus mr-2 text-sm"></i> Ajouter un partenaire
       </button>
     </div>
 
     <!-- Modal d'ajout -->
-    <div *ngIf="isAddModalVisible" class="modal">
-      <div class="modal-content">
-        <span class="close" (click)="closeAddModal()">&times;</span>
-        <h2>Ajouter un Partenaire</h2>
-        <form (submit)="onAddSubmit(); $event.preventDefault()">
-          <div class="form-group">
-            <label for="name">Nom :</label>
-            <input type="text" id="name" [(ngModel)]="newPartenaire.name" name="name" required />
-            <div *ngIf="!newPartenaire.name && isSubmitted" class="error-message">Le nom est requis.</div>
+    <div *ngIf="isAddModalVisible" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fadeIn">
+      <div class="bg-gradient-to-br from-white to-gray-100 p-8 rounded-3xl w-11/12 max-w-2xl shadow-2xl border border-white border-opacity-20 max-h-[90vh] overflow-y-auto animate-slideIn">
+        <span class="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-gray-500 bg-opacity-10 text-gray-500 text-2xl text-white font-bold cursor-pointer transition-all duration-300 hover:text-red-500 hover:bg-red-500 hover:bg-opacity-10 hover:scale-110" (click)="closeAddModal()">&times;</span>
+        <h2 class="text-2xl font-bold text-gray-800 text-center mb-6 relative">Ajouter un Partenaire</h2>
+        <h2 class="after:content-[''] after:absolute after:bottom-[-8px] after:left-1/2 after:transform after:-translate-x-1/2 after:w-12 after:h-1 after:bg-gradient-to-r after:from-[#5371FF] after:to-[#415ad8] after:rounded">Ajouter un Partenaire</h2>
+        <form (submit)="onAddSubmit(); $event.preventDefault()" class="space-y-4">
+          <div class="flex flex-col">
+            <label for="name" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Nom :</label>
+            <input type="text" id="name" [(ngModel)]="newPartenaire.name" name="name" required class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none placeholder-gray-400 placeholder-italic" />
+            <div *ngIf="!newPartenaire.name && isSubmitted" class="text-red-500 mt-1 text-sm text-center">Le nom est requis.</div>
           </div>
-          <div class="form-group">
-            <label for="email">Email :</label>
-            <input type="email" id="email" [(ngModel)]="newPartenaire.email" name="email" required />
-            <div *ngIf="!newPartenaire.email && isSubmitted" class="error-message">L'email est requis.</div>
+          <div class="flex flex-col">
+            <label for="email" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Email :</label>
+            <input type="email" id="email" [(ngModel)]="newPartenaire.email" name="email" required class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none placeholder-gray-400 placeholder-italic" />
+            <div *ngIf="!newPartenaire.email && isSubmitted" class="text-red-500 mt-1 text-sm text-center">L'email est requis.</div>
           </div>
-          <div class="form-group">
-            <label for="phone">Téléphone :</label>
-            <input type="text" id="phone" [(ngModel)]="newPartenaire.phone" name="phone" required />
-            <div *ngIf="!newPartenaire.phone && isSubmitted" class="error-message">Le téléphone est requis.</div>
+          <div class="flex flex-col">
+            <label for="phone" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Téléphone :</label>
+            <input type="text" id="phone" [(ngModel)]="newPartenaire.phone" name="phone" required class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none placeholder-gray-400 placeholder-italic" />
+            <div *ngIf="!newPartenaire.phone && isSubmitted" class="text-red-500 mt-1 text-sm text-center">Le téléphone est requis.</div>
           </div>
-          <div class="form-group">
-            <label for="address">Adresse :</label>
-            <input type="text" id="address" [(ngModel)]="newPartenaire.address" name="address" />
+          <div class="flex flex-col">
+            <label for="address" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Adresse :</label>
+            <input type="text" id="address" [(ngModel)]="newPartenaire.address" name="address" class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none placeholder-gray-400 placeholder-italic" />
           </div>
-          <div class="form-group">
-            <label for="managerName">Nom du manager :</label>
-            <input type="text" id="managerName" [(ngModel)]="newPartenaire.managerName" name="managerName" />
+          <div class="flex flex-col">
+            <label for="managerName" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Nom du manager :</label>
+            <input type="text" id="managerName" [(ngModel)]="newPartenaire.managerName" name="managerName" class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none placeholder-gray-400 placeholder-italic" />
           </div>
-          <div class="form-group">
-            <label for="ninea">Ninea :</label>
-            <input type="text" id="ninea" [(ngModel)]="newPartenaire.ninea" name="ninea" />
+          <div class="flex flex-col">
+            <label for="ninea" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Ninea :</label>
+            <input type="text" id="ninea" [(ngModel)]="newPartenaire.ninea" name="ninea" class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none placeholder-gray-400 placeholder-italic" />
           </div>
-          <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-          <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
-          <button type="submit" class="btn-submit">Ajouter</button>
+          <div *ngIf="errorMessage" class="bg-gradient-to-r from-red-100 to-red-50 text-red-600 p-3 rounded-xl text-center font-medium border-l-4 border-red-500 shadow-md animate-shake"> {{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="bg-gradient-to-r from-green-100 to-green-50 text-green-600 p-3 rounded-xl text-center font-medium border-l-4 border-green-500 shadow-md animate-bounceIn">{{ successMessage }}</div>
+          <button type="submit" class="w-full py-4 bg-gradient-to-br from-[#5371FF] to-[#415ad8] text-white rounded-full font-semibold text-base uppercase tracking-wide shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 relative overflow-hidden before:content-[''] before:absolute before:top-0 before:left-[-100%] before:w-full before:h-full before:bg-gradient-to-r before:from-transparent before:via-white before:via-opacity-20 before:to-transparent hover:before:left-full before:transition-all before:duration-500">Ajouter</button>
         </form>
       </div>
     </div>
 
     <!-- Modal de modification -->
-    <div *ngIf="isEditModalVisible" class="modal">
-      <div class="modal-content">
-        <span class="close" (click)="closeEditModal()">&times;</span>
-        <h2>Modifier le partenaire</h2>
+    <div *ngIf="isEditModalVisible" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm animate-fadeIn">
+      <div class="bg-gradient-to-br from-white to-gray-100 p-8 rounded-3xl w-11/12 max-w-2xl shadow-2xl border border-white border-opacity-20 max-h-[90vh] overflow-y-auto animate-slideIn">
+        <span class="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-gray-500 bg-opacity-10 text-gray-500 text-2xl font-bold cursor-pointer transition-all duration-300 hover:text-red-500 hover:bg-red-500 hover:bg-opacity-10 hover:scale-110" (click)="closeEditModal()">&times;</span>
+        <h2 class="text-2xl font-bold text-gray-800 text-center mb-6 relative">Modifier le partenaire</h2>
+        <h2 class="after:content-[''] after:absolute after:bottom-[-8px] after:left-1/2 after:transform after:-translate-x-1/2 after:w-12 after:h-1 after:bg-gradient-to-r after:from-[#5371FF] after:to-[#415ad8] after:rounded">Modifier le partenaire</h2>
 
-        <form (submit)="onEditSubmit(); $event.preventDefault()">
+        <form (submit)="onEditSubmit(); $event.preventDefault()" class="space-y-5">
 
           <!-- Ligne 1 -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="edit-name">Nom :</label>
-              <input type="text" id="edit-name" [(ngModel)]="selectedPartenaire.name" name="edit-name" required />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="flex flex-col">
+              <label for="edit-name" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Nom :</label>
+              <input type="text" id="edit-name" [(ngModel)]="selectedPartenaire.name" name="edit-name" required class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none placeholder-gray-400 placeholder-italic" />
             </div>
 
-            <div class="form-group">
-              <label for="edit-email">Email :</label>
-              <input type="email" id="edit-email" [(ngModel)]="selectedPartenaire.email" name="edit-email" required />
+            <div class="flex flex-col">
+              <label for="edit-email" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Email :</label>
+              <input type="email" id="edit-email" [(ngModel)]="selectedPartenaire.email" name="edit-email" required class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none placeholder-gray-400 placeholder-italic" />
             </div>
           </div>
 
           <!-- Ligne 2 -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="edit-phone">Téléphone :</label>
-              <input type="text" id="edit-phone" [(ngModel)]="selectedPartenaire.phone" name="edit-phone" required />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="flex flex-col">
+              <label for="edit-phone" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Téléphone :</label>
+              <input type="text" id="edit-phone" [(ngModel)]="selectedPartenaire.phone" name="edit-phone" required class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none placeholder-gray-400 placeholder-italic" />
             </div>
 
-            <div class="form-group">
-              <label for="edit-address">Adresse :</label>
-              <input type="text" id="edit-address" [(ngModel)]="selectedPartenaire.address" name="edit-address" />
+            <div class="flex flex-col">
+              <label for="edit-address" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Adresse :</label>
+              <input type="text" id="edit-address" [(ngModel)]="selectedPartenaire.address" name="edit-address" class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none placeholder-gray-400 placeholder-italic" />
             </div>
           </div>
 
           <!-- Ligne 3 -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="edit-managerName">Nom du manager :</label>
-              <input type="text" id="edit-managerName" [(ngModel)]="selectedPartenaire.managerName" name="edit-managerName" />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="flex flex-col">
+              <label for="edit-managerName" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Nom du manager :</label>
+              <input type="text" id="edit-managerName" [(ngModel)]="selectedPartenaire.managerName" name="edit-managerName" class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none placeholder-gray-400 placeholder-italic" />
             </div>
 
-            <div class="form-group">
-              <label for="edit-ninea">Ninea :</label>
-              <input type="text" id="edit-ninea" [(ngModel)]="selectedPartenaire.ninea" name="edit-ninea" />
+            <div class="flex flex-col">
+              <label for="edit-ninea" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Ninea :</label>
+              <input type="text" id="edit-ninea" [(ngModel)]="selectedPartenaire.ninea" name="edit-ninea" class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none placeholder-gray-400 placeholder-italic" />
             </div>
           </div>
 
           <!-- Ligne 4 -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="edit-photo">Photo :</label>
-              <input type="file" id="edit-photo" (change)="onFileChange($event, 'photo')" />
-              <img *ngIf="getPreviewUrl('photo')" [src]="getPreviewUrl('photo')" alt="Aperçu photo" style="width: 100px; margin-top: 5px;" />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="flex flex-col">
+              <label for="edit-photo" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Photo :</label>
+              <input type="file" id="edit-photo" (change)="onFileChange($event, 'photo')" class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none" />
+              <img *ngIf="getPreviewUrl('photo')" [src]="getPreviewUrl('photo')" alt="Aperçu photo" class="w-24 mt-2" />
             </div>
 
-            <div class="form-group">
-              <label for="edit-permis">Permis :</label>
-              <input type="file" id="edit-permis" (change)="onFileChange($event, 'permis')" />
+            <div class="flex flex-col">
+              <label for="edit-permis" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Permis :</label>
+              <input type="file" id="edit-permis" (change)="onFileChange($event, 'permis')" class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none" />
             </div>
           </div>
 
           <!-- Ligne 5 -->
-          <div class="form-row">
-            <div class="form-group">
-              <label for="edit-certificat">Certificat :</label>
-              <input type="file" id="edit-certificat" (change)="onFileChange($event, 'certificat')" />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="flex flex-col">
+              <label for="edit-certificat" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Certificat :</label>
+              <input type="file" id="edit-certificat" (change)="onFileChange($event, 'certificat')" class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none" />
             </div>
 
-            <div class="form-group">
-              <label for="edit-autresDocs">Autres documents :</label>
-              <input type="file" id="edit-autresDocs" (change)="onFileChange($event, 'autresDocs')" />
+            <div class="flex flex-col">
+              <label for="edit-autresDocs" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Autres documents :</label>
+              <input type="file" id="edit-autresDocs" (change)="onFileChange($event, 'autresDocs')" class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none" />
             </div>
           </div>
 
           <!-- Ligne 6 -->
-          <div class="form-row">
-            <div class="form-group" style="flex: 1;">
-              <label for="edit-idCardCopy">Copie CNI :</label>
-              <input type="file" id="edit-idCardCopy" (change)="onFileChange($event, 'idCardCopy')" />
+          <div class="grid grid-cols-1 gap-5">
+            <div class="flex flex-col">
+              <label for="edit-idCardCopy" class="mb-2 font-semibold text-gray-700 text-sm transition-colors duration-300">Copie CNI :</label>
+              <input type="file" id="edit-idCardCopy" (change)="onFileChange($event, 'idCardCopy')" class="px-4 py-3 border-2 border-gray-300 rounded-xl text-base transition-all duration-300 bg-white bg-opacity-80 backdrop-blur-sm focus:border-blue-500 focus:shadow-lg focus:outline-none" />
             </div>
           </div>
 
-          <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-          <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+          <div *ngIf="errorMessage" class="bg-gradient-to-r from-red-100 to-red-50 text-red-600 p-3 rounded-xl text-center font-medium border-l-4 border-red-500 shadow-md animate-shake">{{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="bg-gradient-to-r from-green-100 to-green-50 text-green-600 p-3 rounded-xl text-center font-medium border-l-4 border-green-500 shadow-md animate-bounceIn">{{ successMessage }}</div>
 
-          <button type="submit" class="btn-submit">Modifier</button>
+          <button type="submit" class="w-full py-4 bg-gradient-to-br from-[#5371FF] to-[#415ad8] text-white rounded-full font-semibold text-base uppercase tracking-wide shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 relative overflow-hidden before:content-[''] before:absolute before:top-0 before:left-[-100%] before:w-full before:h-full before:bg-gradient-to-r before:from-transparent before:via-white before:via-opacity-20 before:to-transparent hover:before:left-full before:transition-all before:duration-500">Modifier</button>
         </form>
       </div>
     </div>
 
     <!-- Modal de confirmation de suppression -->
-    <div *ngIf="isDeleteModalVisible" class="modal">
-      <div class="modal-content">
-        <h2>Confirmer la suppression</h2>
-        <p>Êtes-vous sûr de vouloir supprimer ce partenaire ?</p>
-        <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-        <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
-        <div class="modal-actions">
-          <button class="btn-cancel" (click)="cancelDelete()">Annuler</button>
-          <button class="btn-confirm" (click)="confirmDelete()">Supprimer</button>
+    <div *ngIf="isDeleteModalVisible" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm animate-fadeIn">
+      <div class="bg-gradient-to-br from-white to-gray-100 p-8 rounded-3xl w-11/12 max-w-md shadow-2xl border border-white border-opacity-20 animate-slideIn">
+        <h2 class="text-2xl font-bold text-gray-800 text-center mb-6 relative">Confirmer la suppression</h2>
+        <h2 class="after:content-[''] after:absolute after:bottom-[-8px] after:left-1/2 after:transform after:-translate-x-1/2 after:w-12 after:h-1 after:bg-gradient-to-r after:from-[#5371FF] after:to-[#415ad8] after:rounded">Confirmer la suppression</h2>
+        <p class="text-gray-600 text-center mb-6">Êtes-vous sûr de vouloir supprimer ce partenaire ?</p>
+        <div *ngIf="errorMessage" class="bg-gradient-to-r from-red-100 to-red-50 text-red-600 p-3 rounded-xl text-center font-medium border-l-4 border-red-500 shadow-md animate-shake">{{ errorMessage }}</div>
+        <div *ngIf="successMessage" class="bg-gradient-to-r from-green-100 to-green-50 text-green-600 p-3 rounded-xl text-center font-medium border-l-4 border-green-500 shadow-md animate-bounceIn">{{ successMessage }}</div>
+        <div class="flex justify-center gap-4 mt-6">
+          <button class="px-6 py-3 bg-gray-300 text-gray-700 rounded-full font-semibold uppercase tracking-wide transition-all duration-300 hover:bg-gray-400 hover:shadow-md" (click)="cancelDelete()">Annuler</button>
+          <button class="px-6 py-3 bg-red-500 text-white rounded-full font-semibold uppercase tracking-wide transition-all duration-300 hover:bg-red-600 hover:shadow-md" (click)="confirmDelete()">Supprimer</button>
         </div>
       </div>
     </div>
 
     <!-- Liste des partenaires -->
-    <div class="partenaires-list">
-      <h2 class="section-title">Liste des partenaires</h2>
-      <div class="table-container">
-        <table>
+    <div class="bg-white rounded-3xl shadow-2xl p-8 mt-8 w-full backdrop-blur-sm border border-white border-opacity-20">
+      <h2 class="text-2xl font-bold text-gray-800 text-center mb-8 relative">Liste des partenaires</h2>
+      <!-- <h2 class="after:content-[''] after:absolute after:bottom-[-10px] after:left-1/2 after:transform after:-translate-x-1/2 after:w-16 after:h-1 after:bg-gradient-to-r after:from-[#5371FF] after:to-[#415ad8] after:rounded">Liste des partenaires</h2> -->
+      <div class="w-full overflow-x-auto rounded-2xl shadow-lg mt-8">
+        <table class="w-full max-w-[1200px] border-collapse bg-gradient-to-br from-white to-gray-100 rounded-2xl overflow-x-auto shadow-lg text-sm text-gray-800">
           <thead>
-            <tr>
-              <th>Nom</th>
-              <th>Adresse</th>
-              <th>Téléphone</th>
-              <th>Email</th>
-              <th>Manager</th>
-              <th>Ninea</th>
-              <th>Photo</th>
-              <th>Documents</th>
-              <th>Statut</th>
-              <th>Actions</th>
+            <tr class="bg-gradient-to-r from-[#5371FF] to-[#415ad8] text-white font-semibold uppercase tracking-wide text-xs">
+              <th class="px-4 py-4 text-left">Nom</th>
+              <th class="px-4 py-4 text-left">Adresse</th>
+              <th class="px-4 py-4 text-left">Téléphone</th>
+              <th class="px-4 py-4 text-left">Email</th>
+              <th class="px-4 py-4 text-left">Manager</th>
+              <th class="px-4 py-4 text-left">Ninea</th>
+              <th class="px-4 py-4 text-left">Photo</th>
+              <th class="px-4 py-4 text-left">Documents</th>
+              <th class="px-4 py-4 text-left">Statut</th>
+              <th class="px-4 py-4 text-left min-w-48">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let partenaire of partenaires">
-              <td>{{ partenaire.name }}</td>
-              <td>{{ partenaire.address }}</td>
-              <td>{{ partenaire.phone }}</td>
-              <td>{{ partenaire.email }}</td>
-              <td>{{ partenaire.managerName }}</td>
-              <td>{{ partenaire.ninea }}</td>
-              <td>
+            <tr *ngFor="let partenaire of partenaires" class="even:bg-blue-50 odd:bg-white hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transform hover:-translate-y-1 transition-all duration-300 shadow-sm">
+              <td class="px-4 py-4 border-b border-gray-200">{{ partenaire.name }}</td>
+              <td class="px-4 py-4 border-b border-gray-200">{{ partenaire.address }}</td>
+              <td class="px-4 py-4 border-b border-gray-200">{{ partenaire.phone }}</td>
+              <td class="px-4 py-4 border-b border-gray-200">{{ partenaire.email }}</td>
+              <td class="px-4 py-4 border-b border-gray-200">{{ partenaire.managerName }}</td>
+              <td class="px-4 py-4 border-b border-gray-200">{{ partenaire.ninea }}</td>
+              <td class="px-4 py-4 border-b border-gray-200">
                 <img
                   *ngIf="partenaire.photo"
                   [src]="getFileUrl(partenaire.photo)"
                   alt="Photo de {{ partenaire.name }}"
-                  width="80"
+                  class="w-20 h-auto rounded-lg shadow-md"
                 />
               </td>
-              <td>
-                <a *ngIf="partenaire.permis" [href]="getFileUrl(partenaire.permis)" target="_blank">Permis</a> |
-                <a *ngIf="partenaire.certificat" [href]="getFileUrl(partenaire.certificat)" target="_blank">Certificat</a> |
-                <a *ngIf="partenaire.autresDocs" [href]="getFileUrl(partenaire.autresDocs)" target="_blank">Autres</a> |
-                <a *ngIf="partenaire.idCardCopy" [href]="getFileUrl(partenaire.idCardCopy)" target="_blank">CNI</a>
+              <td class="px-4 py-4 border-b border-gray-200">
+                <a *ngIf="partenaire.permis" [href]="getFileUrl(partenaire.permis)" target="_blank" class="text-blue-500 hover:text-blue-700 mr-2">Permis</a>
+                <a *ngIf="partenaire.certificat" [href]="getFileUrl(partenaire.certificat)" target="_blank" class="text-blue-500 hover:text-blue-700 mr-2">Certificat</a>
+                <a *ngIf="partenaire.autresDocs" [href]="getFileUrl(partenaire.autresDocs)" target="_blank" class="text-blue-500 hover:text-blue-700 mr-2">Autres</a>
+                <a *ngIf="partenaire.idCardCopy" [href]="getFileUrl(partenaire.idCardCopy)" target="_blank" class="text-blue-500 hover:text-blue-700">CNI</a>
               </td>
-              <td>
-                <span class="status-badge" [ngClass]="{
-                  'badge-approved': partenaire.status === 'approved',
-                  'badge-incomplete': partenaire.status === 'incomplete',
-                  'badge-rejected': partenaire.status === 'rejected',
-                  'badge-pending': partenaire.status === 'pending',
-                  'badge-blocked': partenaire.status === 'blocked'
+              <td class="px-4 py-4 border-b border-gray-200">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold text-white shadow-md transition-all duration-300 hover:scale-105" [ngClass]="{
+                  '!bg-gradient-to-r !from-green-500 !to-teal-500': partenaire.status === 'approved',
+                  'bg-gradient-to-r from-yellow-500 to-orange-500': partenaire.status === 'pending',
+                  'bg-gradient-to-r from-gray-500 to-gray-600': partenaire.status === 'incomplete',
+                  'bg-gradient-to-r from-red-500 to-pink-500': partenaire.status === 'rejected',
+                  'bg-gradient-to-r from-gray-800 to-black': partenaire.status === 'blocked'
                 }">
-                  <i class="fas" [ngClass]="{
+                  <i class="fas text-sm" [ngClass]="{
                     'fa-check-circle': partenaire.status === 'approved',
                     'fa-clock': partenaire.status === 'pending',
                     'fa-exclamation-triangle': partenaire.status === 'incomplete',
@@ -212,30 +216,30 @@
                   {{ partenaire.status | titlecase }}
                 </span>
               </td>
-              <td class="actions-cell">
-                <div class="action-buttons">
-                  <button class="icon-button edit" (click)="openEditModal(partenaire)" title="Modifier">
-                    <i class="fas fa-edit"></i>
+              <td class="px-4 py-4 border-b border-gray-200 min-w-48">
+                <div class="flex flex-wrap gap-2 justify-start items-center">
+                  <button class="bg-green-500 text-white p-2 rounded-full w-9 h-9 flex items-center justify-center transition-all duration-300 hover:bg-green-600 hover:scale-110 shadow-md relative overflow-hidden before:content-[''] before:absolute before:top-0 before:left-[-100%] before:w-full before:h-full before:bg-white before:bg-opacity-20 hover:before:left-full before:transition-all before:duration-500" (click)="openEditModal(partenaire)" title="Modifier">
+                    <i class="fas fa-edit text-sm"></i>
                   </button>
 
-                  <button class="icon-button delete" (click)="openDeleteModal(partenaire._id!)" title="Supprimer">
-                    <i class="fas fa-trash"></i>
+                  <button class="bg-red-500 text-white p-2 rounded-full w-9 h-9 flex items-center justify-center transition-all duration-300 hover:bg-red-600 hover:scale-110 shadow-md relative overflow-hidden before:content-[''] before:absolute before:top-0 before:left-[-100%] before:w-full before:h-full before:bg-white before:bg-opacity-20 hover:before:left-full before:transition-all before:duration-500" (click)="openDeleteModal(partenaire._id!)" title="Supprimer">
+                    <i class="fas fa-trash text-sm"></i>
                   </button>
 
                   <button
-                    class="btn-approve"
+                    class="bg-gradient-to-r from-green-500 to-teal-500 text-white px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide shadow-md transition-all duration-300 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-1"
                     (click)="partenaire._id && approvePartenaire(partenaire._id)"
                     [disabled]="partenaire.status === 'approved'"
                     title="Approuver">
-                    <i class="fas fa-check"></i> Approuver
+                    <i class="fas fa-check text-xs"></i> Approuver
                   </button>
 
                   <button
-                    class="btn-reject"
+                    class="bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide shadow-md transition-all duration-300 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-1"
                     (click)="partenaire._id && rejectPartenaire(partenaire._id)"
                     [disabled]="partenaire.status === 'rejected'"
                     title="Rejeter">
-                    <i class="fas fa-times"></i> Rejeter
+                    <i class="fas fa-times text-xs"></i> Rejeter
                   </button>
                 </div>
               </td>

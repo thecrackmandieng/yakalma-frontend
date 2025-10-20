@@ -5,6 +5,8 @@ import { LivreursService } from '../../../services/livreurs.service';
 import { HeaderComponent } from '../header/header.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { SafeUrlPipe } from '../../../pipes/safe-url.pipe';
+import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faUsers, faCheckCircle, faClock, faTimesCircle, faEdit, faTrash, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 interface Livreur {
   id: string;
@@ -21,7 +23,7 @@ interface Livreur {
 @Component({
   selector: 'app-livreurs',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, SidebarComponent, SafeUrlPipe],
+  imports: [CommonModule, FormsModule, HeaderComponent, SidebarComponent, SafeUrlPipe, FontAwesomeModule],
   templateUrl: './livreurs.component.html',
   styleUrls: ['./livreurs.component.css']
 })
@@ -32,6 +34,20 @@ export class LivreursComponent implements OnInit {
   isDeleteModalVisible = false;
   isDocumentModalVisible = false;
   formStep = 1;
+
+  // Pagination
+  currentPage = 1;
+  itemsPerPage = 10;
+
+  // Icônes FontAwesome
+  faUsers = faUsers;
+  faCheckCircle = faCheckCircle;
+  faClock = faClock;
+  faTimesCircle = faTimesCircle;
+  faEdit = faEdit;
+  faTrash = faTrash;
+  faChevronLeft = faChevronLeft;
+  faChevronRight = faChevronRight;
 
   fileInputs: { [key: string]: File | null } = {
     idCardCopy: null,
@@ -60,10 +76,51 @@ export class LivreursComponent implements OnInit {
   isSubmitted = false;
   isEditSubmitted = false;
 
-  constructor(private livreursService: LivreursService) {}
+  constructor(private livreursService: LivreursService, private faIconLibrary: FaIconLibrary) {
+    faIconLibrary.addIcons(faUsers, faCheckCircle, faClock, faTimesCircle, faEdit, faTrash, faChevronLeft, faChevronRight);
+  }
 
   ngOnInit(): void {
     this.loadLivreurs();
+  }
+
+  // Méthodes pour les statistiques
+  get totalLivreurs(): number {
+    return this.livreurs.length;
+  }
+
+  get approvedLivreurs(): number {
+    return this.livreurs.filter(l => l.status === 'approved').length;
+  }
+
+  get pendingLivreurs(): number {
+    return this.livreurs.filter(l => l.status === 'pending').length;
+  }
+
+  get rejectedLivreurs(): number {
+    return this.livreurs.filter(l => l.status === 'rejected').length;
+  }
+
+  // Pagination
+  paginatedLivreurs(): Livreur[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.livreurs.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  totalPages(): number {
+    return Math.ceil(this.livreurs.length / this.itemsPerPage);
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages()) {
+      this.currentPage++;
+    }
   }
 
   loadLivreurs() {
