@@ -1,0 +1,232 @@
+<app-header></app-header>
+<div class="container">
+  <app-sidebar></app-sidebar>
+  <div class="main-content">
+    <button class="btn-add" (click)="openAddModal()">Ajouter un partenaire</button>
+
+    <!-- Modal d'ajout -->
+    <div *ngIf="isAddModalVisible" class="modal">
+      <div class="modal-content">
+        <span class="close" (click)="closeAddModal()">&times;</span>
+        <h2>Ajouter un Partenaire</h2>
+        <form (submit)="onAddSubmit(); $event.preventDefault()">
+          <div class="form-group">
+            <label for="name">Nom :</label>
+            <input type="text" id="name" [(ngModel)]="newPartenaire.name" name="name" required />
+            <div *ngIf="!newPartenaire.name && isSubmitted" class="error-message">Le nom est requis.</div>
+          </div>
+          <div class="form-group">
+            <label for="email">Email :</label>
+            <input type="email" id="email" [(ngModel)]="newPartenaire.email" name="email" required />
+            <div *ngIf="!newPartenaire.email && isSubmitted" class="error-message">L'email est requis.</div>
+          </div>
+          <div class="form-group">
+            <label for="phone">Téléphone :</label>
+            <input type="text" id="phone" [(ngModel)]="newPartenaire.phone" name="phone" required />
+            <div *ngIf="!newPartenaire.phone && isSubmitted" class="error-message">Le téléphone est requis.</div>
+          </div>
+          <div class="form-group">
+            <label for="address">Adresse :</label>
+            <input type="text" id="address" [(ngModel)]="newPartenaire.address" name="address" />
+          </div>
+          <div class="form-group">
+            <label for="managerName">Nom du manager :</label>
+            <input type="text" id="managerName" [(ngModel)]="newPartenaire.managerName" name="managerName" />
+          </div>
+          <div class="form-group">
+            <label for="ninea">Ninea :</label>
+            <input type="text" id="ninea" [(ngModel)]="newPartenaire.ninea" name="ninea" />
+          </div>
+          <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+          <button type="submit" class="btn-submit">Ajouter</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de modification -->
+    <div *ngIf="isEditModalVisible" class="modal">
+      <div class="modal-content">
+        <span class="close" (click)="closeEditModal()">&times;</span>
+        <h2>Modifier le partenaire</h2>
+
+        <form (submit)="onEditSubmit(); $event.preventDefault()">
+
+          <!-- Ligne 1 -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-name">Nom :</label>
+              <input type="text" id="edit-name" [(ngModel)]="selectedPartenaire.name" name="edit-name" required />
+            </div>
+
+            <div class="form-group">
+              <label for="edit-email">Email :</label>
+              <input type="email" id="edit-email" [(ngModel)]="selectedPartenaire.email" name="edit-email" required />
+            </div>
+          </div>
+
+          <!-- Ligne 2 -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-phone">Téléphone :</label>
+              <input type="text" id="edit-phone" [(ngModel)]="selectedPartenaire.phone" name="edit-phone" required />
+            </div>
+
+            <div class="form-group">
+              <label for="edit-address">Adresse :</label>
+              <input type="text" id="edit-address" [(ngModel)]="selectedPartenaire.address" name="edit-address" />
+            </div>
+          </div>
+
+          <!-- Ligne 3 -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-managerName">Nom du manager :</label>
+              <input type="text" id="edit-managerName" [(ngModel)]="selectedPartenaire.managerName" name="edit-managerName" />
+            </div>
+
+            <div class="form-group">
+              <label for="edit-ninea">Ninea :</label>
+              <input type="text" id="edit-ninea" [(ngModel)]="selectedPartenaire.ninea" name="edit-ninea" />
+            </div>
+          </div>
+
+          <!-- Ligne 4 -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-photo">Photo :</label>
+              <input type="file" id="edit-photo" (change)="onFileChange($event, 'photo')" />
+              <img *ngIf="getPreviewUrl('photo')" [src]="getPreviewUrl('photo')" alt="Aperçu photo" style="width: 100px; margin-top: 5px;" />
+            </div>
+
+            <div class="form-group">
+              <label for="edit-permis">Permis :</label>
+              <input type="file" id="edit-permis" (change)="onFileChange($event, 'permis')" />
+            </div>
+          </div>
+
+          <!-- Ligne 5 -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-certificat">Certificat :</label>
+              <input type="file" id="edit-certificat" (change)="onFileChange($event, 'certificat')" />
+            </div>
+
+            <div class="form-group">
+              <label for="edit-autresDocs">Autres documents :</label>
+              <input type="file" id="edit-autresDocs" (change)="onFileChange($event, 'autresDocs')" />
+            </div>
+          </div>
+
+          <!-- Ligne 6 -->
+          <div class="form-row">
+            <div class="form-group" style="flex: 1;">
+              <label for="edit-idCardCopy">Copie CNI :</label>
+              <input type="file" id="edit-idCardCopy" (change)="onFileChange($event, 'idCardCopy')" />
+            </div>
+          </div>
+
+          <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+          <button type="submit" class="btn-submit">Modifier</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div *ngIf="isDeleteModalVisible" class="modal">
+      <div class="modal-content">
+        <h2>Confirmer la suppression</h2>
+        <p>Êtes-vous sûr de vouloir supprimer ce partenaire ?</p>
+        <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+        <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="cancelDelete()">Annuler</button>
+          <button class="btn-confirm" (click)="confirmDelete()">Supprimer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des partenaires -->
+    <div class="partenaires-list">
+      <h2>Liste des partenaires</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Adresse</th>
+              <th>Téléphone</th>
+              <th>Email</th>
+              <th>Manager</th>
+              <th>Ninea</th>
+              <th>Photo</th>
+              <th>Documents</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let partenaire of partenaires">
+              <td>{{ partenaire.name }}</td>
+              <td>{{ partenaire.address }}</td>
+              <td>{{ partenaire.phone }}</td>
+              <td>{{ partenaire.email }}</td>
+              <td>{{ partenaire.managerName }}</td>
+              <td>{{ partenaire.ninea }}</td>
+              <td>
+                <img
+                  *ngIf="partenaire.photo"
+                  [src]="getFileUrl(partenaire.photo)"
+                  alt="Photo de {{ partenaire.name }}"
+                  width="80"
+                />
+              </td>
+              <td>
+                <a *ngIf="partenaire.permis" [href]="getFileUrl(partenaire.permis)" target="_blank">Permis</a> |
+                <a *ngIf="partenaire.certificat" [href]="getFileUrl(partenaire.certificat)" target="_blank">Certificat</a> |
+                <a *ngIf="partenaire.autresDocs" [href]="getFileUrl(partenaire.autresDocs)" target="_blank">Autres</a> |
+                <a *ngIf="partenaire.idCardCopy" [href]="getFileUrl(partenaire.idCardCopy)" target="_blank">CNI</a>
+              </td>
+              <td>
+                <span [ngClass]="{
+                  'badge-approved': partenaire.status === 'approved',
+                  'badge-incomplete': partenaire.status === 'incomplete',
+                  'badge-rejected': partenaire.status === 'rejected',
+                  'badge-pending': partenaire.status === 'pending',
+                  'badge-blocked': partenaire.status === 'blocked'
+                }">
+                  {{ partenaire.status }}
+                </span>
+              </td>
+              <td>
+                <button class="icon-button edit" (click)="openEditModal(partenaire)" title="Modifier">
+                  <i class="fas fa-edit"></i>
+                </button>
+
+                <button class="icon-button delete" (click)="openDeleteModal(partenaire._id!)" title="Supprimer">
+                  <i class="fas fa-trash"></i>
+                </button>
+
+                <button
+                  class="btn-approve"
+                  (click)="partenaire._id && approvePartenaire(partenaire._id)"
+                  [disabled]="partenaire.status === 'approved'">
+                  Approuver
+                </button>
+
+                <button
+                  class="btn-reject"
+                  (click)="partenaire._id && rejectPartenaire(partenaire._id)"
+                  [disabled]="partenaire.status === 'rejected'">
+                  Rejeter
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

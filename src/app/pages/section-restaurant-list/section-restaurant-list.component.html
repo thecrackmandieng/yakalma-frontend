@@ -1,0 +1,23 @@
+<div class="px-4 py-6 bg-gray-100">
+  <h1 class="text-3xl md:text-4xl font-bold text-center text-gray-800 !mb-8 font-serif">Liste des Restaurants</h1>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
+    <div
+      class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform transition duration-300 hover:-translate-y-2 hover:shadow-xl animate-fade-in-up"
+      *ngFor="let restaurant of restaurants"
+      (click)="onRestaurantClick(restaurant)"
+    >
+      <div class="h-48 overflow-hidden">
+        <img [src]="getImageUrl(restaurant)" alt="Image du restaurant" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+      </div>
+      <div class="p-4 text-left">
+        <h2 class="text-xl font-bold text-gray-800 font-serif mb-2">{{ restaurant.name }}</h2>
+        <p class="text-gray-600 mb-1">{{ restaurant.description }}</p>
+        <div class="flex items-center justify-between mt-4">
+          <p class="text-md text-gray-500"><strong>Adresse:</strong> {{ restaurant.address }}</p>
+          <p class="text-md rounded-lg px-2 text-gray-500 bg-green-200"><strong>Contact:</strong> {{ restaurant.phone }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

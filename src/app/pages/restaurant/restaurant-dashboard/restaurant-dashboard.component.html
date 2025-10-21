@@ -1,0 +1,205 @@
+<app-header-restaurant></app-header-restaurant>
+
+<div class="font-serif font-['Playfair Display'] mt-16 font-bold">
+  <header
+    class="relative w-full bg-center bg-cover"
+    [ngStyle]="{ 'background-image': backgroundImage }"
+  >
+    <!-- Overlay sombre -->
+    <div class="absolute inset-0 bg-black/70"></div>
+
+    <!-- Contenu -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 py-20 sm:py-28 md:py-40 text-center text-white">
+      <h1 class="text-2xl sm:text-5xl md:!text-7xl !font-extrabold leading-tight">
+        LES MEILLEURS DELICES<br />
+        {{ restaurantName | uppercase }}
+      </h1>
+
+      <p class="mt-4 text-sm sm:text-base md:text-3xl text-white/90 leading-relaxed">
+        Découvrez une expérience culinaire unique alliant gastronomie raffinée,
+        service exceptionnel et ambiance chaleureuse.
+      </p>
+      <div class="mt-8 flex justify-center gap-4">
+        <a href="/restaurant/menu"
+           class="px-6 py-3 bg-[#5371ff] hover:bg-[#415ad8] text-white text-lg rounded-lg shadow-lg transition transform hover:scale-105">
+          Voir le Menu
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Section 2: Hero Section -->
+  <section class="relative flex flex-col md:flex-row items-center justify-center px-6 md:px-24 py-12 md:py-24 bg-white">
+
+  <div class="">
+    <!-- Image -->
+    <div class="flex-1 flex justify-center md:justify-end mb-6 md:mb-0">
+      <img src="assets/dieune.webp" alt="Hero Image"
+          class="w-full max-w-xs md:max-w-md lg:max-w-lg rounded-xl shadow-lg">
+    </div>
+    <!-- Info Card -->
+    <div class="relative animate-fade-in-left top-4 px-6 ml-24 -mt-34 mb-4 left-4 bg-[#4169E1] text-white p-6 rounded-lg justify-center items-center shadow-lg z-10 w-64 md:w-80">
+      <h3 class="text-lg md:text-xl mt-4 font-bold mb-3">Contacter Nous sur</h3>
+      <p class="flex items-center gap-2 text-sm md:text-base">
+        <i class="fas fa-phone"></i> Contact: +221 77 123 45 67
+      </p>
+      <p class="flex items-center gap-2 text-sm md:text-base">
+        <i class="fas fa-map-marker-alt"></i> Adresse: Dakar, Sénégal
+      </p>
+    </div>
+  </div>
+
+  <!-- Hero Content -->
+  <div class="flex-1 text-center px-6 md:text-left space-y-6">
+    <h1 class="text-3xl md:!text-7xl lg:!text-7xl !font-extrabold font-['Playfair Display'] leading-snug">
+      Nous fournissons des <br class="hidden md:block"/> aliments <br class="hidden md:block"/>
+      sains pour votre famille.
+    </h1>
+    <p class="text-gray-800 text-sm md:text-xl leading-relaxed">
+      Notre histoire a commencé avec la vision de créer une expérience culinaire <br/>
+      unique alliant gastronomie raffinée, service exceptionnel et ambiance dynamique. <br/>
+      Ancrés dans la riche culture culinaire de la ville, nous souhaitons honorer <br/>
+      nos racines locales tout en infusant un palais mondial. <br/>
+      Chez nous, la restauration ne se résume pas seulement à la nourriture, mais également à l'expérience globale. <br/>
+      Notre personnel, réputé pour sa chaleur et son dévouement, <br/>
+      s'efforce de faire de chaque visite un événement inoubliable.
+    </p>
+    <a href="/restaurant/menu">
+      <button class="px-6 py-3 bg-[#5371ff] text-white rounded-lg shadow-md hover:bg-[#415ad8] transition w-fit mx-auto md:mx-0">
+        Découvrir nos plats
+      </button>
+    </a>
+  </div>
+  </section>
+
+<!-- Section 3: Services -->
+<section class="py-6 px-6 md:px-24 bg-gray-50 text-center">
+  <h2 class="!font-extrabold text-3xl md:!text-7xl lg:text-6xl font-['Times_New_Roman'] leading-snug">
+    Nous proposons également <br class="hidden md:block"/>
+    des services uniques pour vos événements
+  </h2>
+
+  <!-- Cards Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+    <!-- Service Card -->
+    <div class="bg-gray-50 border rounded-xl shadow-md p-6 hover:shadow-xl transition hover:scale-105 transition-transform">
+      <img src="assets/annif.webp" alt="Service 1" class="w-full h-50 object-cover rounded-lg mb-4">
+      <h3 class="text-xl font-semibold mb-2">🎉 Joyeux Anniversaire ! 🎉</h3>
+      <p class="text-gray-700 text-sm md:text-lg leading-relaxed">
+        Célébrez votre journée spéciale avec nous ! Chez {{ restaurantName }},
+        nous rendons chaque moment inoubliable avec nos délices culinaires et une ambiance chaleureuse.
+        Que ce soit un dîner intime ou une fête festive, laissez-nous vous offrir une expérience unique.
+      </p>
+    </div>
+
+    <!-- Service Card -->
+    <div class="bg-gray-50 border rounded-xl shadow-md p-6 hover:shadow-xl transition hover:scale-105 transition-transform">
+      <img src="assets/mar.webp" alt="Service 2" class="w-full h-50 object-cover rounded-lg mb-4">
+      <h3 class="text-xl font-semibold mb-2">🍽️ Service Traiteur d'Exception 🍽️</h3>
+      <p class="text-gray-700 text-sm md:text-lg leading-relaxed">
+        Pour vos événements inoubliables, faites confiance à [Nom du Service Traiteur].
+        Nous vous offrons une cuisine raffinée et des présentations élégantes pour impressionner vos invités.
+      </p>
+    </div>
+
+    <!-- Service Card -->
+    <div class="bg-gray-50 border rounded-xl shadow-md p-6 hover:shadow-xl transition hover:scale-105 transition-transform">
+      <img src="assets/evenement.webp" alt="Service 3" class="w-full h-50 object-cover rounded-lg mb-4">
+      <h3 class="text-xl font-semibold mb-2">🎊 Événements Inoubliables 🎊</h3>
+      <p class="text-gray-700 text-sm md:text-lg leading-relaxed">
+        Confiez-nous l'organisation de vos événements et laissez-nous transformer vos idées en réalité.
+        Notre expertise en planification et notre passion pour l'excellence garantissent une expérience mémorable.
+      </p>
+    </div>
+
+    <!-- Service Card -->
+    <div class="bg-gray-50 border rounded-xl shadow-md p-6 hover:shadow-xl transition hover:scale-105 transition-transform">
+      <img src="assets/couple.webp" alt="Service 4" class="w-full h-50 object-cover rounded-lg mb-4">
+      <h3 class="text-xl font-semibold mb-2">💒 Mariages de Rêve 💒</h3>
+      <p class="text-gray-700 text-sm md:text-lg leading-relaxed">
+        Nous transformons vos rêves en réalité pour un mariage inoubliable.
+        Chaque détail est soigneusement pensé, de la cérémonie à la réception.
+      </p>
+    </div>
+
+    <!-- Service Card -->
+    <div class="bg-gray-50 border rounded-xl shadow-md p-6 hover:shadow-xl transition hover:scale-105 transition-transform">
+      <img src="assets/gradu.webp" alt="Service 5" class="w-full h-50 object-cover rounded-lg mb-4">
+      <h3 class="text-xl font-semibold mb-2">🎓 Célébrez Votre Réussite 🎓</h3>
+      <p class="text-gray-700 text-sm md:text-lg leading-relaxed">
+        Marquez votre accomplissement avec une cérémonie de graduation inoubliable.
+        Nous organisons tout pour que vous profitiez de ce moment spécial.
+      </p>
+    </div>
+
+    <!-- Service Card -->
+    <div class="bg-gray-50 border rounded-xl shadow-md p-6 hover:shadow-xl transition hover:scale-105 transition-transform">
+      <img src="assets/pause.webp" alt="Service 6" class="w-full h-50 object-cover rounded-lg mb-4">
+      <h3 class="text-xl font-semibold mb-2">☕ Pauses Revitalisantes au Travail ☕</h3>
+      <p class="text-gray-700 text-sm md:text-lg leading-relaxed">
+        Offrez à votre équipe des moments de détente avec nos pauses café et snacks.
+        Des instants agréables qui boostent productivité et moral.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+    <!-- Testimonials -->
+  <section class="py-20 bg-white">
+    <div class="mx-auto px-6 md:px-24 text-center">
+      <h2 class="text-3xl sm:text-5xl md:!text-7xl !font-extrabold !mb-8">Ce que disent nos clients</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-24">
+        <div class="bg-gray-50 border p-6 rounded-xl shadow hover:shadow-lg transition">
+          <p class="italic text-gray-600">"Le service de [Nom du Service] a transformé notre événement en une expérience inoubliable.
+             Tout était parfaitement organisé, et la nourriture était délicieuse.
+             Merci pour cette belle soirée exceptionnelle !"</p>
+          <h4 class="mt-4 font-bold">— Malick Fall</h4>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-xl shadow hover:shadow-lg transition">
+          <p class="italic text-gray-600">"Nous avons fait appel à [Nom du Service] pour notre mariage, et nous ne pourrions être plus heureux.
+            Chaque détail a été pris en compte, et nos invités n'ont pas cessé de complimenter
+            la qualité du service. Un grand merci !"</p>
+          <h4 class="mt-4 font-bold">— Khady Fall</h4>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-xl shadow hover:shadow-lg transition">
+          <p class="italic text-gray-600">"Un vrai délice ! Service impeccable et ambiance chaleureuse. Chaque détail était parfait et Notre mariage a été magique grâce à vous. Merci infiniment ! <br> je recommande à 100%."</p>
+          <h4 class="mt-4 font-bold">— Moustapha Fall</h4>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- Blog -->
+  <section class="bg-gray-50 py-20">
+    <div class="mx-auto px-6 md:px-24 text-center">
+      <h2 class="text-3xl sm:text-5xl md:!text-7xl !font-bold !mb-8">Notre blog</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-24">
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-2">
+          <img src="assets/annif.webp" class="h-48 w-full object-cover">
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2">Secrets de nos recettes</h3>
+            <p class="text-gray-600">Découvrez comment nous préparons nos plats les plus populaires.</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-2">
+          <img src="assets/mar.webp" class="h-48 w-full object-cover">
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2">Nos inspirations</h3>
+            <p class="text-gray-600">Un voyage culinaire entre tradition locale et cuisine moderne.</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-2">
+          <img src="assets/evenement.webp" class="h-48 w-full object-cover">
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2">Vie du restaurant</h3>
+            <p class="text-gray-600">Événements, coulisses et histoires de nos équipes passionnées.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div>
+  <app-footer></app-footer>
+

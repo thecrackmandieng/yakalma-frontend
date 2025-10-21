@@ -1,0 +1,75 @@
+<app-header-l></app-header-l>
+
+<div class="mt-8 mb-8 bg-white px-4 flex flex-col items-center justify-center text-center font-serif">
+  <!-- Titre principal -->
+  <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4">Inscription Livreur</h1>
+
+  <p class="text-gray-600 max-w-lg mb-10">
+    Nous prenons en compte tous les facteurs de changement et vous fournissons les composants dont vous avez besoin pour changer et créer un événement qui se produit réellement.
+  </p>
+
+  <!-- Carte -->
+  <div class="bg-white shadow-2xl rounded-2xl p-6 sm:p-10 w-full max-w-md">
+    <h2 class="text-xl font-bold mb-4">Indiquez votre adresse email</h2>
+
+    <!-- Champ email -->
+    <input
+      type="email"
+      [(ngModel)]="email"
+      placeholder="Entrez votre adresse email"
+      class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#5371ff] placeholder-gray-400 mb-4"
+    />
+
+    <!-- Bouton continuer avec loader -->
+    <button
+      class="w-full bg-[#5371ff] hover:bg-[#415ad8] text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center transition disabled:opacity-50 disabled:cursor-not-allowed"
+      (click)="preRegisterLivreur()"
+      [disabled]="isLoading"
+    >
+      <span *ngIf="!isLoading">Continuer</span>
+      <svg *ngIf="isLoading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+    </button>
+
+    <!-- Erreur -->
+    <div *ngIf="errorMessage" class="text-red-600 mt-3 text-sm">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Divider -->
+    <div class="mt-3 mb-6 flex items-center">
+      <div class="flex-grow border-t border-gray-400"></div>
+        <span class="mx-3 text-gray-600 text-sm">ou</span>
+      <div class="flex-grow border-t border-gray-400"></div>
+    </div>
+
+    <!-- Bouton Google -->
+    <button class="w-full flex items-center justify-center border border-gray-300 rounded-lg py-2 px-4 hover:bg-gray-100 transition mb-3">
+      <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" alt="Google" class="w-5 h-5 mr-2" />
+      Continuer avec Google
+    </button>
+
+    <!-- Bouton Apple -->
+    <button class="w-full flex items-center justify-center border border-gray-300 rounded-lg py-2 px-4 mb-3 hover:bg-gray-100 transition">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple" class="w-5 h-5 mr-2" />
+      Continuer avec iCloud
+    </button>
+
+    <!-- Terms -->
+    <p class="text-xs text-gray-400 mt-6 text-center leading-relaxed">
+      En continuant, vous acceptez de recevoir des appels, messages WhatsApp ou SMS/RCS au numéro fourni, y compris de façon automatisée, de la part d’Uber et de ses sociétés affiliées.
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="mt-10 text-gray-600 text-sm">
+    <div class="flex justify-center gap-6">
+      <a href="#" class="text-blue-600 hover:underline">Conditions</a>
+      <a href="#" class="text-blue-600 hover:underline">Confidentialité</a>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

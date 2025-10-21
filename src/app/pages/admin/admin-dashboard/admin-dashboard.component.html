@@ -1,0 +1,97 @@
+<app-header></app-header>
+<app-sidebar></app-sidebar>
+
+<div class="dashboard-container px-2 md:px-8 py-6 bg-gray-50 min-h-screen">
+  <!-- Cartes statistiques -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow p-8 flex flex-col items-center justify-center" *ngFor="let card of cards">
+      <fa-icon [icon]="card.icon" class="large-icon text-3xl text-blue-600 mb-2"></fa-icon>
+      <h3 class="text-lg font-semibold text-gray-700">{{ card.title }}</h3>
+      <p class="text-2xl font-bold text-blue-700">{{ card.value }}</p>
+    </div>
+  </div>
+
+  <!-- Graphiques -->
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+    <!-- Courbe historique -->
+    <div class="bg-white rounded-xl shadow p-6" *ngIf="isBrowser()" ngSkipHydration>
+      <h3 class="text-base font-semibold mb-3 text-gray-700">Historique des Commandes</h3>
+      <canvas baseChart
+        [data]="lineChartData"
+        [options]="lineChartOptions"
+        [type]="lineChartType"
+        class="w-full h-56"></canvas>
+      <div class="flex flex-wrap justify-center mt-4">
+        <button (click)="filterByWeek()" class="px-4 py-1 rounded bg-gray-200 hover:bg-gray-300 mr-2">Semaine</button>
+        <button (click)="filterByMonth()" class="px-4 py-1 rounded bg-gray-200 hover:bg-gray-300 mr-2">Mois</button>
+        <button (click)="filterByYear()" class="px-4 py-1 rounded bg-gray-200 hover:bg-gray-300">Année</button>
+      </div>
+    </div>
+
+    <!-- Bar chart -->
+    <div class="bg-white rounded-xl shadow p-6" *ngIf="isBrowser()" ngSkipHydration>
+      <h3 class="text-base font-semibold mb-3 text-gray-700">Encaissements Restaurants vs Livreurs</h3>
+      <canvas baseChart
+        [data]="barChartData"
+        [options]="barChartOptions"
+        [type]="barChartType"
+        class="w-full h-56"></canvas>
+    </div>
+
+    <!-- Doughnut chart -->
+    <div class="bg-white rounded-xl shadow p-6" *ngIf="isBrowser()" ngSkipHydration>
+      <h3 class="text-base font-semibold mb-3 text-gray-700">Répartition Utilisateurs</h3>
+      <canvas baseChart
+        [data]="doughnutChartData"
+        [options]="doughnutChartOptions"
+        [type]="doughnutChartType"
+        class="w-full h-56"></canvas>
+    </div>
+  </div>
+
+  <!-- Liste des administrateurs -->
+  <div class="admin-list bg-white rounded-xl shadow p-8">
+    <h3 class="text-lg font-semibold mb-4 text-gray-700">Liste des Administrateurs</h3>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">#</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Rôle</th>
+            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+            <th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-100">
+          <tr *ngFor="let admin of paginatedAdmins(); let i = index">
+            <td class="px-3 py-2">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+            <td class="px-3 py-2">{{ admin.name }}</td>
+            <td class="px-3 py-2">{{ admin.email }}</td>
+            <td class="px-3 py-2">{{ admin.role }}</td>
+            <td class="px-3 py-2">
+              <span [ngClass]="admin.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
+                    class="px-2 py-1 rounded text-xs font-semibold">
+                {{ admin.isActive ? 'Actif' : 'Inactif' }}
+              </span>
+            </td>
+            <td class="px-3 py-2 flex gap-2 justify-center">
+              <button (click)="editAdmin(admin)" class="text-blue-600 hover:text-blue-800 text-lg" title="Modifier">✏️</button>
+              <button (click)="deleteAdmin(admin)" class="text-red-600 hover:text-red-800 text-lg" title="Supprimer">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex flex-col sm:flex-row items-center justify-between mt-4 gap-2" *ngIf="totalPages() > 1">
+      <button (click)="prevPage()" [disabled]="currentPage === 1"
+        class="px-4 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50">Précédent</button>
+      <span class="text-sm text-gray-600">Page {{ currentPage }} / {{ totalPages() }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages()"
+        class="px-4 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50">Suivant</button>
+    </div>
+  </div>
+</div>

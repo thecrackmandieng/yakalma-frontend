@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: yakalma-frontend
+    runtime: node
+    buildCommand: npm ci && npm run build:ssr
+    startCommand: npm run serve:ssr
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_OPTIONS
+        value: "--max-old-space-size=384"
+    plan: starter
+    healthCheckPath: /
