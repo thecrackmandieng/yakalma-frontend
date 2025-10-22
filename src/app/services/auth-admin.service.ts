@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 interface LoginResponse {
   token: string;
@@ -16,7 +17,7 @@ interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthAdminService {
-  private baseUrl = 'https://yakalma.onrender.com/api/admins';
+  private baseUrl = `${environment.apiUrl}/api/admins`;
 
   constructor(private http: HttpClient) {}
 

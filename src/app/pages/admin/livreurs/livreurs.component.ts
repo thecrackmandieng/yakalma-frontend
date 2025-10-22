@@ -7,6 +7,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 import { SafeUrlPipe } from '../../../pipes/safe-url.pipe';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUsers, faCheckCircle, faClock, faTimesCircle, faEdit, faTrash, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { environment } from '../../../../environments/environment';
 
 interface Livreur {
   id: string;

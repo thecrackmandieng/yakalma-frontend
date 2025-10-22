@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import io from 'socket.io-client';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Position } from './geolocation.service';
+import { environment } from '../../environments/environment';
 
 type Socket = ReturnType<typeof io>;
 
@@ -35,11 +36,11 @@ export class TrackingService {
 
   constructor(@Inject(PLATFORM_ID) private platformId: object) {
     this.isBrowser = isPlatformBrowser(this.platformId);
-    
+
     if (this.isBrowser) {
       // Connexion au serveur WebSocket avec meilleure gestion d'erreur
       try {
-        this.socket = io('https://yakalma.onrender.com', {
+        this.socket = io(environment.socketServerUrl, {
           transports: ['websocket', 'polling'],
           reconnection: true,
           reconnectionAttempts: 10,
@@ -69,7 +70,7 @@ export class TrackingService {
       console.warn('⚠️ startTracking appelé côté serveur - ignoré');
       return;
     }
-    
+
     try {
       if (this.socket && this.socket.connected) {
         this.socket.emit('start_tracking', { orderId, clientId });
@@ -94,7 +95,7 @@ export class TrackingService {
       console.warn('⚠️ stopTracking appelé côté serveur - ignoré');
       return;
     }
-    
+
     try {
       if (this.socket && this.socket.connected) {
         this.socket.emit('stop_tracking', { orderId });
@@ -110,7 +111,7 @@ export class TrackingService {
       console.warn('⚠️ updateLivreurPosition appelé côté serveur - ignoré');
       return;
     }
-    
+
     try {
       if (this.socket && this.socket.connected) {
         const trackingData: TrackingData = {
@@ -136,7 +137,7 @@ export class TrackingService {
       console.warn('⚠️ markAsArrived appelé côté serveur - ignoré');
       return;
     }
-    
+
     try {
       if (this.socket && this.socket.connected) {
         this.socket.emit('livreur_arrived', { orderId, livreurId });
@@ -152,7 +153,7 @@ export class TrackingService {
       console.warn('⚠️ markAsDelivered appelé côté serveur - ignoré');
       return;
     }
-    
+
     try {
       if (this.socket && this.socket.connected) {
         this.socket.emit('order_delivered', { orderId, livreurId });
@@ -170,7 +171,7 @@ export class TrackingService {
         observer.complete();
       });
     }
-    
+
     return new Observable(observer => {
       this.socket.on(`tracking_update_${orderId}`, (data: TrackingData) => {
         this.trackingData.next(data);
@@ -191,7 +192,7 @@ export class TrackingService {
         observer.complete();
       });
     }
-    
+
     return new Observable(observer => {
       this.socket.on(`eta_update_${orderId}`, (data: ETAData) => {
         this.etaData.next(data);
@@ -210,7 +211,7 @@ export class TrackingService {
       console.warn('⚠️ getTrackingHistory appelé côté serveur - retourne Promise vide');
       return Promise.resolve([]);
     }
-    
+
     return new Promise((resolve, reject) => {
       this.socket.emit('get_tracking_history', { orderId });
 
@@ -230,7 +231,7 @@ export class TrackingService {
       console.warn('⚠️ disconnect appelé côté serveur - ignoré');
       return;
     }
-    
+
     try {
       if (this.socket) {
         this.socket.disconnect();
@@ -247,7 +248,7 @@ export class TrackingService {
       console.warn('⚠️ reconnect appelé côté serveur - ignoré');
       return;
     }
-    
+
     try {
       if (this.socket) {
         if (!this.socket.connected) {
@@ -272,9 +273,9 @@ export class TrackingService {
       console.warn('⚠️ initializeSocket appelé côté serveur - ignoré');
       return;
     }
-    
+
     try {
-      this.socket = io('https://yakalma.onrender.com', {
+      this.socket = io(environment.socketServerUrl, {
         transports: ['websocket', 'polling'],
         reconnection: true,
         reconnectionAttempts: 10,
@@ -298,7 +299,7 @@ export class TrackingService {
       console.warn('⚠️ setupSocketListeners appelé côté serveur - ignoré');
       return;
     }
-    
+
     this.socket.on('connect', () => {
       console.log('✅ Connecté au serveur de suivi');
     });
@@ -322,7 +323,7 @@ export class TrackingService {
       console.warn('⚠️ isConnected appelé côté serveur - retourne false');
       return false;
     }
-    
+
     return this.socket && this.socket.connected;
   }
 }

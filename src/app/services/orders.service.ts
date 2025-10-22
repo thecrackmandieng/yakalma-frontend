@@ -2,6 +2,7 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 export interface OrderItem {
   dishId: string;
@@ -40,7 +41,7 @@ export interface Order {
 
 @Injectable({ providedIn: 'root' })
 export class OrdersService {
-  private baseUrl = 'https://yakalma.onrender.com/api/orders';
+  private baseUrl = `${environment.apiUrl}/api/orders`;
 
   constructor(
     private http: HttpClient,

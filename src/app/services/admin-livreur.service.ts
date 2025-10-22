@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 // 🔹 Interfaces
 export interface Livreur {
@@ -50,8 +51,8 @@ export interface DashboardData {
 })
 export class AdminLivreurService {
 
-  private apiUrl = 'https://yakalma.onrender.com/api/livreurs';
-  private dashboardUrl = 'https://yakalma.onrender.com/api/admins/dashboard-data';
+  private apiUrl = `${environment.apiUrl}/api/livreurs`;
+  private dashboardUrl = `${environment.apiUrl}/api/admins/dashboard-data`;
 
   constructor(private http: HttpClient) {}
 

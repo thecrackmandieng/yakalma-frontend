@@ -336,12 +336,12 @@
           rows="3"
           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5371ff]"
           required
-          minlength="10"
+          minlength="4"
           #address="ngModel"
         ></textarea>
         <div *ngIf="paymentForm.submitted || address?.touched" class="text-red-500 text-sm mt-1">
           <div *ngIf="address?.errors?.['required']">L'adresse de livraison est requise.</div>
-          <div *ngIf="address?.errors?.['minlength']">L'adresse doit contenir au moins 10 caractères.</div>
+          <div *ngIf="address?.errors?.['minlength']">L'adresse doit contenir au moins 4 caractères.</div>
         </div>
       </div>
     </form>

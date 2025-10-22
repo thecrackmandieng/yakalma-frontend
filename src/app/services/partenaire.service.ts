@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Partenaire } from '../pages/models/partenaire.model';
 import { MenuItem } from '../pages/models/menu-item.model';
+import { environment } from '../../environments/environment';
 
 export interface OrderItem {
   dishId: string;
@@ -46,9 +47,9 @@ export interface Order {
 
 @Injectable({ providedIn: 'root' })
 export class PartenaireService {
-  private baseUrl = 'https://yakalma.onrender.com/api/restaurants';
-  private ordersUrl = 'https://yakalma.onrender.com/api/orders';
-  private clientsUrl = 'https://yakalma.onrender.com/api/clients';
+  private baseUrl = `${environment.apiUrl}/api/restaurants`;
+  private ordersUrl = `${environment.apiUrl}/api/orders`;
+  private clientsUrl = `${environment.apiUrl}/api/clients`;
 
   constructor(
     private http: HttpClient,
@@ -198,7 +199,7 @@ export class PartenaireService {
   // -------------------- CLIENTS --------------------
 
   registerClient(clientData: { fullName: string; email: string; phone: string; address?: string }): Observable<any> {
-    return this.http.post(`${this.clientsUrl}/register`, clientData, this.getAuthHeaders());
+    return this.http.post(`${this.clientsUrl}/register`, clientData);
   }
 
   // -------------------- LIVREURS --------------------

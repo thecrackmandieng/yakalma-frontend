@@ -3,6 +3,7 @@ import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FooterComponent } from '../../footer/footer.component';
 import { HeaderRestaurantComponent } from '../../header-restaurant/header-restaurant.component';
 import { PartenaireService } from '../../../services/partenaire.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-restaurant-dashboard',
@@ -14,7 +15,7 @@ import { PartenaireService } from '../../../services/partenaire.service';
 export class RestaurantDashboardComponent implements OnInit {
   restaurantName: string = '';
   backgroundImage: string = "url('/assets/partb.png')";
-  private backendUrl = 'https://yakalma.onrender.com';
+  private backendUrl = environment.apiUrl;
   private isBrowser: boolean;
 
   constructor(

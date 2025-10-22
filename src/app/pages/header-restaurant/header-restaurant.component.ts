@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-header-restaurant',
@@ -103,7 +104,7 @@ export class HeaderRestaurantComponent implements OnInit {
     this.email = r.email || '';
     this.phone = r.phone || '';
 
-    const baseUrl = 'https://yakalma.onrender.com/';
+    const baseUrl = environment.apiUrl + '/';
 
     this.uploadedFilesUrl['permisUrl'] = r.permis ? baseUrl + r.permis : null;
     this.uploadedFilesUrl['certificatUrl'] = r.certificat ? baseUrl + r.certificat : null;

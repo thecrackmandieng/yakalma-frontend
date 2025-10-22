@@ -10,6 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PaymentService } from '../../../services/payment.service';
 import { ToastSuccessComponent } from '../../../components/toast-success/toast-success.component';
 import { ToastErrorComponent } from '../../../components/toast-error/toast-error.component';
+import { environment } from '../../../../environments/environment';
 
 
 @Component({
@@ -210,7 +211,7 @@ export class RestaurantMenuComponent implements OnInit {
       currency: "XOF",
       ref_command: ref,
       customerName: this.payment.name,
-      customerEmail: "moustaphadieng0405@gmail.com"
+      customerEmail: this.payment.email // Utiliser l'email du formulaire
     };
 
     this.paymentService.initPayment(paymentPayload).subscribe({
@@ -264,9 +265,11 @@ export class RestaurantMenuComponent implements OnInit {
         }).toPromise();
         clientId = clientResponse.client?._id || clientResponse._id;
         console.log('Client créé:', clientId);
-      } catch (err) {
+        this.successMessage = "Commande enregistrée et compte client créé. Vérifiez votre email pour le mot de passe temporaire.";
+      } catch (err: any) {
         console.error('Erreur création client:', err);
-        this.errorMessage = "Erreur lors de la création du compte client. La commande sera enregistrée sans compte.";
+        this.errorMessage = err.error?.message || "Erreur lors de la création du compte client. La commande sera enregistrée sans compte.";
+        // Ne pas arrêter le processus, continuer avec clientId = null
       }
     }
 
@@ -295,8 +298,8 @@ export class RestaurantMenuComponent implements OnInit {
     this.partenaireService.createOrder(orderPayload).subscribe({
       next: (response) => {
         console.log('Commande enregistrée:', response);
-        if (this.createAccount && clientId) {
-          this.successMessage = "Commande enregistrée et compte client créé. Vérifiez votre email pour le mot de passe temporaire.";
+        if (!this.createAccount || !clientId) {
+          this.successMessage = "Commande enregistrée avec succès.";
         }
       },
       error: (err) => {
@@ -309,7 +312,7 @@ export class RestaurantMenuComponent implements OnInit {
   getImageUrl(imagePath?: string): string {
     if (!imagePath) return 'assets/default-dish.png';
     if (imagePath.startsWith('http') || imagePath.startsWith('data:')) return imagePath;
-    return `https://yakalma.onrender.com/${imagePath}`;
+    return `${environment.apiUrl}/${imagePath}`;
   }
 
   // --- Gestion plats ---

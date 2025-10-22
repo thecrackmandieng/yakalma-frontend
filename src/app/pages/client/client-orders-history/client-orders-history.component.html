@@ -68,36 +68,17 @@
           class="absolute bottom-0 inset-x-0 bg-white/70 backdrop-blur-sm p-3 flex flex-col items-end"
         >
 
-          <!-- Bouton Accepter -->
-          <button
-            *ngIf="order.status === 'en_attente'"
-            class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded-md shadow mb-2"
-            (click)="acceptOrder(order); $event.stopPropagation()"
-          >
-            Accepter
-          </button>
-
-          <!-- Bouton Livrer -->
-          <button
-            *ngIf="order.status === 'en_cours'"
-            class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded-md shadow"
-            (click)="deliverOrder(order); $event.stopPropagation()"
-          >
-            Livrer
-          </button>
-
-          <!-- Statut client -->
+          <!-- Statut -->
           <p class="text-sm font-semibold mt-2">
             Statut :
             <span
               [ngClass]="{
-                'text-blue-500': order.clientStatus === 'en_cours',
-                'text-green-600': order.clientStatus === 'accepte',
-                'text-red-500': order.clientStatus === 'rembourse',
-                'text-gray-500': order.clientStatus === 'annullee'
+                'text-yellow-500': order.status === 'en_attente',
+                'text-blue-500': order.status === 'en_cours',
+                'text-green-600': order.status === 'livre'
               }"
             >
-              {{ getClientStatusLabel(order.clientStatus) }}
+              {{ order.status?.replace('_', ' ') }}
             </span>
           </p>
         </div>
@@ -190,25 +171,6 @@
   </div>
 </div>
 
-<!-- ✅ Modal de succès livraison -->
-<div
-  *ngIf="showSuccessModal"
-  class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
->
-  <div
-    class="bg-white rounded-xl shadow-lg p-6 text-center w-[90%] max-w-sm animate-fade-in"
-  >
-    <h2 class="text-green-600 text-2xl font-bold mb-2">Succès !</h2>
-    <p class="text-gray-700 mb-4">
-      La commande #{{ currentOrderId }} est prête et envoyée aux livreurs.
-    </p>
-    <button
-      (click)="closeSuccessModal()"
-      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-    >
-      Fermer
-    </button>
-  </div>
-</div>
+
 
 <app-footer></app-footer>

@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: '/api', // Use relative URL for proxy
+  apiUrl: 'https://yakalma.onrender.com',
   enableDebug: false,
   googleMapsApiKey: 'AIzaSyAGs3CBy6cHrNqb3d0ZS89NlY-8jmwwXzU',
   socketServerUrl: 'https://yakalma.onrender.com',

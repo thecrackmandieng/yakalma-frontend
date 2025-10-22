@@ -3,6 +3,7 @@ import { HeaderRestaurantComponent } from '../../header-restaurant/header-restau
 import { FooterComponent } from '../../footer/footer.component';
 import { CommonModule } from '@angular/common';
 import { PartenaireService, Order } from '../../../services/partenaire.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-restaurant-menu-management',
@@ -84,7 +85,7 @@ loadOrders(): void {
       return imagePath;
     }
     // Assure que l'URL ne commence pas par '/' pour éviter '//' dans l'URL finale
-    return `https://yakalma.onrender.com/${imagePath.replace(/^\/+/, '')}`;
+    return `${environment.apiUrl}/${imagePath.replace(/^\/+/, '')}`;
   }
 
   // Récupère l'image de la première item de la commande ou une image par défaut

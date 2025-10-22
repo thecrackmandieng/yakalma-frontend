@@ -58,6 +58,7 @@ import { FooterComponent } from '../../footer/footer.component';
 import { CommonModule } from '@angular/common';
 import { PartenaireService, Order } from '../../../services/partenaire.service';
 import { HeaderClientComponent } from "../header-client/header-client.component";
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-client-orders-history',
@@ -67,8 +68,6 @@ import { HeaderClientComponent } from "../header-client/header-client.component"
   styleUrl: './client-orders-history.component.css'
 })
 export class ClientOrdersHistoryComponent implements OnInit {
-  showSuccessModal = false;
-  currentOrderId: string | null = null;
   orders: Order[] = [];
 
   constructor(private partenaireService: PartenaireService) {}
@@ -91,44 +90,7 @@ loadOrders(): void {
 }
 
 
-  // Accepter une commande
-  acceptOrder(order: Order): void {
-    if (order.status === 'en_attente' && order._id) {
-      this.partenaireService.acceptOrder(order._id).subscribe({
-        next: () => {
-          order.status = 'en_cours';
-          this.loadOrders(); // Recharge la liste après acceptation
-        },
-        error: (err: any) => {
-          console.error('Erreur acceptation commande :', err);
-        },
-      });
-    }
-  }
 
-  // Marquer une commande comme livrée
-  deliverOrder(order: Order): void {
-    if (order.status === 'en_cours' && order._id) {
-      this.partenaireService.deliverOrder(order._id).subscribe({
-        next: (updatedOrder: Order) => {
-          order.status = 'livre';
-          this.currentOrderId = updatedOrder._id || null;
-          this.showSuccessModal = true;
-          this.loadOrders(); // Recharge la liste après livraison
-          setTimeout(() => this.closeSuccessModal(), 2000); // Ferme modal automatiquement après 2 secondes
-        },
-        error: (err: any) => {
-          console.error('Erreur livraison commande :', err);
-        },
-      });
-    }
-  }
-
-  // Fermer la modal de succès
-  closeSuccessModal(): void {
-    this.showSuccessModal = false;
-    this.currentOrderId = null;
-  }
 
   // Retourne l'URL complète d'une image ou une image par défaut
   getImageUrl(imagePath?: string): string {
@@ -139,7 +101,7 @@ loadOrders(): void {
       return imagePath;
     }
     // Assure que l'URL ne commence pas par '/' pour éviter '//' dans l'URL finale
-    return `https://yakalma.onrender.com/${imagePath.replace(/^\/+/, '')}`;
+    return `${environment.apiUrl}/${imagePath.replace(/^\/+/, '')}`;
   }
 
   // Récupère l'image de la première item de la commande ou une image par défaut
@@ -163,16 +125,7 @@ loadOrders(): void {
     this.selectedOrder = null;
   }
 
-  // Retourne le label du statut client
-  getClientStatusLabel(clientStatus?: string): string {
-    switch (clientStatus) {
-      case 'en_cours': return 'En cours';
-      case 'accepte': return 'Acceptée';
-      case 'rembourse': return 'Remboursée';
-      case 'annullee': return 'Annulée';
-      default: return 'En cours';
-    }
-  }
+
 
   // Charge la localisation du livreur pour une commande
   loadDelivererLocation(order: Order): void {

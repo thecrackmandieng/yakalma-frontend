@@ -3,12 +3,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map, throwError } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { Livreur } from '../pages/models/livreur.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LivreursService {
-  private baseUrl = 'https://yakalma.onrender.com/api/livreurs';
+  private baseUrl = `${environment.apiUrl}/api/livreurs`;
 
   constructor(
     private http: HttpClient,

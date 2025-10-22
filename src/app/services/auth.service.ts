@@ -2,6 +2,7 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, EMPTY } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 interface Profile {
   firstName?: string;
@@ -27,7 +28,7 @@ interface ProfileResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = 'https://yakalma.onrender.com/api';
+  private baseUrl = `${environment.apiUrl}/api`;
 
   constructor(
     private http: HttpClient,
