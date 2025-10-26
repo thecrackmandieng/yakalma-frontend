@@ -1,5 +1,3 @@
-# TODO: Fix Geocoding Error in Livreur Dashboard
-
-## Steps to Complete:
-- [x] Update showMap method in livreur-dashboard.component.ts to load Google Maps script before geocoding address
-- [ ] Test the fix to ensure 'google is not defined' error is resolved
+- [x] Modifier la méthode saveOrder pour accepter le paramètre ref et ajouter ref_command au orderPayload
+- [x] Dans payNow(), après réception de redirect_url, appeler saveOrder avant la redirection
+- [x] Ajuster verifyAndSaveOrder pour supprimer l'appel à saveOrder, car la commande est déjà enregistrée

@@ -215,9 +215,10 @@ export class RestaurantMenuComponent implements OnInit {
     };
 
     this.paymentService.initPayment(paymentPayload).subscribe({
-      next: (res) => {
+      next: async (res) => {
         if (res.redirect_url) {
-          // ✅ redirection uniquement, pas de saveOrder ici
+          // Enregistrer la commande avant la redirection
+          await this.saveOrder(totalPrice, ref);
           localStorage.setItem('pending_ref', ref);
           window.location.href = res.redirect_url;
         } else {
@@ -236,8 +237,7 @@ export class RestaurantMenuComponent implements OnInit {
     this.paymentService.verifyPayment(ref).subscribe({
       next: (res: { status: string }) => {
         if (res.status === 'success') {
-          const totalPrice = this.calculateTotalPrice();
-          this.saveOrder(totalPrice);
+          // La commande est déjà enregistrée, juste naviguer vers succès
           localStorage.removeItem('pending_ref');
           this.router.navigate(['/success']); // ✅ affichage succès uniquement après paiement validé
         } else {
@@ -249,7 +249,7 @@ export class RestaurantMenuComponent implements OnInit {
     });
   }
 
-  private async saveOrder(totalPrice: number) {
+  private async saveOrder(totalPrice: number, ref?: string) {
     if (!this.modalItem) return;
 
     let clientId: string | null = null;
@@ -292,7 +292,8 @@ export class RestaurantMenuComponent implements OnInit {
       contact: this.payment.contact,
       total: totalPrice,
       status: 'en_attente',
-      clientId: clientId
+      clientId: clientId,
+      ref_command: ref
     };
 
     this.partenaireService.createOrder(orderPayload).subscribe({
