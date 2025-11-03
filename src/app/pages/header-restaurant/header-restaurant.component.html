@@ -49,13 +49,13 @@
     </a>
 
     <a
-      routerLink="/pages"
+      routerLink="/restaurant/tables"
       routerLinkActive="text-blue-400 font-bold border-b-2 border-blue-400 pb-1"
       [routerLinkActiveOptions]="{ exact: true }"
       *ngIf="isRestaurant"
       class="hover:!text-blue-300 !text-white !no-underline transition"
     >
-      Pages
+      Tables
     </a>
   </nav>
 
@@ -136,20 +136,19 @@
     </a>
 
     <a
-      routerLink="/pages"
+      routerLink="/restaurant/tables"
       routerLinkActive="text-blue-400 font-bold border-l-4 border-blue-400 pl-2"
       [routerLinkActiveOptions]="{ exact: true }"
       *ngIf="isRestaurant"
       class="hover:!text-blue-300 !text-white !no-underline transition"
       (click)="mobileMenuOpen=false"
     >
-      Pages
+      Tables
     </a>
   </div>
 </header>
 
 <!-- =========================================== -->
-  <!-- Backdrop générique -->
 <!-- Modal Profil -->
 <div
   *ngIf="showProfileModal"
@@ -345,7 +344,6 @@
 </div>
 
 <!-- ================================== -->
-<!-- Modal Changer Mot de Passe -->
 <!-- Modal Changer Mot de Passe -->
 <div
   *ngIf="showPasswordModal"

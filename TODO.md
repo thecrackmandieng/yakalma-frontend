@@ -1,3 +1,12 @@
-- [x] Modifier la méthode saveOrder pour accepter le paramètre ref et ajouter ref_command au orderPayload
-- [x] Dans payNow(), après réception de redirect_url, appeler saveOrder avant la redirection
-- [x] Ajuster verifyAndSaveOrder pour supprimer l'appel à saveOrder, car la commande est déjà enregistrée
+# TODO: Implement Table Management Page for Restaurant
+
+## Steps to Complete
+
+- [x] Create RestaurantTablesComponent files (ts, html, css)
+- [x] Add route '/restaurant/tables' in app.routes.ts
+- [x] Update header-restaurant.component.html to link to '/restaurant/tables'
+- [x] Install qrcode library for QR code generation
+- [x] Implement table list with QR codes in the component
+- [x] Add register table button and modal
+- [x] Fetch tables and menus from services
+- [ ] Test navigation and functionality

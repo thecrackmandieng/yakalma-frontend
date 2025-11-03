@@ -16,6 +16,7 @@ import { RestaurantOrdersTrackingComponent } from './pages/restaurant/restaurant
 import { RestaurantOrdersHistoryComponent } from './pages/restaurant/restaurant-orders-history/restaurant-orders-history.component';
 import { RestaurantSettingsComponent } from './pages/restaurant/restaurant-settings/restaurant-settings.component';
 import { RestaurantMenuComponent } from './pages/restaurant/restaurant-menu/restaurant-menu.component';
+import { RestaurantTablesComponent } from './pages/restaurant/restaurant-tables/restaurant-tables.component';
 
 import { LivreurDashboardComponent } from './pages/livreur/livreur-dashboard/livreur-dashboard.component';
 import { LivreurMapComponent } from './pages/livreur/livreur-map/livreur-map.component';
@@ -69,6 +70,7 @@ export const routes: Routes = [
 
   { path: 'restaurant/menu-management', component: RestaurantMenuManagementComponent },
   { path: 'restaurant/menu', component: RestaurantMenuComponent },
+  { path: 'restaurant/tables', component: RestaurantTablesComponent },
   { path: 'restaurant/orders-tracking', component: RestaurantOrdersTrackingComponent },
   { path: 'restaurant/orders-history', component: RestaurantOrdersHistoryComponent },
   { path: 'restaurant/settings', component: RestaurantSettingsComponent },
