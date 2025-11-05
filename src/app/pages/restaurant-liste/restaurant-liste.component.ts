@@ -15,6 +15,8 @@ import { FooterComponent } from '../footer/footer.component';
 })
 export class RestaurantListeComponent implements OnInit {
   restaurants: Partenaire[] = [];
+  isLoading: boolean = true;
+  skeletonItems: number[] = [1, 2, 3];
 
   constructor(
     private partenaireService: PartenaireService,
@@ -26,9 +28,11 @@ export class RestaurantListeComponent implements OnInit {
       next: (data) => {
         // console.log('Restaurants chargés :', data); // pour debug
         this.restaurants = data;
+        this.isLoading = false;
       },
       error: (err) => {
         console.error("Erreur lors du chargement des restaurants :", err);
+        this.isLoading = false;
       }
     });
   }
