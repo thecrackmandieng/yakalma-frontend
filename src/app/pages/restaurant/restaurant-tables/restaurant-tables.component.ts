@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import * as QRCode from 'qrcode';
+import { HeaderRestaurantComponent } from "../../header-restaurant/header-restaurant.component";
+import { FooterComponent } from "../../footer/footer.component";
 
 interface Table {
   id: string;
@@ -19,7 +21,7 @@ interface Menu {
 @Component({
   selector: 'app-restaurant-tables',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HeaderRestaurantComponent, FooterComponent],
   templateUrl: './restaurant-tables.component.html',
   styleUrls: ['./restaurant-tables.component.css']
 })

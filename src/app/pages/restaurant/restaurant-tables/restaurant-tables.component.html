@@ -1,10 +1,12 @@
-<div class="min-h-screen bg-gray-50 p-6">
+<app-header-restaurant></app-header-restaurant>
+
+<div class="px-4 py-6 pt-16 md:pt-24 min-h-screen bg-gray-50 font-serif">
   <div class="max-w-7xl mx-auto">
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-3xl font-bold text-gray-900">Gestion des Tables</h1>
       <button
         (click)="openRegisterModal()"
-        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition"
+        class="bg-[#5371ff] hover:bg-[#415ad8] text-white px-4 py-2 rounded-lg font-medium transition"
       >
         Enregistrer une Table
       </button>
@@ -70,3 +72,5 @@
     </div>
   </div>
 </div>
+
+<app-footer></app-footer>
