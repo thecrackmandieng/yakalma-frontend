@@ -74,13 +74,9 @@ export class RestaurantTablesComponent implements OnInit {
 
   generateQRCodes() {
     this.tables.forEach(table => {
-      const qrData = {
-        restaurantId: this.restaurantId,
-        tableId: table.id,
-        menus: this.menus.map(m => ({ id: m.id, name: m.name }))
-      };
+      const menuUrl = `${window.location.origin}/restaurant/${this.restaurantId}/menu`;
 
-      QRCode.toDataURL(JSON.stringify(qrData), (err, url) => {
+      QRCode.toDataURL(menuUrl, (err, url) => {
         if (!err) {
           table.qrCode = url;
         }
