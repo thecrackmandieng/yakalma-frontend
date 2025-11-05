@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Partenaire } from '../models/partenaire.model';
 import { PartenaireService } from '../../services/partenaire.service';
 import { Router } from '@angular/router';
@@ -13,22 +14,28 @@ import { CommonModule } from '@angular/common';
 })
 export class SectionRestaurantListComponent implements OnInit {
   restaurants: Partenaire[] = [];
+  isBrowser: boolean;
 
   constructor(
     private partenaireService: PartenaireService,
-    private router: Router
-  ) {}
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   ngOnInit(): void {
-    this.partenaireService.getPartenaires().subscribe({
-      next: (data) => {
-        // console.log('Restaurants chargés :', data); // pour debug
-        this.restaurants = data;
-      },
-      error: (err) => {
-        console.error("Erreur lors du chargement des restaurants :", err);
-      }
-    });
+    if (this.isBrowser) {
+      this.partenaireService.getPartenaires().subscribe({
+        next: (data) => {
+          // console.log('Restaurants chargés :', data); // pour debug
+          this.restaurants = data;
+        },
+        error: (err) => {
+          console.error("Erreur lors du chargement des restaurants :", err);
+        }
+      });
+    }
   }
 
 onRestaurantClick(restaurant: Partenaire): void {
