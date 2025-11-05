@@ -6,7 +6,7 @@
   </h1>
 
   <!-- Cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div *ngIf="!isLoading && orders.length > 0; else loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     <div *ngFor="let order of orders"
          class="bg-white rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1 cursor-pointer"
          (click)="selectedOrder = order">
@@ -49,6 +49,28 @@
       </div>
     </div>
   </div>
+
+  <!-- Skeleton Loading -->
+  <ng-template #loading>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let item of [1,2,3]" class="bg-white rounded-xl shadow-lg animate-pulse">
+        <!-- Skeleton Image -->
+        <div class="relative">
+          <div class="w-full h-48 bg-gray-300 rounded-t-xl"></div>
+          <div class="absolute top-2 left-2 bg-gray-400 text-xs font-semibold px-2 py-1 rounded w-16 h-6"></div>
+          <div class="absolute top-2 right-2 flex space-x-2">
+            <div class="bg-gray-400 px-3 py-1 rounded w-16 h-6"></div>
+            <div class="bg-gray-400 px-3 py-1 rounded w-6 h-6"></div>
+          </div>
+        </div>
+        <!-- Skeleton Infos -->
+        <div class="flex justify-between p-4">
+          <div class="bg-gray-300 h-4 w-24 rounded"></div>
+          <div class="bg-gray-300 h-4 w-20 rounded"></div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
 </div>
 
 <!-- ✅ Modal Détails -->

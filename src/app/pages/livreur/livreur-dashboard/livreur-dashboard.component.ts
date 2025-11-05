@@ -24,6 +24,7 @@ export class LivreurDashboardComponent implements OnInit {
   isBrowser: boolean;
   selectedOrder: Order | null = null;
   orders: Order[] = [];
+  isLoading: boolean = true;
   userLocation: { latitude: number; longitude: number } | null = null;
   clientLocation: { latitude: number; longitude: number } | null = null;
   isLoadingLocation = false;
@@ -56,8 +57,12 @@ export class LivreurDashboardComponent implements OnInit {
           ...order,
           image: this.getImageUrl(order)
         }));
+        this.isLoading = false;
       },
-      error: err => console.error('Erreur chargement commandes livrées :', err)
+      error: err => {
+        console.error('Erreur chargement commandes livrées :', err);
+        this.isLoading = false;
+      }
     });
   }
 

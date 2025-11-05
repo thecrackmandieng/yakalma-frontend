@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { LivreursService } from '../../../services/livreurs.service';
 import { HeaderComponent } from '../header/header.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
-import { SafeUrlPipe } from '../../../pipes/safe-url.pipe';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUsers, faCheckCircle, faClock, faTimesCircle, faEdit, faTrash, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { environment } from '../../../../environments/environment';
@@ -24,7 +23,7 @@ interface Livreur {
 @Component({
   selector: 'app-livreurs',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, SidebarComponent, SafeUrlPipe, FontAwesomeModule],
+  imports: [CommonModule, FormsModule, HeaderComponent, SidebarComponent, FontAwesomeModule],
   templateUrl: './livreurs.component.html',
   styleUrls: ['./livreurs.component.css']
 })
