@@ -130,7 +130,7 @@ export class PartenaireService {
   }
 
   // -------------------- MENU --------------------
-
+c
   /** 🔓 Public : Menu d'un restaurant par ID */
   getMenuByRestaurantId(restaurantId: string): Observable<MenuItem[]> {
     return this.http

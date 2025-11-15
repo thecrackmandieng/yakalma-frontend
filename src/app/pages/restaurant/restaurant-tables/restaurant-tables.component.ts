@@ -43,42 +43,62 @@ export class RestaurantTablesComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('🚀 Initialisation du composant RestaurantTablesComponent');
     if (this.isBrowser) {
+      console.log('🌐 Environnement browser détecté, chargement des données...');
       this.loadRestaurantData();
       this.loadTables();
+    } else {
+      console.log('🖥️ Environnement serveur détecté, pas de chargement des données');
     }
   }
 
   loadRestaurantData() {
+    console.log('🔍 Chargement des données du restaurant...');
     this.authService.getRestaurantProfile().subscribe({
       next: (res: any) => {
+        console.log('📋 Réponse du profil restaurant:', res);
         if (res?.restaurant) {
           this.restaurantId = res.restaurant._id;
           this.menus = res.restaurant.menus || [];
+          console.log('✅ Restaurant ID:', this.restaurantId);
+          console.log('📋 Menus:', this.menus);
+        } else {
+          console.error('❌ Structure de réponse inattendue:', res);
         }
       },
       error: (err) => {
-        console.error('Erreur récupération du profil:', err);
+        console.error('❌ Erreur récupération du profil:', err);
       }
     });
   }
 
   loadTables() {
+    console.log('📋 Chargement des tables...');
     // Assume there's a service method to get tables
     // For now, using mock data
     this.tables = [
       { id: '1', name: 'Table 1', qrCode: '' },
       { id: '2', name: 'Table 2', qrCode: '' },
     ];
+    console.log('📋 Tables mockées:', this.tables);
     this.generateQRCodes();
   }
 
   generateQRCodes() {
+    console.log('🔄 Génération des QR codes...');
+    console.log('🏪 Restaurant ID:', this.restaurantId);
+    console.log('🌐 Frontend URL:', environment.frontendUrl);
+
     this.tables.forEach(table => {
       const menuUrl = `${environment.frontendUrl}/restaurant/${this.restaurantId}/menu`;
+      console.log(`📱 Génération QR pour table ${table.name}:`, menuUrl);
 
       QRCode.toDataURL(menuUrl, (err, url) => {
-        if (!err) {
+        if (err) {
+          console.error(`❌ Erreur génération QR pour table ${table.name}:`, err);
+        } else {
+          console.log(`✅ QR généré pour table ${table.name}`);
           table.qrCode = url;
         }
       });
