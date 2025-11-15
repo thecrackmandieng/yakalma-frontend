@@ -48,6 +48,7 @@ export class RestaurantMenuComponent implements OnInit {
   restaurantName: string = '';
   restaurantId: string = '';
   isRestaurant: boolean = false;
+  tableId: string = '';
 
   deliveryFee = 500;
   serviceFee = 300;
@@ -100,6 +101,11 @@ export class RestaurantMenuComponent implements OnInit {
       } else {
         console.error('Aucun ID restaurant trouvé dans l\'URL.');
       }
+    });
+
+    this.route.queryParams.subscribe(queryParams => {
+      this.tableId = queryParams['table'] || '';
+      console.log('Table ID from QR:', this.tableId);
     });
   }
 
@@ -293,7 +299,8 @@ export class RestaurantMenuComponent implements OnInit {
       total: totalPrice,
       status: 'en_attente',
       clientId: clientId,
-      ref_command: ref
+      ref_command: ref,
+      tableId: this.tableId
     };
 
     this.partenaireService.createOrder(orderPayload).subscribe({

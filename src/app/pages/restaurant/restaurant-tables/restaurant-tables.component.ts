@@ -91,7 +91,7 @@ export class RestaurantTablesComponent implements OnInit {
     console.log('🌐 Frontend URL:', environment.frontendUrl);
 
     this.tables.forEach(table => {
-      const menuUrl = `${environment.frontendUrl}/restaurant/${this.restaurantId}/menu`;
+      const menuUrl = `${environment.frontendUrl}/restaurant/${this.restaurantId}/menu?table=${table.id}`;
       console.log(`📱 Génération QR pour table ${table.name}:`, menuUrl);
 
       QRCode.toDataURL(menuUrl, (err, url) => {
