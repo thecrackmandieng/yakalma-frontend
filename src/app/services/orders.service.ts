@@ -52,13 +52,22 @@ export class OrdersService {
   private getAuthHeaders(): { headers: HttpHeaders } {
     let token = '';
     if (isPlatformBrowser(this.platformId)) {
-      token = localStorage.getItem('token') || '';
+      // Check multiple possible token keys for consistency with auth interceptor
+      const tokenKeys = ['token', 'authToken', 'accessToken', 'jwt'];
+      for (const key of tokenKeys) {
+        token = localStorage.getItem(key) || '';
+        if (token) break;
+      }
     }
 
     const headersConfig: Record<string, string> = {
-      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
+
+    // Only add Authorization header if token exists
+    if (token) {
+      headersConfig['Authorization'] = `Bearer ${token}`;
+    }
 
     return { headers: new HttpHeaders(headersConfig) };
   }

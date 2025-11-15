@@ -59,6 +59,8 @@ import { CommonModule } from '@angular/common';
 import { PartenaireService, Order } from '../../../services/partenaire.service';
 import { HeaderClientComponent } from "../header-client/header-client.component";
 import { environment } from '../../../../environments/environment';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-client-orders-history',
@@ -69,25 +71,51 @@ import { environment } from '../../../../environments/environment';
 })
 export class ClientOrdersHistoryComponent implements OnInit {
   orders: Order[] = [];
+  isLoading = false;
+  errorMessage = '';
 
-  constructor(private partenaireService: PartenaireService) {}
+  constructor(
+    private partenaireService: PartenaireService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    // Vérifier l'authentification avant de charger les commandes
+    if (!this.authService.isLoggedIn()) {
+      this.errorMessage = 'Vous devez être connecté pour voir vos commandes.';
+      this.router.navigate(['/login']);
+      return;
+    }
     this.loadOrders();
   }
 
   // Charge la liste des commandes depuis le service
-loadOrders(): void {
-  this.partenaireService.getMyOrders().subscribe({
-    next: (orders: Order[]) => {
-      console.log('Orders dans le composant:', orders);
-      this.orders = orders;
-    },
-    error: (err: any) => {
-      console.error('❌ Erreur lors du chargement des commandes :', err);
-    },
-  });
-}
+  loadOrders(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.partenaireService.getMyOrders().subscribe({
+      next: (orders: Order[]) => {
+        console.log('Orders dans le composant:', orders);
+        this.orders = orders;
+        this.isLoading = false;
+      },
+      error: (err: any) => {
+        console.error('❌ Erreur lors du chargement des commandes :', err);
+        this.isLoading = false;
+
+        // Gestion spécifique des erreurs d'authentification
+        if (err.status === 401) {
+          this.errorMessage = 'Session expirée. Veuillez vous reconnecter.';
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        } else {
+          this.errorMessage = 'Erreur lors du chargement des commandes. Veuillez réessayer.';
+        }
+      },
+    });
+  }
 
 
 
