@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import * as QRCode from 'qrcode';
 import { HeaderRestaurantComponent } from "../../header-restaurant/header-restaurant.component";
 import { FooterComponent } from "../../footer/footer.component";
+import { environment } from '../../../../environments/environment';
 
 interface Table {
   id: string;
@@ -52,7 +53,7 @@ export class RestaurantTablesComponent implements OnInit {
     this.authService.getRestaurantProfile().subscribe({
       next: (res: any) => {
         if (res?.restaurant) {
-          this.restaurantId = res.restaurant.id;
+          this.restaurantId = res.restaurant._id;
           this.menus = res.restaurant.menus || [];
         }
       },
@@ -74,7 +75,7 @@ export class RestaurantTablesComponent implements OnInit {
 
   generateQRCodes() {
     this.tables.forEach(table => {
-      const menuUrl = `${window.location.origin}/restaurant/${this.restaurantId}/menu`;
+      const menuUrl = `${environment.frontendUrl}/restaurant/${this.restaurantId}/menu`;
 
       QRCode.toDataURL(menuUrl, (err, url) => {
         if (!err) {
