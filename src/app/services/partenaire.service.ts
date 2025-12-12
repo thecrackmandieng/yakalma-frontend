@@ -61,12 +61,20 @@ export class PartenaireService {
     let token = '';
 
     if (isPlatformBrowser(this.platformId)) {
-      token = localStorage.getItem('token') || '';
+      // Check multiple possible token keys for consistency with auth interceptor
+      const tokenKeys = ['token', 'authToken', 'accessToken', 'jwt'];
+      for (const key of tokenKeys) {
+        token = localStorage.getItem(key) || '';
+        if (token) break;
+      }
     }
 
-    const headersConfig: Record<string, string> = {
-      Authorization: `Bearer ${token}`
-    };
+    const headersConfig: Record<string, string> = {};
+
+    // Only add Authorization header if token exists
+    if (token) {
+      headersConfig['Authorization'] = `Bearer ${token}`;
+    }
 
     if (!isFormData) headersConfig['Content-Type'] = 'application/json';
 

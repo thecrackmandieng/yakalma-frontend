@@ -12,7 +12,11 @@
       </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngIf="isLoading && tables.length === 0" class="text-center py-8">
+      <p class="text-gray-500">Chargement des tables...</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="!isLoading || tables.length > 0">
       <div *ngFor="let table of tables" class="bg-white rounded-lg shadow-md p-6">
         <h3 class="text-xl font-semibold text-gray-800 mb-4">{{ table.name }}</h3>
 
@@ -20,12 +24,20 @@
           <img *ngIf="table.qrCode" [src]="table.qrCode" alt="QR Code" class="w-32 h-32" />
         </div>
 
-        <div class="text-center">
+        <div class="text-center space-y-2">
           <button
             (click)="downloadQR(table)"
             class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition"
           >
             Télécharger QR
+          </button>
+          <br>
+          <button
+            (click)="deleteTable(table)"
+            [disabled]="isLoading"
+            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition disabled:opacity-50"
+          >
+            Supprimer
           </button>
         </div>
       </div>
