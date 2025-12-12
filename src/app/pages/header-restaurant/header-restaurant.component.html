@@ -6,6 +6,47 @@
       <h1 class="text-2xl font-serif !no-underline text-white font-bold">Yakalma</h1>
     </a>
   </div>
+<nav class="hidden lg:flex gap-6" role="navigation" aria-label="Menu principal">
+  <a
+    routerLink="/restaurant/dashboard"
+    routerLinkActive="text-blue-400 font-bold border-b-2 !border-blue-400 pb-1"
+    [routerLinkActiveOptions]="{ exact: true }"
+    *ngIf="isRestaurant"
+    class="hover:!text-blue-300 !text-white !no-underline transition"
+  >
+    Accueil
+  </a>
+
+  <a
+    routerLink="/restaurant/menu-management"
+    routerLinkActive="text-blue-400 font-bold border-b-2 border-blue-400 pb-1"
+    [routerLinkActiveOptions]="{ exact: true }"
+    *ngIf="isRestaurant"
+    class="hover:!text-blue-300 !text-white !no-underline transition"
+  >
+    Commande
+  </a>
+
+  <a
+    routerLink="/restaurant/menu"
+    routerLinkActive="text-blue-400 font-bold border-b-2 border-blue-400 pb-1"
+    [routerLinkActiveOptions]="{ exact: true }"
+    *ngIf="isRestaurant"
+    class="hover:!text-blue-300 !text-white !no-underline transition"
+  >
+    Menu
+  </a>
+
+  <a
+    routerLink="/restaurant/tables"
+    routerLinkActive="text-blue-400 font-bold border-b-2 border-blue-400 pb-1"
+    [routerLinkActiveOptions]="{ exact: true }"
+    *ngIf="isRestaurant"
+    class="hover:!text-blue-300 !text-white !no-underline transition"
+  >
+    Tables
+  </a>
+</nav>
 
   <!-- Bouton Burger (mobile) -->
   <button
