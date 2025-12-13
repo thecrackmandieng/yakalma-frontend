@@ -4,7 +4,7 @@ export const environment = {
   enableDebug: false,
   googleMapsApiKey: 'AIzaSyAGs3CBy6cHrNqb3d0ZS89NlY-8jmwwXzU',
   socketServerUrl: 'https://yakalma.onrender.com',
-  frontendUrl: 'https://yakalma-frontend.onrender.com',
+  frontendUrl: 'https://yakalma-client.onrender.com',
 
   // Paiement PayTech
   API_KEY: '4aa1eae39d439ae26a40d1c248581251c1162d4985cd750e631a40f47acc6c6b',

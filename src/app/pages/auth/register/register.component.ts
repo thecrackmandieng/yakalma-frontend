@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms'; // Assure-toi d'importer FormsModu
 import { HttpClientModule } from '@angular/common/http'; // Ajout de HttpClientModule
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-register',
@@ -24,7 +25,8 @@ export class RegisterComponent {
     event.preventDefault();
 
     // Envoi des données à l'API
-    this.http.post('http://localhost:3000/api/auth/register', {
+
+    this.http.post(environment.apiUrl + '/api/auth/register', {
       email: this.email,
       password: this.password,
       role: this.role
