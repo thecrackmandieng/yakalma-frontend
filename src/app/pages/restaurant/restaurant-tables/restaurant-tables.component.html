@@ -24,21 +24,23 @@
           <img *ngIf="table.qrCode" [src]="table.qrCode" alt="QR Code" class="w-32 h-32" />
         </div>
 
-        <div class="text-center space-y-2">
-          <button
-            (click)="downloadQR(table)"
-            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition"
-          >
-            Télécharger QR
-          </button>
-          <br>
-          <button
-            (click)="deleteTable(table)"
-            [disabled]="isLoading"
-            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition disabled:opacity-50"
-          >
-            Supprimer
-          </button>
+
+        <div class="justify-center align-center text-center">
+          <div class="flex space-x-2 justify-center gap-2">
+            <button
+              (click)="downloadQR(table)"
+              class="bg-[#5371ff] hover:bg-[#415ad8] text-white px-4 py-2 rounded-lg font-medium transition"
+            >
+              Télécharger QR
+            </button>
+            <button
+              (click)="deleteTable(table)"
+              [disabled]="isLoading"
+              class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition disabled:opacity-50"
+            >
+              Supprimer
+            </button>
+          </div>
         </div>
       </div>
     </div>
