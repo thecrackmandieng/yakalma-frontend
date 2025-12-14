@@ -12,6 +12,7 @@
   <button
     class="lg:hidden text-white !text-2xl focus:outline-none"
     (click)="mobileMenuOpen = !mobileMenuOpen"
+    *ngIf="isRestaurant"
     aria-label="Menu mobile"
   >
     <i class="fas fa-bars"></i>
