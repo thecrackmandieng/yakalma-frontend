@@ -46,6 +46,9 @@ import { LivreurPubComponent } from './pages/livreur-pub/livreur-pub.component';
 import { LivreursComponent } from './pages/admin/livreurs/livreurs.component';
 import { PartenairesComponent } from './pages/admin/partenaires/partenaires.component';
 import { PaymentSuccessComponent } from './pages/payment-success/payment-success.component';
+import { ForgotPasswordPartenaireComponent } from './pages/auth/forgot-password/forgot-password-partenaire/forgot-password-partenaire.component';
+import { ForgotPasswordClientComponent } from './pages/auth/forgot-password/forgot-password-client/forgot-password-client.component';
+import { ForgotPasswordLivreurComponent } from './pages/auth/forgot-password/forgot-password-livreur/forgot-password-livreur.component';
 
 
 export const routes: Routes = [
@@ -56,6 +59,9 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'partenaire-pub', component: PartenairePubComponent },
   { path: 'livreur-pub', component: LivreurPubComponent },
+  { path: 'forgot-password-partenaire', component: ForgotPasswordPartenaireComponent },
+  { path: 'forgot-password-livreur', component: ForgotPasswordLivreurComponent },
+  { path: 'forgot-password-client', component: ForgotPasswordClientComponent },
 
   // Admin
   { path: 'admin/dashboard', component: AdminDashboardComponent },
