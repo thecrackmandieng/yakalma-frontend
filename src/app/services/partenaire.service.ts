@@ -21,7 +21,10 @@ export interface Order {
   _id?: string;
   items: OrderItem[];
   customerName: string;
-  address: string;
+  deliveryLocation: {
+    lat: number;
+    lng: number;
+  };
   contact: string;
   restaurantId: string;
   total: number;
