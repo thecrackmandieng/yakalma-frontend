@@ -122,7 +122,8 @@
         <h3 class="text-lg font-semibold text-center !text-blue-600 mb-2"><i class="fa fa-user"></i> Client</h3>
         <div class="flex flex-wrap justify-between items-center mb-2">
           <p><strong>Client :</strong> {{ selectedOrder.customerName }}</p>
-          <p><strong>Adresse :</strong> {{ selectedOrder.address }}</p>
+
+          <p><strong>Localisation :</strong> {{ selectedOrder.deliveryLocation.lat }}, {{ selectedOrder.deliveryLocation.lng }}</p>
         </div>
         <p><strong>Contact :</strong> {{ selectedOrder.contact }}</p>
       </div>

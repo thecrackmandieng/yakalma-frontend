@@ -237,6 +237,7 @@ export class HeaderComponent implements OnInit {
     return;
   }
 
+
   const orderPayload = {
     items: this.cartItems.map(item => ({
       dishId: item._id || item.menuItemId,
@@ -247,7 +248,10 @@ export class HeaderComponent implements OnInit {
       supplements: item.supplements || []
     })),
     customerName: this.payment.name.trim(),
-    address: this.payment.address.trim(),
+    deliveryLocation: {
+      lat: 14.6928, // Coordonnées par défaut pour Dakar, à remplacer par géolocalisation automatique
+      lng: -17.4467
+    },
     contact: this.payment.contact.trim(),
     restaurantId: restaurantId,
     total: this.getCartTotal(),
