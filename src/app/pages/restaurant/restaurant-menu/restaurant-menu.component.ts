@@ -276,23 +276,41 @@ export class RestaurantMenuComponent implements OnInit {
 
     // Créer un compte client si demandé
     if (this.createAccount) {
-      try {
+      console.log('🔄 Tentative de création automatique de compte client...');
+      console.log('📋 Données client à envoyer:', {
+        fullName: this.payment.name,
+        email: this.payment.email,
+        phone: this.payment.contact,
+        address: `${this.deliveryLocation!.latitude}, ${this.deliveryLocation!.longitude}`
+      });
 
+      try {
         const clientResponse = await this.partenaireService.registerClient({
           fullName: this.payment.name,
           email: this.payment.email,
           phone: this.payment.contact,
           address: `${this.deliveryLocation!.latitude}, ${this.deliveryLocation!.longitude}` // Utiliser les coordonnées GPS comme adresse
         }).toPromise();
+
+        console.log('✅ Réponse création client:', clientResponse);
         clientId = clientResponse.client?._id || clientResponse._id;
-        console.log('Client créé:', clientId);
+        console.log('🆔 ID client créé:', clientId);
+
         this.successMessage = "Commande enregistrée et compte client créé. Vérifiez votre email pour le mot de passe temporaire.";
-        console.log('Mot de passe temporaire envoyé à l\'email du client, client',clientResponse);
+        console.log('📧 Mot de passe temporaire envoyé à l\'email du client:', clientResponse);
       } catch (err: any) {
-        console.error('Erreur création client:', err);
+        console.error('❌ Erreur lors de la création automatique du compte client:', err);
+        console.error('Détails de l\'erreur:', {
+          status: err.status,
+          statusText: err.statusText,
+          error: err.error,
+          message: err.message
+        });
         this.errorMessage = err.error?.message || "Erreur lors de la création du compte client. La commande sera enregistrée sans compte.";
         // Ne pas arrêter le processus, continuer avec clientId = null
       }
+    } else {
+      console.log('ℹ️ Création de compte client désactivée par l\'utilisateur');
     }
 
     const selectedSupplements = this.modalSupplements
