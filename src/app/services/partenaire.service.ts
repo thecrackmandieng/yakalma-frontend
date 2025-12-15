@@ -1,9 +1,10 @@
 // src/app/services/partenaire.service.ts
+
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap, catchError } from 'rxjs/operators';
 import { Partenaire } from '../pages/models/partenaire.model';
 import { MenuItem } from '../pages/models/menu-item.model';
 import { environment } from '../../environments/environment';
@@ -17,6 +18,7 @@ export interface OrderItem {
   image?: string;
 }
 
+
 export interface Order {
   _id?: string;
   items: OrderItem[];
@@ -26,6 +28,7 @@ export interface Order {
     lng: number;
   };
   contact: string;
+  email: string; // Email du client pour la création de compte automatique
   restaurantId: string;
   total: number;
 
@@ -186,8 +189,48 @@ export class PartenaireService {
     return this.http.patch<Order>(`${this.ordersUrl}/${orderId}/status`, { status }, { headers });
   }
 
+
   acceptOrderRestaurant(orderId: string): Observable<Order> {
-    return this.updateOrderStatus(orderId, 'en_cours');
+    return this.updateOrderStatus(orderId, 'en_cours').pipe(
+      // Créer un compte client automatiquement si nécessaire
+      switchMap((order: Order) => {
+        // Si la commande a déjà un clientId, ne rien faire
+        if (order.clientId) {
+          return [order];
+        }
+
+        // Vérifier que les données nécessaires sont présentes
+        if (!order.customerName || !order.email || !order.contact) {
+          console.warn('Données client insuffisantes pour créer un compte automatiquement');
+          return [order];
+        }
+
+        console.log('🔄 Création automatique du compte client...');
+
+        return this.registerClient({
+          fullName: order.customerName,
+          email: order.email,
+          phone: order.contact,
+          address: `${order.deliveryLocation.lat}, ${order.deliveryLocation.lng}`
+        }).pipe(
+          map((clientResponse: any) => {
+            console.log('✅ Compte client créé automatiquement:', clientResponse);
+            // Mettre à jour la commande avec le clientId
+            const updatedOrder = { ...order, clientId: clientResponse.client?._id || clientResponse._id };
+
+            // Optionnel : mettre à jour la commande côté backend avec le clientId
+            // this.http.patch(`${this.ordersUrl}/${orderId}`, { clientId: updatedOrder.clientId })
+
+            return updatedOrder;
+          }),
+          catchError((error: any) => {
+            console.error('❌ Erreur lors de la création automatique du compte client:', error);
+            // En cas d'erreur, retourner la commande originale sans clientId
+            return [order];
+          })
+        );
+      })
+    );
   }
 
   deliverOrderRestaurant(orderId: string): Observable<Order> {
@@ -210,7 +253,12 @@ export class PartenaireService {
   // -------------------- CLIENTS --------------------
 
   registerClient(clientData: { fullName: string; email: string; phone: string; address?: string }): Observable<any> {
-    return this.http.post(`${this.clientsUrl}/register`, clientData);
+    const clientDataWithRole = {
+      ...clientData,
+      role: 'client'
+    };
+    console.log('📤 Envoi données client avec rôle:', clientDataWithRole);
+    return this.http.post(`${this.clientsUrl}/register`, clientDataWithRole);
   }
 
   // -------------------- LIVREURS --------------------

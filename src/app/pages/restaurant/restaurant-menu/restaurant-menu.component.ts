@@ -317,6 +317,7 @@ export class RestaurantMenuComponent implements OnInit {
       .filter(s => s.selected)
       .map(s => ({ name: s.name, price: s.price }));
 
+
     const orderPayload: any = {
       restaurantId: this.restaurantId,
       items: [{
@@ -333,6 +334,7 @@ export class RestaurantMenuComponent implements OnInit {
         lng: this.deliveryLocation!.longitude
       },
       contact: this.payment.contact,
+      email: this.payment.email, // Ajout du champ email
       total: totalPrice,
       status: 'en_attente',
       clientId: clientId,
