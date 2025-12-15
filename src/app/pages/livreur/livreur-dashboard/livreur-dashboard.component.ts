@@ -85,13 +85,12 @@ export class LivreurDashboardComponent implements OnInit {
     await this.loadGoogleMapsScript();
     await this.getCurrentLocation();
 
-    if (order.address) {
-      try {
-        this.clientLocation = await this.geocodeAddress(order.address);
-      } catch (error) {
-        console.error('Erreur géocodage adresse client:', error);
-        this.clientLocation = { latitude: 14.6928, longitude: -17.4467 }; // Dakar par défaut
-      }
+
+    if (order.deliveryLocation) {
+      this.clientLocation = {
+        latitude: order.deliveryLocation.lat,
+        longitude: order.deliveryLocation.lng
+      };
     } else {
       this.clientLocation = { latitude: 14.6928, longitude: -17.4467 };
     }

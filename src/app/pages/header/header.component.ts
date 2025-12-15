@@ -65,10 +65,12 @@ export class HeaderComponent implements OnInit {
 
   selectedOperator: any = null;
 
+
   payment = {
     address: '',
     contact: '',
     name: '',
+    email: '',
     card: '',
     exp: '',
     cvc: ''
@@ -237,6 +239,8 @@ export class HeaderComponent implements OnInit {
     return;
   }
 
+
+
   const orderPayload = {
     items: this.cartItems.map(item => ({
       dishId: item._id || item.menuItemId,
@@ -247,8 +251,12 @@ export class HeaderComponent implements OnInit {
       supplements: item.supplements || []
     })),
     customerName: this.payment.name.trim(),
-    address: this.payment.address.trim(),
+    deliveryLocation: {
+      lat: 14.6928, // Coordonnées par défaut pour Dakar, à remplacer par géolocalisation automatique
+      lng: -17.4467
+    },
     contact: this.payment.contact.trim(),
+    email: this.payment.email.trim(), // Ajout du champ email
     restaurantId: restaurantId,
     total: this.getCartTotal(),
     operator: this.selectedOperator?.name || ''
@@ -258,7 +266,8 @@ export class HeaderComponent implements OnInit {
     next: () => {
       this.showSuccess('Commande envoyée avec succès !');
       this.cartService.clearCart();
-      this.payment = { address: '', contact: '', name: '', card: '', exp: '', cvc: '' };
+
+      this.payment = { address: '', contact: '', name: '', email: '', card: '', exp: '', cvc: '' };
       setTimeout(() => this.closeOrderModal(), 2000);
     },
     error: () => {
@@ -403,9 +412,10 @@ getCartTotal(): number {
 
   // Méthode pour traiter le paiement du panier après validation du formulaire
   processCartPayment() {
+
     // Validation des informations client
-    if (!this.payment.name || !this.payment.contact || !this.payment.address) {
-      this.showError('Veuillez remplir tous les champs du formulaire (nom, contact, adresse).');
+    if (!this.payment.name || !this.payment.contact || !this.payment.address || !this.payment.email) {
+      this.showError('Veuillez remplir tous les champs du formulaire (nom, contact, adresse, email).');
       return;
     }
 

@@ -8,6 +8,7 @@ import { CartService } from '../../../services/cart.service';
 import { MenuItem } from '../../models/menu-item.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaymentService } from '../../../services/payment.service';
+import { GeolocationService, Position } from '../../../services/geolocation.service';
 import { ToastSuccessComponent } from '../../../components/toast-success/toast-success.component';
 import { ToastErrorComponent } from '../../../components/toast-error/toast-error.component';
 import { environment } from '../../../../environments/environment';
@@ -30,9 +31,11 @@ export class RestaurantMenuComponent implements OnInit {
   modalItem: MenuItem | null = null;
   quantity = 1;
 
+
   showPaymentForm = false;
-  payment = { name: '', contact: '', address: '', email: '' };
-  createAccount = false;
+  payment = { name: '', contact: '', email: '' };
+  deliveryLocation: Position | null = null;
+  createAccount = true; // Créer un compte automatiquement par défaut
 
   showAddDishModal = false;
   newDish: any = { name: '', description: '', price: 0, image: '', supplements: [] };
@@ -55,8 +58,10 @@ export class RestaurantMenuComponent implements OnInit {
 
   modalSupplements: { name: string, price: number, selected: boolean }[] = [];
 
+
   successMessage: string = '';
   errorMessage: string = '';
+  infoMessage: string = '';
 
   constructor(
     private partenaireService: PartenaireService,
@@ -64,6 +69,7 @@ export class RestaurantMenuComponent implements OnInit {
     private router: Router,
     private cartService: CartService,
     private paymentService: PaymentService,
+    private geolocationService: GeolocationService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -148,14 +154,33 @@ export class RestaurantMenuComponent implements OnInit {
   }
 
   // --- Modal commande ---
-  openModal(item: MenuItem, event: Event) {
+  async openModal(item: MenuItem, event: Event) {
     event.stopPropagation();
     this.modalItem = item;
     this.quantity = 1;
     this.showModal = true;
     this.showPaymentForm = true;
-    this.payment = { name: '', contact: '', address: '', email: '' };
-    this.createAccount = false;
+    this.payment = { name: '', contact: '', email: '' };
+    this.createAccount = true;
+
+
+    // Récupérer automatiquement la localisation GPS du client avec fallback
+    try {
+      this.deliveryLocation = await this.geolocationService.requestClientLocation();
+      console.log('Localisation GPS récupérée:', this.deliveryLocation);
+      this.successMessage = 'Position GPS récupérée avec succès !';
+    } catch (error) {
+      console.warn('Géolocalisation indisponible, utilisation des coordonnées par défaut (Dakar)');
+      // Fallback : coordonnées par défaut de Dakar si géolocalisation échoue
+      this.deliveryLocation = {
+        latitude: 14.6928,
+        longitude: -17.4467
+      };
+
+      this.infoMessage = 'Position par défaut utilisée (Dakar). Vous pouvez modifier l\'adresse de livraison dans le formulaire.';
+      // Auto-suppression du message après 5 secondes
+      setTimeout(() => this.infoMessage = '', 5000);
+    }
 
     this.modalSupplements = (item.supplements || []).map((s: any) => ({
       name: s.name,
@@ -203,8 +228,9 @@ export class RestaurantMenuComponent implements OnInit {
   }
 
   // --- Paiement ---
+
   payNow() {
-    if (!this.modalItem || !this.payment.name || !this.payment.contact || !this.payment.address || !this.payment.email) {
+    if (!this.modalItem || !this.payment.name || !this.payment.contact || !this.payment.email) {
       this.errorMessage = 'Veuillez remplir tous les champs correctement et sélectionner un plat.';
       return;
     }
@@ -255,33 +281,55 @@ export class RestaurantMenuComponent implements OnInit {
     });
   }
 
+
   private async saveOrder(totalPrice: number, ref?: string) {
-    if (!this.modalItem) return;
+    if (!this.modalItem || !this.deliveryLocation) return;
 
     let clientId: string | null = null;
 
     // Créer un compte client si demandé
     if (this.createAccount) {
+      console.log('🔄 Tentative de création automatique de compte client...');
+      console.log('📋 Données client à envoyer:', {
+        fullName: this.payment.name,
+        email: this.payment.email,
+        phone: this.payment.contact,
+        address: `${this.deliveryLocation!.latitude}, ${this.deliveryLocation!.longitude}`
+      });
+
       try {
         const clientResponse = await this.partenaireService.registerClient({
           fullName: this.payment.name,
           email: this.payment.email,
           phone: this.payment.contact,
-          address: this.payment.address
+          address: `${this.deliveryLocation!.latitude}, ${this.deliveryLocation!.longitude}` // Utiliser les coordonnées GPS comme adresse
         }).toPromise();
+
+        console.log('✅ Réponse création client:', clientResponse);
         clientId = clientResponse.client?._id || clientResponse._id;
-        console.log('Client créé:', clientId);
+        console.log('🆔 ID client créé:', clientId);
+
         this.successMessage = "Commande enregistrée et compte client créé. Vérifiez votre email pour le mot de passe temporaire.";
+        console.log('📧 Mot de passe temporaire envoyé à l\'email du client:', clientResponse);
       } catch (err: any) {
-        console.error('Erreur création client:', err);
+        console.error('❌ Erreur lors de la création automatique du compte client:', err);
+        console.error('Détails de l\'erreur:', {
+          status: err.status,
+          statusText: err.statusText,
+          error: err.error,
+          message: err.message
+        });
         this.errorMessage = err.error?.message || "Erreur lors de la création du compte client. La commande sera enregistrée sans compte.";
         // Ne pas arrêter le processus, continuer avec clientId = null
       }
+    } else {
+      console.log('ℹ️ Création de compte client désactivée par l\'utilisateur');
     }
 
     const selectedSupplements = this.modalSupplements
       .filter(s => s.selected)
       .map(s => ({ name: s.name, price: s.price }));
+
 
     const orderPayload: any = {
       restaurantId: this.restaurantId,
@@ -294,8 +342,12 @@ export class RestaurantMenuComponent implements OnInit {
         supplements: selectedSupplements
       }],
       customerName: this.payment.name,
-      address: this.payment.address,
+      deliveryLocation: {
+        lat: this.deliveryLocation!.latitude,
+        lng: this.deliveryLocation!.longitude
+      },
       contact: this.payment.contact,
+      email: this.payment.email, // Ajout du champ email
       total: totalPrice,
       status: 'en_attente',
       clientId: clientId,

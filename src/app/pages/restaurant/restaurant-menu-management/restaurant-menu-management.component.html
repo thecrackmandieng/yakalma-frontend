@@ -118,13 +118,22 @@
         <p><strong>Téléphone :</strong> {{ selectedOrder.restaurantPhone }}</p>
       </div>
 
+
       <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
         <h3 class="text-lg font-semibold text-center !text-blue-600 mb-2"><i class="fa fa-user"></i> Client</h3>
         <div class="flex flex-wrap justify-between items-center mb-2">
           <p><strong>Client :</strong> {{ selectedOrder.customerName }}</p>
-          <p><strong>Adresse :</strong> {{ selectedOrder.address }}</p>
+
+          <p><strong>Localisation :</strong> {{ selectedOrder.deliveryLocation.lat }}, {{ selectedOrder.deliveryLocation.lng }}</p>
         </div>
         <p><strong>Contact :</strong> {{ selectedOrder.contact }}</p>
+        <p *ngIf="selectedOrder.email"><strong>Email :</strong> {{ selectedOrder.email }}</p>
+        <p *ngIf="selectedOrder.clientId" class="text-sm text-green-600 mt-1">
+          <i class="fas fa-check-circle"></i> Compte client créé automatiquement
+        </p>
+        <p *ngIf="!selectedOrder.clientId" class="text-sm text-orange-600 mt-1">
+          <i class="fas fa-exclamation-triangle"></i> Aucun compte client associé
+        </p>
       </div>
 
       <div *ngIf="selectedOrder.validationCode" class="p-4 bg-red-50 rounded-xl border border-red-200 md:col-span-2">
