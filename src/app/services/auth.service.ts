@@ -177,4 +177,11 @@ updateLivreurProfile(id: string, data: Partial<Profile> | FormData): Observable<
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   }
+
+  /**
+   * Mot de passe oublié partenaire/restaurant
+   */
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/restaurants/forgot-password`, { email });
+  }
 }
