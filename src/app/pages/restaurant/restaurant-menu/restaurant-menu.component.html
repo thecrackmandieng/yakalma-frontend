@@ -532,6 +532,8 @@
 
 <app-footer></app-footer>
 
+
 <!-- Toasts -->
 <app-toast-success [message]="successMessage"></app-toast-success>
 <app-toast-error [message]="errorMessage"></app-toast-error>
+<div *ngIf="infoMessage" class="fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow-lg z-50">{{ infoMessage }}</div>

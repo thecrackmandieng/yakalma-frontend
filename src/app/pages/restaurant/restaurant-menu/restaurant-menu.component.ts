@@ -58,8 +58,10 @@ export class RestaurantMenuComponent implements OnInit {
 
   modalSupplements: { name: string, price: number, selected: boolean }[] = [];
 
+
   successMessage: string = '';
   errorMessage: string = '';
+  infoMessage: string = '';
 
   constructor(
     private partenaireService: PartenaireService,
@@ -161,13 +163,23 @@ export class RestaurantMenuComponent implements OnInit {
     this.payment = { name: '', contact: '', email: '' };
     this.createAccount = true;
 
-    // Récupérer automatiquement la localisation GPS du client
+
+    // Récupérer automatiquement la localisation GPS du client avec fallback
     try {
       this.deliveryLocation = await this.geolocationService.requestClientLocation();
       console.log('Localisation GPS récupérée:', this.deliveryLocation);
+      this.successMessage = 'Position GPS récupérée avec succès !';
     } catch (error) {
-      console.error('Erreur lors de la récupération de la localisation:', error);
-      this.errorMessage = 'Impossible de récupérer votre localisation. Veuillez autoriser l\'accès à la géolocalisation.';
+      console.warn('Géolocalisation indisponible, utilisation des coordonnées par défaut (Dakar)');
+      // Fallback : coordonnées par défaut de Dakar si géolocalisation échoue
+      this.deliveryLocation = {
+        latitude: 14.6928,
+        longitude: -17.4467
+      };
+
+      this.infoMessage = 'Position par défaut utilisée (Dakar). Vous pouvez modifier l\'adresse de livraison dans le formulaire.';
+      // Auto-suppression du message après 5 secondes
+      setTimeout(() => this.infoMessage = '', 5000);
     }
 
     this.modalSupplements = (item.supplements || []).map((s: any) => ({
@@ -216,9 +228,10 @@ export class RestaurantMenuComponent implements OnInit {
   }
 
   // --- Paiement ---
+
   payNow() {
-    if (!this.modalItem || !this.payment.name || !this.payment.contact || !this.deliveryLocation || !this.payment.email) {
-      this.errorMessage = 'Veuillez remplir tous les champs correctement et sélectionner un plat. Assurez-vous que la localisation GPS est disponible.';
+    if (!this.modalItem || !this.payment.name || !this.payment.contact || !this.payment.email) {
+      this.errorMessage = 'Veuillez remplir tous les champs correctement et sélectionner un plat.';
       return;
     }
 
