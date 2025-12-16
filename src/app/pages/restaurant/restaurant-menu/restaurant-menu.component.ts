@@ -283,48 +283,56 @@ export class RestaurantMenuComponent implements OnInit {
 
 
   private async saveOrder(totalPrice: number, ref?: string) {
-    if (!this.modalItem || !this.deliveryLocation) return;
+    try {
+      if (!this.modalItem || !this.deliveryLocation) {
+        console.error('❌ Données manquantes pour enregistrer la commande:', {
+          modalItem: !!this.modalItem,
+          deliveryLocation: !!this.deliveryLocation
+        });
+        return;
+      }
 
-    let clientId: string | null = null;
+      let clientId: string | null = null;
 
-    // Créer un compte client si demandé
-    if (this.createAccount) {
-      console.log('🔄 Tentative de création automatique de compte client...');
-      console.log('📋 Données client à envoyer:', {
-        fullName: this.payment.name,
-        email: this.payment.email,
-        phone: this.payment.contact,
-        address: `${this.deliveryLocation!.latitude}, ${this.deliveryLocation!.longitude}`
-      });
-
-      try {
-        const clientResponse = await this.partenaireService.registerClient({
+      // Créer un compte client si demandé
+      if (this.createAccount) {
+        console.log('🔄 Tentative de création automatique de compte client...');
+        const clientPayload = {
           fullName: this.payment.name,
           email: this.payment.email,
           phone: this.payment.contact,
-          address: `${this.deliveryLocation!.latitude}, ${this.deliveryLocation!.longitude}` // Utiliser les coordonnées GPS comme adresse
-        }).toPromise();
-
-        console.log('✅ Réponse création client:', clientResponse);
-        clientId = clientResponse.client?._id || clientResponse._id;
-        console.log('🆔 ID client créé:', clientId);
-
-        this.successMessage = "Commande enregistrée et compte client créé. Vérifiez votre email pour le mot de passe temporaire.";
-        console.log('📧 Mot de passe temporaire envoyé à l\'email du client:', clientResponse);
-      } catch (err: any) {
-        console.error('❌ Erreur lors de la création automatique du compte client:', err);
-        console.error('Détails de l\'erreur:', {
-          status: err.status,
-          statusText: err.statusText,
-          error: err.error,
-          message: err.message
+          address: `${this.deliveryLocation!.latitude}, ${this.deliveryLocation!.longitude}`
+        };
+        console.log('📋 Données client à envoyer:', clientPayload);
+        console.log('📍 Coordonnées GPS utilisées:', {
+          latitude: this.deliveryLocation!.latitude,
+          longitude: this.deliveryLocation!.longitude
         });
-        this.errorMessage = err.error?.message || "Erreur lors de la création du compte client. La commande sera enregistrée sans compte.";
-        // Ne pas arrêter le processus, continuer avec clientId = null
+
+        try {
+          const clientResponse = await this.partenaireService.registerClient(clientPayload).toPromise();
+
+          console.log('✅ Réponse création client:', clientResponse);
+          clientId = clientResponse.client?._id || clientResponse._id;
+          console.log('🆔 ID client créé:', clientId);
+
+          this.successMessage = "Commande enregistrée et compte client créé. Vérifiez votre email pour le mot de passe temporaire.";
+          console.log('📧 Mot de passe temporaire envoyé à l\'email du client:', clientResponse);
+        } catch (err: any) {
+          console.error('❌ Erreur lors de la création automatique du compte client:', err);
+          console.error('Détails de l\'erreur:', {
+            status: err.status,
+            statusText: err.statusText,
+            error: err.error,
+            message: err.message,
+            stack: err.stack
+          });
+          this.errorMessage = err.error?.message || "Erreur lors de la création du compte client. La commande sera enregistrée sans compte.";
+          // Ne pas arrêter le processus, continuer avec clientId = null
+        }
+      } else {
+        console.log('ℹ️ Création de compte client désactivée par l\'utilisateur');
       }
-    } else {
-      console.log('ℹ️ Création de compte client désactivée par l\'utilisateur');
-    }
 
     const selectedSupplements = this.modalSupplements
       .filter(s => s.selected)
@@ -367,6 +375,14 @@ export class RestaurantMenuComponent implements OnInit {
         this.errorMessage = "Impossible d'enregistrer la commande.";
       }
     });
+    } catch (error: any) {
+      console.error('❌ Erreur générale dans saveOrder:', error);
+      console.error('Détails erreur générale:', {
+        message: error.message,
+        stack: error.stack
+      });
+      this.errorMessage = "Une erreur inattendue s'est produite lors de l'enregistrement de la commande.";
+    }
   }
 
   getImageUrl(imagePath?: string): string {

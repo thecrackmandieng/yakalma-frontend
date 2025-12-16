@@ -258,7 +258,33 @@ export class PartenaireService {
       role: 'client'
     };
     console.log('📤 Envoi données client avec rôle:', clientDataWithRole);
-    return this.http.post(`${this.clientsUrl}/register`, clientDataWithRole);
+    console.log('🔗 URL de requête:', `${this.clientsUrl}/register`);
+    console.log('📋 Headers utilisés:', this.getAuthHeaders().headers);
+    console.log('🌐 Environnement API:', this.clientsUrl);
+
+    return this.http.post<{ message: string; client: any }>(`${this.clientsUrl}/register`, clientDataWithRole).pipe(
+      map((response: { message: string; client: any }) => {
+        console.log('✅ Réponse succès création client:', response);
+        console.log('📧 Vérification email dans réponse:', {
+          hasMessage: !!response.message,
+          message: response.message,
+          hasClient: !!response.client,
+          clientEmail: response.client?.email
+        });
+        return response;
+      }),
+      catchError(error => {
+        console.error('❌ Erreur HTTP lors de la création du client:', error);
+        console.error('📊 Détails erreur:', {
+          status: error.status,
+          statusText: error.statusText,
+          url: error.url,
+          error: error.error,
+          fullError: error
+        });
+        throw error;
+      })
+    );
   }
 
   // -------------------- LIVREURS --------------------
