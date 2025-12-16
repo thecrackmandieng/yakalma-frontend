@@ -59,18 +59,22 @@ export class ForgotPasswordLivreurComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // Simulation de l'envoi de l'email de réinitialisation
-    // Dans un vrai projet, vous appelleriez votre API ici
-    setTimeout(() => {
-      this.successMessage = "Un email de réinitialisation a été envoyé à votre adresse si elle existe dans notre système.";
-      this.isLoading = false;
+    this.authService.forgotPasswordLivreur(this.email).subscribe({
+      next: (response: any) => {
+        this.successMessage = "Un email de réinitialisation a été envoyé à votre adresse si elle existe dans notre système.";
+        this.isLoading = false;
 
-      // Redirection automatique après 3 secondes
-      if (this.isBrowser) {
-        setTimeout(() => {
-          this.router.navigate(['/connexion-livreur']);
-        }, 3000);
+        // Redirection automatique après 3 secondes
+        if (this.isBrowser) {
+          setTimeout(() => {
+            this.router.navigate(['/connexion-livreur']);
+          }, 3000);
+        }
+      },
+      error: (error: any) => {
+        this.errorMessage = error.error?.message || "Une erreur est survenue. Veuillez réessayer.";
+        this.isLoading = false;
       }
-    }, 1500);
+    });
   }
 }

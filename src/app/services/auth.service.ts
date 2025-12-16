@@ -184,4 +184,25 @@ updateLivreurProfile(id: string, data: Partial<Profile> | FormData): Observable<
   forgotPassword(email: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/restaurants/forgot-password`, { email });
   }
+
+  /**
+   * Mot de passe oublié livreur
+   */
+  forgotPasswordLivreur(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/livreurs/forgot-password`, { email });
+  }
+
+  /**
+   * Mot de passe oublié client/utilisateur
+   */
+  forgotPasswordClient(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/clients/forgot-password`, { email });
+  }
+
+  /**
+   * Mot de passe oublié client/utilisateur
+   */
+  forgotPasswordAdmin(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/admins/forgot-password`, { email });
+  }
 }
