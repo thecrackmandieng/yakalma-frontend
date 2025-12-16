@@ -260,10 +260,17 @@ export class PartenaireService {
     console.log('📤 Envoi données client avec rôle:', clientDataWithRole);
     console.log('🔗 URL de requête:', `${this.clientsUrl}/register`);
     console.log('📋 Headers utilisés:', this.getAuthHeaders().headers);
+    console.log('🌐 Environnement API:', this.clientsUrl);
 
-    return this.http.post(`${this.clientsUrl}/register`, clientDataWithRole).pipe(
-      map(response => {
+    return this.http.post<{ message: string; client: any }>(`${this.clientsUrl}/register`, clientDataWithRole).pipe(
+      map((response: { message: string; client: any }) => {
         console.log('✅ Réponse succès création client:', response);
+        console.log('📧 Vérification email dans réponse:', {
+          hasMessage: !!response.message,
+          message: response.message,
+          hasClient: !!response.client,
+          clientEmail: response.client?.email
+        });
         return response;
       }),
       catchError(error => {
@@ -272,7 +279,8 @@ export class PartenaireService {
           status: error.status,
           statusText: error.statusText,
           url: error.url,
-          error: error.error
+          error: error.error,
+          fullError: error
         });
         throw error;
       })
