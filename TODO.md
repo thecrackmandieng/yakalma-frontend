@@ -28,3 +28,4 @@
 - [ ] Mettre à jour `saveOrder` pour inclure `tableId` dans `orderPayload`.
 - [ ] Tester la génération et le scan du QR.
 - [ ] Vérifier que les commandes incluent l'ID de table.
+la branche 
