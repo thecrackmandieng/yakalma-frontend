@@ -23,7 +23,7 @@ export interface Address {
 export class GeolocationService {
   private currentPosition = new BehaviorSubject<Position | null>(null);
   private deliveryAddress = new BehaviorSubject<Address | null>(null);
-  
+
   public currentPosition$ = this.currentPosition.asObservable();
   public deliveryAddress$ = this.deliveryAddress.asObservable();
 
@@ -100,14 +100,60 @@ export class GeolocationService {
   /** 📤 Obtenir l'adresse depuis les coordonnées */
   async reverseGeocode(latitude: number, longitude: number): Promise<string> {
     try {
+      // Créer un AbortController pour le timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 secondes timeout
+
+      // Utiliser BigDataCloud API pour une meilleure fiabilité
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=fr`,
+        { signal: controller.signal }
       );
+      clearTimeout(timeoutId);
+
       const data = await response.json();
-      return data.display_name || 'Adresse non trouvée';
-    } catch (error) {
+
+      // Construire une adresse formatée à partir des composants
+      const addressParts: string[] = [];
+
+      if (data.locality) addressParts.push(data.locality);
+      if (data.city) addressParts.push(data.city);
+      if (data.principalSubdivision) addressParts.push(data.principalSubdivision);
+      if (data.countryName) addressParts.push(data.countryName);
+
+      if (addressParts.length > 0) {
+        const formattedAddress = addressParts.join(', ');
+        console.log('✅ Adresse récupérée avec BigDataCloud:', formattedAddress);
+        return formattedAddress;
+      }
+
+      // Fallback vers Nominatim si BigDataCloud ne donne pas de résultats
+      console.warn('⚠️ BigDataCloud n\'a pas donné de résultats, utilisation de Nominatim...');
+
+      // Nouveau timeout pour Nominatim
+      const nominatimController = new AbortController();
+      const nominatimTimeoutId = setTimeout(() => nominatimController.abort(), 10000);
+
+      const nominatimResponse = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`,
+        { signal: nominatimController.signal }
+      );
+      clearTimeout(nominatimTimeoutId);
+
+      const nominatimData = await nominatimResponse.json();
+
+      if (nominatimData.display_name) {
+        console.log('✅ Adresse récupérée avec Nominatim:', nominatimData.display_name);
+        return nominatimData.display_name;
+      }
+
+      return 'Adresse non trouvée, veuillez saisir manuellement';
+    } catch (error: any) {
       console.error('Erreur géocodage inverse:', error);
-      return 'Erreur lors de la récupération de l\'adresse';
+      if (error.name === 'AbortError') {
+        return 'Timeout lors de la récupération de l\'adresse, veuillez saisir manuellement';
+      }
+      return 'Erreur lors de la récupération de l\'adresse, veuillez saisir manuellement';
     }
   }
 

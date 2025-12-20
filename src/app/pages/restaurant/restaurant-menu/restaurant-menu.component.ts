@@ -239,14 +239,23 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
   if (!navigator.geolocation) {
     console.warn('❌ Géolocalisation non supportée');
     this.isGpsLoading = false;
+    this.errorMessage = 'Géolocalisation non supportée. Veuillez saisir votre adresse manuellement.';
     return;
   }
 
   this.isGpsLoading = true;
+  this.errorMessage = ''; // Clear any previous errors
   console.log('📍 Demande position GPS client...');
 
+  // Timeout pour l'ensemble du processus (GPS + géocodage)
+  const totalTimeout = setTimeout(() => {
+    console.warn('⏰ Timeout global du processus GPS + géocodage');
+    this.isGpsLoading = false;
+    this.errorMessage = 'Timeout lors de la récupération de la position. Veuillez saisir votre adresse manuellement.';
+  }, 25000); // 25 secondes total
+
   navigator.geolocation.getCurrentPosition(
-    (position) => {
+    async (position) => {
       const { latitude, longitude, accuracy } = position.coords;
 
       console.log('✅ GPS client récupéré', { latitude, longitude, accuracy });
@@ -254,15 +263,38 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
       this.payment.latitude = latitude;
       this.payment.longitude = longitude;
 
+      // 🔄 Géocodage inverse pour récupérer l'adresse
+      try {
+        console.log('🏠 Récupération de l\'adresse via géocodage inverse...');
+        const address = await this.geolocationService.reverseGeocode(latitude, longitude);
+        this.payment.address = address;
+        console.log('✅ Adresse récupérée:', address);
+
+        // Si l'adresse indique un problème, informer l'utilisateur
+        if (address.includes('veuillez saisir manuellement')) {
+          this.errorMessage = 'Impossible de récupérer l\'adresse automatiquement. Veuillez la saisir manuellement ci-dessous.';
+        } else {
+          this.successMessage = 'Position et adresse récupérées avec succès !';
+        }
+      } catch (error) {
+        console.warn('⚠️ Échec du géocodage inverse:', error);
+        this.payment.address = '';
+        this.errorMessage = 'Impossible de récupérer l\'adresse. Veuillez la saisir manuellement ci-dessous.';
+      }
+
+      clearTimeout(totalTimeout);
       this.isGpsLoading = false;
     },
     (error) => {
+      clearTimeout(totalTimeout);
       console.warn('⚠️ GPS indisponible, mode adresse manuelle activé');
       console.warn(error);
 
       // GPS échoué → on ne bloque PAS
       this.payment.latitude = 0;
       this.payment.longitude = 0;
+      this.payment.address = '';
+      this.errorMessage = 'Impossible d\'obtenir votre position GPS. Veuillez saisir votre adresse manuellement.';
 
       this.isGpsLoading = false;
     },
@@ -286,11 +318,16 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
     !this.modalItem ||
     !this.payment.name ||
     !this.payment.contact ||
-    !this.payment.address ||
     !this.payment.email
   ) {
     this.errorMessage =
-      'Veuillez remplir les informations obligatoires (nom, contact, adresse, email).';
+      'Veuillez remplir les informations obligatoires (nom, contact, email).';
+    return;
+  }
+
+  // Si l'adresse est vide, demander à l'utilisateur de la saisir
+  if (!this.payment.address || this.payment.address.trim() === '') {
+    this.errorMessage = 'Veuillez saisir votre adresse de livraison.';
     return;
   }
 
