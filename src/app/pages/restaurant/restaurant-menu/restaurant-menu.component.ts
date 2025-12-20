@@ -235,70 +235,41 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
 
  getUserLocationAndAddress() {
   console.log('🔍 Vérification support géolocalisation...');
+
   if (!navigator.geolocation) {
-    console.warn('❌ Géolocalisation non supportée par le navigateur');
+    console.warn('❌ Géolocalisation non supportée');
     this.isGpsLoading = false;
     return;
   }
 
+  this.isGpsLoading = true;
   console.log('📍 Demande position GPS client...');
-  console.log('🔐 Permissions géolocalisation:', navigator.permissions ? 'Permissions API disponible' : 'Permissions API non disponible');
-
-  // Vérifier les permissions si disponible
-  if (navigator.permissions) {
-    navigator.permissions.query({ name: 'geolocation' }).then((result) => {
-      console.log('🔐 Permission géolocalisation:', result.state);
-    }).catch((err) => {
-      console.log('❌ Erreur vérification permission:', err);
-    });
-  }
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      const accuracy = position.coords.accuracy;
+      const { latitude, longitude, accuracy } = position.coords;
 
-      console.log('✅ GPS obtenu avec succès:');
-      console.log('   - Latitude:', lat);
-      console.log('   - Longitude:', lng);
-      console.log('   - Précision:', accuracy, 'mètres');
-      console.log('   - Timestamp:', new Date(position.timestamp).toLocaleString());
+      console.log('✅ GPS client récupéré', { latitude, longitude, accuracy });
 
-      this.payment.latitude = lat;
-      this.payment.longitude = lng;
+      this.payment.latitude = latitude;
+      this.payment.longitude = longitude;
 
       this.isGpsLoading = false;
-      console.log('🏁 Géolocalisation terminée - Latitude et Longitude récupérées');
     },
     (error) => {
-      console.log('🚨 Callback erreur GPS appelée');
-      console.error('❌ Erreur GPS détaillée:');
-      console.error('   - Code:', error.code);
-      console.error('   - Message:', error.message);
+      console.warn('⚠️ GPS indisponible, mode adresse manuelle activé');
+      console.warn(error);
 
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          console.error('   - Cause: Permission refusée par l\'utilisateur');
-          break;
-        case error.POSITION_UNAVAILABLE:
-          console.error('   - Cause: Position indisponible');
-          break;
-        case error.TIMEOUT:
-          console.error('   - Cause: Timeout dépassé');
-          break;
-        default:
-          console.error('   - Cause: Erreur inconnue');
-      }
+      // GPS échoué → on ne bloque PAS
+      this.payment.latitude = 0;
+      this.payment.longitude = 0;
 
-      this.isGpsLoading = true;
-      this.payment.address = '';
-      console.log('🏁 Géolocalisation échouée');
+      this.isGpsLoading = false;
     },
     {
       enableHighAccuracy: true,
-      timeout: 30000,
-      maximumAge: 0
+      timeout: 15000,
+      maximumAge: 60000
     }
   );
 }
@@ -306,39 +277,51 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
 
 
 
+
   // --- Paiement ---
   payNow() {
-    console.log('payNow called', this.payment);
-    if (!this.modalItem || !this.payment.name || !this.payment.contact || !this.payment.address || !this.payment.email || this.payment.latitude === 0 || this.payment.longitude === 0) {
-      this.errorMessage = 'Veuillez remplir tous les champs correctement, activer la géolocalisation et sélectionner un plat.';
-      return;
-    }
+  console.log('payNow called', this.payment);
 
-    const totalPrice = this.calculateTotalPrice();
-    const ref = `CMD${Date.now()}`;
-    const paymentPayload = {
-      item_name: this.modalItem.name,
-      item_price: totalPrice,
-      currency: "XOF",
-      ref_command: ref,
-      customerName: this.payment.name,
-      customerEmail: this.payment.email // Utiliser l'email du formulaire
-    };
-
-    this.paymentService.initPayment(paymentPayload).subscribe({
-      next: async (res) => {
-        if (res.redirect_url) {
-          // Enregistrer la commande avant la redirection
-          await this.saveOrder(totalPrice, ref);
-          localStorage.setItem('pending_ref', ref);
-          window.location.href = res.redirect_url;
-        } else {
-          this.errorMessage = 'Erreur : URL de redirection non reçue.';
-        }
-      },
-      error: (err) => this.errorMessage = err.message || 'Erreur paiement.'
-    });
+  if (
+    !this.modalItem ||
+    !this.payment.name ||
+    !this.payment.contact ||
+    !this.payment.address ||
+    !this.payment.email
+  ) {
+    this.errorMessage =
+      'Veuillez remplir les informations obligatoires (nom, contact, adresse, email).';
+    return;
   }
+
+  const totalPrice = this.calculateTotalPrice();
+  const ref = `CMD${Date.now()}`;
+
+  const paymentPayload = {
+    item_name: this.modalItem.name,
+    item_price: totalPrice,
+    currency: 'XOF',
+    ref_command: ref,
+    customerName: this.payment.name,
+    customerEmail: this.payment.email
+  };
+
+  this.paymentService.initPayment(paymentPayload).subscribe({
+    next: async (res) => {
+      if (res.redirect_url) {
+        await this.saveOrder(totalPrice, ref);
+        localStorage.setItem('pending_ref', ref);
+        window.location.href = res.redirect_url;
+      } else {
+        this.errorMessage = 'URL de paiement invalide.';
+      }
+    },
+    error: (err) => {
+      this.errorMessage = err.message || 'Erreur paiement.';
+    }
+  });
+}
+
 
   // --- Vérification après retour ---
   verifyAndSaveOrder() {
