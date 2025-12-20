@@ -249,8 +249,13 @@ export class HeaderComponent implements OnInit {
     customerName: this.payment.name.trim(),
     address: this.payment.address.trim(),
     contact: this.payment.contact.trim(),
+    email: '',
+    latitude: 0,
+    longitude: 0,
     restaurantId: restaurantId,
     total: this.getCartTotal(),
+    ref_command: `CMD${Date.now()}`,
+    tableId: '',
     operator: this.selectedOperator?.name || ''
   };
 

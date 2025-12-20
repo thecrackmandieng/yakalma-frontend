@@ -10,6 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PaymentService } from '../../../services/payment.service';
 import { ToastSuccessComponent } from '../../../components/toast-success/toast-success.component';
 import { ToastErrorComponent } from '../../../components/toast-error/toast-error.component';
+import { GeolocationService } from '../../../services/geolocation.service';
 import { environment } from '../../../../environments/environment';
 
 
@@ -31,8 +32,8 @@ export class RestaurantMenuComponent implements OnInit {
   quantity = 1;
 
   showPaymentForm = false;
-  payment = { name: '', contact: '', address: '', email: '' };
-  createAccount = false;
+payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitude: 0 };
+  createAccount = true;
 
   showAddDishModal = false;
   newDish: any = { name: '', description: '', price: 0, image: '', supplements: [] };
@@ -55,6 +56,10 @@ export class RestaurantMenuComponent implements OnInit {
 
   modalSupplements: { name: string, price: number, selected: boolean }[] = [];
 
+  currentPosition: { latitude: number; longitude: number } | null = null;
+
+  isGpsLoading: boolean = false;
+
   successMessage: string = '';
   errorMessage: string = '';
 
@@ -64,6 +69,7 @@ export class RestaurantMenuComponent implements OnInit {
     private router: Router,
     private cartService: CartService,
     private paymentService: PaymentService,
+    private geolocationService: GeolocationService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -149,26 +155,50 @@ export class RestaurantMenuComponent implements OnInit {
 
   // --- Modal commande ---
   openModal(item: MenuItem, event: Event) {
-    event.stopPropagation();
-    this.modalItem = item;
-    this.quantity = 1;
-    this.showModal = true;
-    this.showPaymentForm = true;
-    this.payment = { name: '', contact: '', address: '', email: '' };
-    this.createAccount = false;
+  event.stopPropagation();
+  this.modalItem = item;
+  this.quantity = 1;
+  this.showModal = true;
+  this.showPaymentForm = true;
 
-    this.modalSupplements = (item.supplements || []).map((s: any) => ({
-      name: s.name,
-      price: s.price,
-      selected: false
-    }));
-  }
+    this.payment = {
+  name: '',
+  contact: '',
+  address: '',
+  email: '',
+  latitude: 0,
+  longitude: 0
+};
+  this.createAccount = true; // ✅ coché par défaut
+
+  this.isGpsLoading = true; // Start GPS loading
+  this.getUserLocationAndAddress(); // ✅ GPS auto
+
+  this.modalSupplements = (item.supplements || []).map((s: any) => ({
+    name: s.name,
+    price: s.price,
+    selected: false
+  }));
+}
+
 
   closeModal() {
     this.showModal = false;
     this.modalItem = null;
     this.showPaymentForm = false;
     this.modalSupplements = [];
+  }
+
+  // --- GPS Location Detection ---
+  private async detectCurrentLocation() {
+    try {
+      const position = await this.geolocationService.requestClientLocation();
+      const address = await this.geolocationService.reverseGeocode(position.latitude, position.longitude);
+      this.payment.address = address;
+    } catch (error) {
+      console.error('Erreur détection GPS:', error);
+      // L'adresse reste vide si la géolocalisation échoue
+    }
   }
 
   incrementQuantity() { this.quantity++; }
@@ -202,10 +232,103 @@ export class RestaurantMenuComponent implements OnInit {
     this.closeModal();
   }
 
+
+ getUserLocationAndAddress() {
+  console.log('🔍 Vérification support géolocalisation...');
+  if (!navigator.geolocation) {
+    console.warn('❌ Géolocalisation non supportée par le navigateur');
+    this.isGpsLoading = false;
+    return;
+  }
+
+  console.log('📍 Demande position GPS client...');
+  console.log('🔐 Permissions géolocalisation:', navigator.permissions ? 'Permissions API disponible' : 'Permissions API non disponible');
+
+  // Vérifier les permissions si disponible
+  if (navigator.permissions) {
+    navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+      console.log('🔐 Permission géolocalisation:', result.state);
+    }).catch((err) => {
+      console.log('❌ Erreur vérification permission:', err);
+    });
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const accuracy = position.coords.accuracy;
+
+      console.log('✅ GPS obtenu avec succès:');
+      console.log('   - Latitude:', lat);
+      console.log('   - Longitude:', lng);
+      console.log('   - Précision:', accuracy, 'mètres');
+      console.log('   - Timestamp:', new Date(position.timestamp).toLocaleString());
+
+      this.payment.latitude = lat;
+      this.payment.longitude = lng;
+
+      console.log('📍 Tentative reverse geocoding...');
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`,
+          { headers: { 'Accept': 'application/json' } }
+        );
+
+        console.log('📡 Réponse geocoding reçue, status:', response.status);
+        const data = await response.json();
+        console.log('📍 Adresse détectée:', data);
+
+        this.payment.address = data.display_name || 'Adresse non détectée';
+        console.log('✅ Adresse définie:', this.payment.address);
+
+      } catch (err) {
+        console.error('❌ Erreur reverse geocoding:', err);
+        this.payment.address = 'Adresse non détectée';
+      }
+
+      this.isGpsLoading = false;
+      console.log('🏁 Géolocalisation terminée');
+    },
+    (error) => {
+      console.error('❌ Erreur GPS détaillée:');
+      console.error('   - Code:', error.code);
+      console.error('   - Message:', error.message);
+
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          console.error('   - Cause: Permission refusée par l\'utilisateur');
+          break;
+        case error.POSITION_UNAVAILABLE:
+          console.error('   - Cause: Position indisponible');
+          break;
+        case error.TIMEOUT:
+          console.error('   - Cause: Timeout dépassé');
+          break;
+        default:
+          console.error('   - Cause: Erreur inconnue');
+      }
+
+      this.isGpsLoading = true;
+      this.payment.address = '';
+      console.log('🏁 Géolocalisation échouée');
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 30000,
+      maximumAge: 0
+    }
+  );
+}
+
+
+
+
   // --- Paiement ---
   payNow() {
-    if (!this.modalItem || !this.payment.name || !this.payment.contact || !this.payment.address || !this.payment.email) {
-      this.errorMessage = 'Veuillez remplir tous les champs correctement et sélectionner un plat.';
+    console.log('payNow called', this.payment);
+    if (!this.modalItem || !this.payment.name || !this.payment.contact || !this.payment.address || !this.payment.email || this.payment.latitude === 0 || this.payment.longitude === 0) {
+      this.errorMessage = 'Veuillez remplir tous les champs correctement, activer la géolocalisation et sélectionner un plat.';
       return;
     }
 
@@ -256,66 +379,47 @@ export class RestaurantMenuComponent implements OnInit {
   }
 
   private async saveOrder(totalPrice: number, ref?: string) {
-    if (!this.modalItem) return;
+  if (!this.modalItem) return;
 
-    let clientId: string | null = null;
+  const selectedSupplements = this.modalSupplements
+    .filter(s => s.selected)
+    .map(s => ({ name: s.name, price: s.price }));
 
-    // Créer un compte client si demandé
-    if (this.createAccount) {
-      try {
-        const clientResponse = await this.partenaireService.registerClient({
-          fullName: this.payment.name,
-          email: this.payment.email,
-          phone: this.payment.contact,
-          address: this.payment.address
-        }).toPromise();
-        clientId = clientResponse.client?._id || clientResponse._id;
-        console.log('Client créé:', clientId);
-        this.successMessage = "Commande enregistrée et compte client créé. Vérifiez votre email pour le mot de passe temporaire.";
-      } catch (err: any) {
-        console.error('Erreur création client:', err);
-        this.errorMessage = err.error?.message || "Erreur lors de la création du compte client. La commande sera enregistrée sans compte.";
-        // Ne pas arrêter le processus, continuer avec clientId = null
-      }
+  const orderPayload: Order = {
+    restaurantId: this.restaurantId,
+    items: [{
+      name: this.modalItem.name,
+      price: this.modalItem.price,
+      quantity: this.quantity,
+      supplements: selectedSupplements,
+      dishId: ''
+    }],
+    customerName: this.payment.name,
+    contact: this.payment.contact,
+    address: this.payment.address,
+    email: this.payment.email,
+    latitude: this.payment.latitude,
+    longitude: this.payment.longitude,
+    total: totalPrice,
+    ref_command: ref,
+    tableId: this.tableId
+  };
+
+  console.log('📦 Payload commande final:', orderPayload);
+
+  this.partenaireService.createOrder(orderPayload).subscribe({
+    next: (res) => {
+      console.log('✅ Commande créée:', res);
+      this.successMessage =
+        "Commande enregistrée. Un compte client a été créé automatiquement si nécessaire. Le mot de passe a été envoyé par email.";
+    },
+    error: (err) => {
+      console.error('❌ Erreur commande:', err);
+      this.errorMessage = "Impossible d'enregistrer la commande.";
     }
+  });
+}
 
-    const selectedSupplements = this.modalSupplements
-      .filter(s => s.selected)
-      .map(s => ({ name: s.name, price: s.price }));
-
-    const orderPayload: any = {
-      restaurantId: this.restaurantId,
-      items: [{
-        dishId: this.modalItem._id!,
-        name: this.modalItem.name,
-        quantity: this.quantity,
-        image: this.modalItem.image,
-        price: this.modalItem.price,
-        supplements: selectedSupplements
-      }],
-      customerName: this.payment.name,
-      address: this.payment.address,
-      contact: this.payment.contact,
-      total: totalPrice,
-      status: 'en_attente',
-      clientId: clientId,
-      ref_command: ref,
-      tableId: this.tableId
-    };
-
-    this.partenaireService.createOrder(orderPayload).subscribe({
-      next: (response) => {
-        console.log('Commande enregistrée:', response);
-        if (!this.createAccount || !clientId) {
-          this.successMessage = "Commande enregistrée avec succès.";
-        }
-      },
-      error: (err) => {
-        console.error('Erreur enregistrement commande:', err);
-        this.errorMessage = "Impossible d'enregistrer la commande.";
-      }
-    });
-  }
 
   getImageUrl(imagePath?: string): string {
     if (!imagePath) return 'assets/default-dish.png';

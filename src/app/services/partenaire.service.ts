@@ -23,8 +23,13 @@ export interface Order {
   customerName: string;
   address: string;
   contact: string;
+  email?: string;
+  latitude: number;
+  longitude: number;
   restaurantId: string;
   total: number;
+  ref_command?: string;
+  tableId?: string;
 
   restaurantName?: string;
   restaurantPhone?: string;
