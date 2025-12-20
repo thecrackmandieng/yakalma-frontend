@@ -311,53 +311,70 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
 
 
   // --- Paiement ---
-  payNow() {
-  console.log('payNow called', this.payment);
+  async payNow() {
+    console.log('payNow called', this.payment);
 
-  if (
-    !this.modalItem ||
-    !this.payment.name ||
-    !this.payment.contact ||
-    !this.payment.email
-  ) {
-    this.errorMessage =
-      'Veuillez remplir les informations obligatoires (nom, contact, email).';
-    return;
-  }
-
-  // Si l'adresse est vide, demander à l'utilisateur de la saisir
-  if (!this.payment.address || this.payment.address.trim() === '') {
-    this.errorMessage = 'Veuillez saisir votre adresse de livraison.';
-    return;
-  }
-
-  const totalPrice = this.calculateTotalPrice();
-  const ref = `CMD${Date.now()}`;
-
-  const paymentPayload = {
-    item_name: this.modalItem.name,
-    item_price: totalPrice,
-    currency: 'XOF',
-    ref_command: ref,
-    customerName: this.payment.name,
-    customerEmail: this.payment.email
-  };
-
-  this.paymentService.initPayment(paymentPayload).subscribe({
-    next: async (res) => {
-      if (res.redirect_url) {
-        await this.saveOrder(totalPrice, ref);
-        localStorage.setItem('pending_ref', ref);
-        window.location.href = res.redirect_url;
-      } else {
-        this.errorMessage = 'URL de paiement invalide.';
-      }
-    },
-    error: (err) => {
-      this.errorMessage = err.message || 'Erreur paiement.';
+    if (
+      !this.modalItem ||
+      !this.payment.name ||
+      !this.payment.contact ||
+      !this.payment.email
+    ) {
+      this.errorMessage =
+        'Veuillez remplir les informations obligatoires (nom, contact, email).';
+      return;
     }
-  });
-}
+
+    // Si l'adresse est vide, demander à l'utilisateur de la saisir
+    if (!this.payment.address || this.payment.address.trim() === '') {
+      this.errorMessage = 'Veuillez saisir votre adresse de livraison.';
+      return;
+    }
+
+    const totalPrice = this.calculateTotalPrice();
+    const ref = `CMD${Date.now()}`;
+
+    try {
+      // 1. D'abord, enregistrer la commande dans la base de données
+      console.log('📦 Sauvegarde de la commande avant paiement...');
+      const orderSaved = await this.saveOrder(totalPrice, ref);
+
+      if (!orderSaved) {
+        this.errorMessage = "Impossible d'enregistrer la commande. Veuillez réessayer.";
+        return;
+      }
+
+      // 2. Ensuite, initier le paiement
+      const paymentPayload = {
+        item_name: this.modalItem.name,
+        item_price: totalPrice,
+        currency: 'XOF',
+        ref_command: ref,
+        customerName: this.payment.name,
+        customerEmail: this.payment.email
+      };
+
+      this.paymentService.initPayment(paymentPayload).subscribe({
+        next: (res) => {
+          if (res.redirect_url) {
+            localStorage.setItem('pending_ref', ref);
+            this.successMessage = 'Commande sauvegardée. Redirection vers le paiement...';
+            window.location.href = res.redirect_url;
+          } else {
+            this.errorMessage = 'URL de paiement invalide.';
+          }
+        },
+        error: (err) => {
+          console.error('❌ Erreur paiement:', err);
+          this.errorMessage = err.message || 'Erreur lors du paiement. La commande reste sauvegardée.';
+        }
+      });
+
+    } catch (error) {
+      console.error('❌ Erreur lors du processus de paiement:', error);
+      this.errorMessage = 'Erreur lors du traitement. Veuillez réessayer.';
+    }
+  }
 
 
   // --- Vérification après retour ---
@@ -380,47 +397,75 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
     });
   }
 
-  private async saveOrder(totalPrice: number, ref?: string) {
-  if (!this.modalItem) return;
+  private async saveOrder(totalPrice: number, ref?: string): Promise<boolean> {
+    if (!this.modalItem) return false;
 
-  const selectedSupplements = this.modalSupplements
-    .filter(s => s.selected)
-    .map(s => ({ name: s.name, price: s.price }));
+    const selectedSupplements = this.modalSupplements
+      .filter(s => s.selected)
+      .map(s => ({ name: s.name, price: s.price }));
 
-  const orderPayload: Order = {
-    restaurantId: this.restaurantId,
-    items: [{
-      name: this.modalItem.name,
-      price: this.modalItem.price,
-      quantity: this.quantity,
-      supplements: selectedSupplements,
-      dishId: ''
-    }],
-    customerName: this.payment.name,
-    contact: this.payment.contact,
-    address: this.payment.address,
-    email: this.payment.email,
-    latitude: this.payment.latitude,
-    longitude: this.payment.longitude,
-    total: totalPrice,
-    ref_command: ref,
-    tableId: this.tableId
-  };
+    const orderPayload: Order = {
+      restaurantId: this.restaurantId,
+      items: [{
+        name: this.modalItem.name,
+        price: this.modalItem.price,
+        quantity: this.quantity,
+        supplements: selectedSupplements,
+        dishId: ''
+      }],
+      customerName: this.payment.name,
+      contact: this.payment.contact,
+      address: this.payment.address,
+      email: this.payment.email,
+      latitude: this.payment.latitude,
+      longitude: this.payment.longitude,
+      total: totalPrice,
+      ref_command: ref,
+      tableId: this.tableId
+    };
 
-  console.log('📦 Payload commande final:', orderPayload);
+    console.log('📦 Payload commande final:', orderPayload);
 
-  this.partenaireService.createOrder(orderPayload).subscribe({
-    next: (res) => {
-      console.log('✅ Commande créée:', res);
-      this.successMessage =
-        "Commande enregistrée. Un compte client a été créé automatiquement si nécessaire. Le mot de passe a été envoyé par email.";
-    },
-    error: (err) => {
-      console.error('❌ Erreur commande:', err);
-      this.errorMessage = "Impossible d'enregistrer la commande.";
-    }
-  });
-}
+    return new Promise<boolean>((resolve, reject) => {
+      this.partenaireService.createOrder(orderPayload).subscribe({
+        next: async (res) => {
+          console.log('✅ Commande créée:', res);
+
+          // Si l'utilisateur a demandé la création d'un compte, procéder à la création
+          if (this.createAccount && this.payment.email) {
+            console.log('👤 Création du compte client...');
+            const clientData = {
+              fullName: this.payment.name,
+              email: this.payment.email,
+              phone: this.payment.contact,
+              address: this.payment.address
+            };
+
+            this.partenaireService.createClientAccount(clientData).subscribe({
+              next: (accountRes) => {
+                console.log('✅ Compte client créé:', accountRes);
+                this.successMessage = 'Commande sauvegardée ! Un compte client a été créé et les identifiants ont été envoyés par email.';
+                resolve(true);
+              },
+              error: (accountErr) => {
+                console.warn('⚠️ Erreur création compte (commande toujours sauvegardée):', accountErr);
+                this.successMessage = 'Commande sauvegardée ! Note: Un problème est survenu lors de la création du compte.';
+                resolve(true); // La commande est sauvegardée même si le compte échoue
+              }
+            });
+          } else {
+            this.successMessage = 'Commande sauvegardée avec succès !';
+            resolve(true);
+          }
+        },
+        error: (err) => {
+          console.error('❌ Erreur commande:', err);
+          this.errorMessage = "Impossible d'enregistrer la commande.";
+          resolve(false);
+        }
+      });
+    });
+  }
 
 
   getImageUrl(imagePath?: string): string {

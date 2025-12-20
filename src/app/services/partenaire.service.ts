@@ -215,6 +215,16 @@ export class PartenaireService {
     return this.http.post(`${this.clientsUrl}/register`, clientData);
   }
 
+  /** Envoyer un email de confirmation de commande */
+  sendOrderConfirmationEmail(emailData: { email: string; customerName: string; orderRef: string; totalAmount: number }): Observable<any> {
+    return this.http.post(`${this.clientsUrl}/send-order-confirmation`, emailData);
+  }
+
+  /** Créer un compte client et envoyer les identifiants */
+  createClientAccount(clientData: { fullName: string; email: string; phone: string; address?: string }): Observable<any> {
+    return this.http.post(`${this.clientsUrl}/create-account`, clientData);
+  }
+
   // -------------------- LIVREURS --------------------
 
   updateLivreurLocation(locationData: { latitude: number; longitude: number }): Observable<any> {
