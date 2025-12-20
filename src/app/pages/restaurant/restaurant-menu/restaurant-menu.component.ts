@@ -254,7 +254,7 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
   }
 
   navigator.geolocation.getCurrentPosition(
-    async (position) => {
+    (position) => {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
       const accuracy = position.coords.accuracy;
@@ -268,29 +268,11 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
       this.payment.latitude = lat;
       this.payment.longitude = lng;
 
-      console.log('📍 Tentative reverse geocoding...');
-      try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`,
-          { headers: { 'Accept': 'application/json' } }
-        );
-
-        console.log('📡 Réponse geocoding reçue, status:', response.status);
-        const data = await response.json();
-        console.log('📍 Adresse détectée:', data);
-
-        this.payment.address = data.display_name || 'Adresse non détectée';
-        console.log('✅ Adresse définie:', this.payment.address);
-
-      } catch (err) {
-        console.error('❌ Erreur reverse geocoding:', err);
-        this.payment.address = 'Adresse non détectée';
-      }
-
       this.isGpsLoading = false;
-      console.log('🏁 Géolocalisation terminée');
+      console.log('🏁 Géolocalisation terminée - Latitude et Longitude récupérées');
     },
     (error) => {
+      console.log('🚨 Callback erreur GPS appelée');
       console.error('❌ Erreur GPS détaillée:');
       console.error('   - Code:', error.code);
       console.error('   - Message:', error.message);
