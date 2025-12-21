@@ -7,12 +7,16 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   // Skip auth for public endpoints
-  const publicEndpoints = ['/auth/login', '/auth/register', '/auth/refresh', '/api/public'];
+  const publicEndpoints = ['/auth/login', '/auth/register', '/auth/refresh', '/api/public', '/api/orders', '/api/clients'];
   const isPublicEndpoint = publicEndpoints.some(endpoint =>
     req.url.includes(endpoint) || req.url.includes('assets/')
   );
 
+  console.log('🔍 Auth Interceptor: Request to', req.url);
+  console.log('🔍 Is public endpoint?', isPublicEndpoint);
+
   if (isPublicEndpoint) {
+    console.log('✅ Auth Interceptor: Skipping auth for public endpoint');
     return next(req);
   }
 

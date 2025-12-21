@@ -59,6 +59,7 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
   currentPosition: { latitude: number; longitude: number } | null = null;
 
   isGpsLoading: boolean = false;
+  isPaymentLoading: boolean = false;
 
   successMessage: string = '';
   errorMessage: string = '';
@@ -314,6 +315,12 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
   async payNow() {
     console.log('payNow called', this.payment);
 
+    // Prevent multiple clicks
+    if (this.isPaymentLoading) {
+      console.log('Payment already in progress, ignoring click');
+      return;
+    }
+
     if (
       !this.modalItem ||
       !this.payment.name ||
@@ -330,6 +337,9 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
       this.errorMessage = 'Veuillez saisir votre adresse de livraison.';
       return;
     }
+
+    this.isPaymentLoading = true;
+    this.errorMessage = '';
 
     const totalPrice = this.calculateTotalPrice();
     const ref = `CMD${Date.now()}`;
@@ -373,6 +383,8 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
     } catch (error) {
       console.error('❌ Erreur lors du processus de paiement:', error);
       this.errorMessage = 'Erreur lors du traitement. Veuillez réessayer.';
+    } finally {
+      this.isPaymentLoading = false;
     }
   }
 
@@ -411,14 +423,16 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
         price: this.modalItem.price,
         quantity: this.quantity,
         supplements: selectedSupplements,
-        dishId: ''
+        dishId: this.modalItem._id || ''
       }],
       customerName: this.payment.name,
       contact: this.payment.contact,
       address: this.payment.address,
       email: this.payment.email,
-      latitude: this.payment.latitude,
-      longitude: this.payment.longitude,
+      location: {
+        latitude: this.payment.latitude,
+        longitude: this.payment.longitude
+      },
       total: totalPrice,
       ref_command: ref,
       tableId: this.tableId
@@ -427,13 +441,15 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
     console.log('📦 Payload commande final:', orderPayload);
 
     return new Promise<boolean>((resolve, reject) => {
+      console.log('🚀 Début création commande avec payload:', orderPayload);
+
       this.partenaireService.createOrder(orderPayload).subscribe({
         next: async (res) => {
-          console.log('✅ Commande créée:', res);
+          console.log('✅ Commande créée avec succès:', res);
 
           // Si l'utilisateur a demandé la création d'un compte, procéder à la création
           if (this.createAccount && this.payment.email) {
-            console.log('👤 Création du compte client...');
+            console.log('👤 Création du compte client demandée...');
             const clientData = {
               fullName: this.payment.name,
               email: this.payment.email,
@@ -441,26 +457,77 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
               address: this.payment.address
             };
 
+            console.log('📧 Données client pour création de compte:', clientData);
+            console.log('📧 CreateAccount flag:', this.createAccount);
+            console.log('📧 Email fourni:', this.payment.email);
+
             this.partenaireService.createClientAccount(clientData).subscribe({
               next: (accountRes) => {
-                console.log('✅ Compte client créé:', accountRes);
-                this.successMessage = 'Commande sauvegardée ! Un compte client a été créé et les identifiants ont été envoyés par email.';
+                console.log('✅ Compte client créé avec succès:', accountRes);
+
+                // Vérifier la réponse pour voir si l'email a été envoyé
+                if (accountRes && typeof accountRes === 'object') {
+                  if (accountRes.passwordSentToEmail) {
+                    console.log('✅ Email envoyé avec succès !');
+                    this.successMessage = 'Commande sauvegardée ! Un compte client a été créé et les identifiants ont été envoyés par email.';
+                  } else if (accountRes.emailSent === false) {
+                    console.warn('⚠️ Compte créé mais email non envoyé');
+                    this.successMessage = 'Commande sauvegardée ! Compte client créé mais problème d\'envoi d\'email.';
+                  } else {
+                    console.log('ℹ️ Réponse de création de compte:', accountRes);
+                    this.successMessage = 'Commande sauvegardée ! Compte client créé.';
+                  }
+                } else {
+                  this.successMessage = 'Commande sauvegardée ! Compte client créé.';
+                }
+
                 resolve(true);
               },
               error: (accountErr) => {
-                console.warn('⚠️ Erreur création compte (commande toujours sauvegardée):', accountErr);
+                console.error('❌ Erreur détaillée lors de la création de compte:');
+                console.error('Status:', accountErr.status);
+                console.error('Message:', accountErr.message);
+                console.error('Error:', accountErr.error);
+
+                // Afficher plus de détails sur l'erreur
+                if (accountErr.error && typeof accountErr.error === 'object') {
+                  console.error('📋 Détails erreur backend:', JSON.stringify(accountErr.error, null, 2));
+                }
+
                 this.successMessage = 'Commande sauvegardée ! Note: Un problème est survenu lors de la création du compte.';
-                resolve(true); // La commande est sauvegardée même si le compte échoue
+                resolve(true);
               }
             });
           } else {
+            console.log('ℹ️ Création de compte non demandée');
             this.successMessage = 'Commande sauvegardée avec succès !';
             resolve(true);
           }
         },
         error: (err) => {
-          console.error('❌ Erreur commande:', err);
-          this.errorMessage = "Impossible d'enregistrer la commande.";
+          console.error('❌ Erreur détaillée lors de la création de commande:');
+          console.error('Status:', err.status);
+          console.error('Status Text:', err.statusText);
+          console.error('Message:', err.message);
+          console.error('Error object:', err.error);
+          console.error('Full error:', err);
+
+          // Afficher plus de détails sur l'erreur
+          if (err.error && typeof err.error === 'object') {
+            console.error('📋 Backend validation error details:', JSON.stringify(err.error, null, 2));
+          }
+
+          // Extraire le message d'erreur spécifique du backend
+          let backendErrorMessage = 'Erreur inconnue';
+          if (err.error && typeof err.error === 'object' && err.error.message) {
+            backendErrorMessage = err.error.message;
+          } else if (err.message) {
+            backendErrorMessage = err.message;
+          }
+
+          console.error('🚨 Backend Error Message:', backendErrorMessage);
+
+          this.errorMessage = `Impossible d'enregistrer la commande. ${backendErrorMessage}`;
           resolve(false);
         }
       });
@@ -563,3 +630,4 @@ payment = { name: '', contact: '', address: '', email: '', latitude: 0, longitud
   addEditSupplement() { this.editDish.supplements.push({ name: '', price: 0 }); }
   removeEditSupplement(i: number) { this.editDish.supplements.splice(i, 1); }
 }
+

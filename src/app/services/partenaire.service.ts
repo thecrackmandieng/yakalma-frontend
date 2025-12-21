@@ -24,8 +24,10 @@ export interface Order {
   address: string;
   contact: string;
   email?: string;
-  latitude: number;
-  longitude: number;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
   restaurantId: string;
   total: number;
   ref_command?: string;
@@ -165,7 +167,17 @@ export class PartenaireService {
   // -------------------- COMMANDES --------------------
 
   createOrder(payload: Order): Observable<{ order: Order }> {
-    return this.http.post<{ order: Order }>(this.ordersUrl, payload, this.getAuthHeaders());
+    console.log('📡 PartenaireService: Envoi requête createOrder');
+    console.log('📡 URL:', this.ordersUrl);
+    console.log('📡 Payload:', payload);
+    console.log('📡 Headers:', this.getAuthHeaders());
+
+    return this.http.post<{ order: Order }>(this.ordersUrl, payload, this.getAuthHeaders()).pipe(
+      map(res => {
+        console.log('✅ PartenaireService: Réponse reçue:', res);
+        return res;
+      })
+    );
   }
 
   getMyOrders(status?: string): Observable<Order[]> {
@@ -222,7 +234,17 @@ export class PartenaireService {
 
   /** Créer un compte client et envoyer les identifiants */
   createClientAccount(clientData: { fullName: string; email: string; phone: string; address?: string }): Observable<any> {
-    return this.http.post(`${this.clientsUrl}/create-account`, clientData);
+    console.log('📧 PartenaireService: Envoi requête createClientAccount');
+    console.log('📧 URL:', `${this.clientsUrl}/create-account`);
+    console.log('📧 ClientData:', clientData);
+    console.log('📧 Headers:', this.getAuthHeaders());
+
+    return this.http.post(`${this.clientsUrl}/create-account`, clientData).pipe(
+      map(res => {
+        console.log('✅ PartenaireService: Réponse createClientAccount:', res);
+        return res;
+      })
+    );
   }
 
   // -------------------- LIVREURS --------------------

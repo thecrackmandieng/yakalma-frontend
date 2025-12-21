@@ -417,9 +417,13 @@
         type="button"
         class="bg-[#5371ff] hover:bg-[#415ad8] text-white px-5 py-2 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         (click)="payNow()"
-        [disabled]="isGpsLoading"
+        [disabled]="isGpsLoading || isPaymentLoading"
       >
-        Payer maintenant
+        <span *ngIf="isPaymentLoading" class="inline-flex items-center">
+          <i class="fas fa-spinner fa-spin mr-2"></i>
+          Traitement...
+        </span>
+        <span *ngIf="!isPaymentLoading">Payer maintenant</span>
       </button>
       <button
         type="button"
